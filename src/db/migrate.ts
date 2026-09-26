@@ -13,7 +13,7 @@ import 'dotenv/config';
  *                        (generated columns, HNSW/GIN indexes, CHECK constraints)
  *
  * Phase 3 files are idempotent and replayed whenever their content hash
- * changes, tracked in `__nexus_post_migrations`.
+ * changes, tracked in `__figbolt_post_migrations`.
  */
 
 const DRIZZLE_DIR = path.resolve(process.cwd(), 'drizzle');
@@ -50,7 +50,19 @@ export async function runMigrations(opts: { log?: boolean; dataDir?: string } = 
 
   // ── Phase 3: post-migrations ─────────────────────────────────────────────
   await db.execute(
-    sql.raw(`CREATE TABLE IF NOT EXISTS __nexus_post_migrations (
+    // Carry the pre-rebrand bookkeeping table forward rather than starting a
+    // fresh one. Phase 3 contains ADD CONSTRAINT statements with no
+    // IF NOT EXISTS, so losing the applied-migration history would replay them
+    // and fail on an existing database.
+    sql.raw(
+      `ALTER TABLE IF EXISTS __nexus_post_migrations RENAME TO __figbolt_post_migrations`,
+    ),
+  ).catch(() => {
+    // Already renamed, or the new table exists: nothing to carry over.
+  });
+
+  await db.execute(
+    sql.raw(`CREATE TABLE IF NOT EXISTS __figbolt_post_migrations (
       name text PRIMARY KEY,
       hash text NOT NULL,
       applied_at timestamptz NOT NULL DEFAULT now()
@@ -66,7 +78,7 @@ export async function runMigrations(opts: { log?: boolean; dataDir?: string } = 
     const body = await readFile(path.join(postDir, file), 'utf8');
     const hash = await sha256(body);
     const existing = (await db.execute(
-      sql`SELECT hash FROM __nexus_post_migrations WHERE name = ${file}`,
+      sql`SELECT hash FROM __figbolt_post_migrations WHERE name = ${file}`,
     )) as { rows: { hash: string }[] };
     const row = existing.rows[0];
     if (row?.hash === hash) continue;
@@ -83,7 +95,7 @@ export async function runMigrations(opts: { log?: boolean; dataDir?: string } = 
       }
     }
     await db.execute(
-      sql`INSERT INTO __nexus_post_migrations (name, hash) VALUES (${file}, ${hash})
+      sql`INSERT INTO __figbolt_post_migrations (name, hash) VALUES (${file}, ${hash})
           ON CONFLICT (name) DO UPDATE SET hash = ${hash}, applied_at = now()`,
     );
     log(`  ✓ post/${file}`);

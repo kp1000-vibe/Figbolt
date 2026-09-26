@@ -47,7 +47,7 @@ const schema = z.object({
   INTEGRATION_TOKEN_KEY: optional,
 
   EMAIL_PROVIDER: z.enum(['console', 'resend', 'ses']).default('console'),
-  EMAIL_FROM: z.string().default('Nexus CRM <nexus@example.com>'),
+  EMAIL_FROM: z.string().default('Figbolt <hello@figbolt.com>'),
   RESEND_API_KEY: optional,
 
   STORAGE_PROVIDER: z.enum(['local', 's3']).default('local'),
@@ -106,6 +106,6 @@ export function authSecret(): Uint8Array {
       ? (() => {
           throw new Error('AUTH_SECRET missing');
         })()
-      : 'nexus-development-only-secret-do-not-use-in-production');
+      : 'figbolt-development-only-secret-do-not-use-in-production');
   return new TextEncoder().encode(raw);
 }

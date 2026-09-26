@@ -197,7 +197,7 @@ export function ProspectCard({ prospect }: { prospect: ScoredProspect }) {
               {prospect.linkedinDraft}
             </p>
             <p className="mt-1.5 text-3xs text-text-subtle">
-              Copy and send from your own LinkedIn account. Nexus does not automate LinkedIn
+              Copy and send from your own LinkedIn account. Figbolt does not automate LinkedIn
               messaging.
             </p>
           </div>

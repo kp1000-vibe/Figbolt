@@ -9,7 +9,7 @@ import { env } from '@/lib/env';
  * vendor. Connecting Apollo, Clay, People Data Labs or a Clearbit-style
  * provider means implementing `findSimilar` and nothing else.
  *
- * Note on scraping: these adapters call vendor APIs under their terms. Nexus
+ * Note on scraping: these adapters call vendor APIs under their terms. Figbolt
  * does not scrape sites whose terms prohibit it, and there is deliberately no
  * generic "fetch a page and parse it" adapter here.
  */

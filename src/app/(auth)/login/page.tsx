@@ -45,7 +45,7 @@ export default async function LoginPage({
             A CRM that already knows what happened.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-text-muted text-pretty">
-            Nexus reads your emails, meetings and calls, turns them into structured customer
+            Figbolt reads your emails, meetings and calls, turns them into structured customer
             knowledge, and keeps a living model of every relationship. Agents work on top of that
             memory — and stop for you before anything leaves the building.
           </p>
@@ -60,7 +60,7 @@ export default async function LoginPage({
               {
                 term: 'Every claim is traceable',
                 detail:
-                  'Answers cite the email or transcript behind them. When the evidence is thin, Nexus says so instead of guessing.',
+                  'Answers cite the email or transcript behind them. When the evidence is thin, Figbolt says so instead of guessing.',
               },
               {
                 term: 'Humans hold the consequential actions',
@@ -82,7 +82,7 @@ export default async function LoginPage({
         </div>
 
         <p className="relative text-2xs text-text-subtle">
-          Nexus CRM · a demonstration build. Customer data shown in the demo workspace is fictional.
+          Figbolt · a demonstration build. Customer data shown in the demo workspace is fictional.
         </p>
       </section>
 
@@ -94,7 +94,7 @@ export default async function LoginPage({
           </div>
 
           <h2 className="mt-8 text-xl font-semibold tracking-tight text-text lg:mt-0">
-            Sign in to Nexus
+            Sign in to Figbolt
           </h2>
           <p className="mt-1.5 text-sm text-text-muted">
             New here?{' '}
@@ -122,15 +122,12 @@ function Mark() {
       <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
         <svg viewBox="0 0 24 24" className="size-4.5" fill="none" aria-hidden>
           <path
-            d="M5 18V6l7 7 7-7v12"
-            stroke="currentColor"
-            strokeWidth="2.1"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
+            fill="currentColor"
           />
         </svg>
       </span>
-      <span className="text-base font-semibold tracking-tight text-text">Nexus</span>
+      <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export default async function ProspectingPage({
           className="mt-6"
           icon={<NavIcon name="signal" />}
           title="Not enough closed history to derive an ICP"
-          description="Prospecting works backwards from the deals you have actually won. Once at least three opportunities are closed-won, Nexus derives the profile and scores lookalikes against it."
+          description="Prospecting works backwards from the deals you have actually won. Once at least three opportunities are closed-won, Figbolt derives the profile and scores lookalikes against it."
         />
       ) : (
         <>
@@ -203,7 +203,7 @@ export default async function ProspectingPage({
                   <code className="font-mono">APOLLO_API_KEY</code> with{' '}
                   <code className="font-mono">INTEGRATION_MODE=live</code> to use real data; the
                   provider interface in <code className="font-mono">enrichment.ts</code> also fits
-                  Clay, People Data Labs and Clearbit-style services. Nexus does not scrape sites
+                  Clay, People Data Labs and Clearbit-style services. Figbolt does not scrape sites
                   whose terms prohibit it.
                 </p>
               </CardBody>

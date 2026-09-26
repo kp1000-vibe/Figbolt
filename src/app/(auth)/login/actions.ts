@@ -33,7 +33,7 @@ const GENERIC_FAILURE = 'That email and password combination is not correct.';
 /** Pre-computed so the timing-equalising path costs the same as a real check. */
 let dummyHashPromise: Promise<string> | undefined;
 function dummyHash(): Promise<string> {
-  dummyHashPromise ??= hashPassword('nexus-timing-equaliser');
+  dummyHashPromise ??= hashPassword('figbolt-timing-equaliser');
   return dummyHashPromise;
 }
 
@@ -111,7 +111,7 @@ const signupSchema = z.object({
     // Length is the dominant factor; a single character-class requirement
     // mostly pushes people toward predictable substitutions, so only trivially
     // guessable inputs are barred.
-    .refine((v) => !/^(?:password|nexus|12345)/i.test(v), 'Choose something less guessable.'),
+    .refine((v) => !/^(?:password|figbolt|12345)/i.test(v), 'Choose something less guessable.'),
 });
 
 export async function signup(_prev: AuthState, formData: FormData): Promise<AuthState> {

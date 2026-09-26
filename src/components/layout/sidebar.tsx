@@ -170,15 +170,12 @@ function Mark() {
       <span className="flex size-7 items-center justify-center rounded-[var(--radius-sm)] bg-accent text-white">
         <svg viewBox="0 0 24 24" className="size-4" fill="none" aria-hidden>
           <path
-            d="M5 18V6l7 7 7-7v12"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
+            fill="currentColor"
           />
         </svg>
       </span>
-      <span className="text-sm font-semibold tracking-tight text-text">Nexus</span>
+      <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
     </Link>
   );
 }

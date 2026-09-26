@@ -90,7 +90,7 @@ export function ActionButtons({
       toast({
         title: 'Calendar not connected',
         description:
-          'Connect Google or Microsoft Calendar in Integrations to schedule from Nexus. In demo mode the connector runs read-only.',
+          'Connect Google or Microsoft Calendar in Integrations to schedule from Figbolt. In demo mode the connector runs read-only.',
         tone: 'info',
       });
       return;

@@ -72,7 +72,7 @@ async function handle(
       { error: auth.failure.error },
       {
         status: auth.failure.status,
-        headers: { 'www-authenticate': 'Bearer realm="nexus-crm"', 'cache-control': 'no-store' },
+        headers: { 'www-authenticate': 'Bearer realm="figbolt"', 'cache-control': 'no-store' },
       },
     );
   }
@@ -442,7 +442,7 @@ const ROUTES: { method: string; pattern: string[]; handler: Handler }[] = [
           riskLevel: outcome.riskLevel,
           title: outcome.title,
           message:
-            'This action was not performed. It requires human approval in Nexus. Report it as pending.',
+            'This action was not performed. It requires human approval in Figbolt. Report it as pending.',
         };
       }
       return { __status: outcome.code === 'FORBIDDEN' ? 403 : 400, status: 'error', error: outcome.error, code: outcome.code };
@@ -582,12 +582,12 @@ function numberParam(query: URLSearchParams, key: string, fallback: number, max:
 
 function apiIndex() {
   return {
-    name: 'Nexus CRM API',
+    name: 'Figbolt API',
     version: 'v1',
     authentication: {
       type: 'bearer',
-      header: 'Authorization: Bearer nxk_…',
-      alternative: 'X-Api-Key: nxk_…',
+      header: 'Authorization: Bearer fgb_…',
+      alternative: 'X-Api-Key: fgb_…',
       note: 'Create a key in Settings → Security, or with `npm run cli -- keys:create`.',
       rateLimit: '600 requests per minute per key',
     },

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Nexus CLI.
+ * Figbolt CLI.
  *
  * A third way into the same product, alongside the web app and the MCP server.
  * It is deliberately a *client of the public API* rather than a script with
@@ -23,7 +23,7 @@
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 
-const BASE = process.env['NEXUS_API_URL'] ?? 'http://localhost:3000';
+const BASE = process.env['FIGBOLT_API_URL'] ?? 'http://localhost:3000';
 
 type Argv = { positional: string[]; flags: Record<string, string | boolean> };
 
@@ -50,12 +50,12 @@ function parseArgv(argv: string[]): Argv {
 }
 
 function requireKey(): string {
-  const key = process.env['NEXUS_API_KEY'];
+  const key = process.env['FIGBOLT_API_KEY'];
   if (!key) {
     fail(
-      'NEXUS_API_KEY is not set.\n' +
+      'FIGBOLT_API_KEY is not set.\n' +
         '  Create one with:  npm run cli -- keys:create --name "cli"\n' +
-        '  Then:             export NEXUS_API_KEY=nxk_...',
+        '  Then:             export FIGBOLT_API_KEY=fgb_...',
     );
   }
   return key;
@@ -160,7 +160,7 @@ function parseInput(flags: Argv['flags']): Record<string, unknown> {
 
 const COMMANDS: Record<string, { summary: string; run: (argv: Argv) => Promise<void> }> = {
   'keys:create': {
-    summary: 'Create an API key (prompts for your Nexus password).',
+    summary: 'Create an API key (prompts for your Figbolt password).',
     async run({ flags }) {
       const name = typeof flags['name'] === 'string' ? flags['name'] : 'CLI';
       const role = typeof flags['role'] === 'string' ? flags['role'] : undefined;
@@ -184,7 +184,7 @@ const COMMANDS: Record<string, { summary: string; run: (argv: Argv) => Promise<v
 
       console.log('\n✓ API key created. This is the only time it will be shown.\n');
       console.log(`  ${String(json['key'])}\n`);
-      console.log('  export NEXUS_API_KEY=' + String(json['key']) + '\n');
+      console.log('  export FIGBOLT_API_KEY=' + String(json['key']) + '\n');
     },
   },
 
@@ -343,9 +343,9 @@ const COMMANDS: Record<string, { summary: string; run: (argv: Argv) => Promise<v
 };
 
 function usage(): void {
-  console.log('\nNexus CRM — command line\n');
+  console.log('\nFigbolt — command line\n');
   console.log(`  Server:  ${BASE}`);
-  console.log(`  Auth:    NEXUS_API_KEY ${process.env['NEXUS_API_KEY'] ? '(set)' : '(not set)'}\n`);
+  console.log(`  Auth:    FIGBOLT_API_KEY ${process.env['FIGBOLT_API_KEY'] ? '(set)' : '(not set)'}\n`);
   console.log('Commands:\n');
   const width = Math.max(...Object.keys(COMMANDS).map((k) => k.length));
   for (const [name, command] of Object.entries(COMMANDS)) {

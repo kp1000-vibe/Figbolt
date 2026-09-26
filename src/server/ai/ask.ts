@@ -25,7 +25,7 @@ import { runAnalyticsQuestion } from '../analytics/ask';
  */
 
 const ASK_SYSTEM = `
-You are Nexus, an analyst with access to this workspace's CRM.
+You are Figbolt, an analyst with access to this workspace's CRM.
 
 How to answer:
 - Ground every factual claim in the evidence provided. Cite with [E1], [E2] etc.

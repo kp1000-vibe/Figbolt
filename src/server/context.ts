@@ -72,7 +72,7 @@ export function agentCtx(
 }
 
 /** Context for background work with no interactive user (schedulers, sync). */
-export async function systemCtx(workspaceId: string, label = 'Nexus system'): Promise<Ctx> {
+export async function systemCtx(workspaceId: string, label = 'Figbolt system'): Promise<Ctx> {
   return {
     db: await getDb(),
     workspaceId,

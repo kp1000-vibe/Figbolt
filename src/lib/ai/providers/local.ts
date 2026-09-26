@@ -42,7 +42,7 @@ import { coerceStructured } from './structured';
 export class LocalModel implements LanguageModel {
   readonly provider = 'local' as const;
   readonly isRemote = false;
-  readonly id = 'nexus-offline-engine';
+  readonly id = 'figbolt-offline-engine';
 
   async complete(request: CompletionRequest): Promise<CompletionResult> {
     const userText = lastUserMessage(request);
@@ -609,7 +609,7 @@ function deriveAgentName(description: string): string {
 
 function buildAgentInstructions(description: string): string {
   return [
-    'You are a Nexus CRM agent. Operate only on records in this workspace.',
+    'You are a Figbolt agent. Operate only on records in this workspace.',
     '',
     'What the user asked you to do:',
     description.trim(),
@@ -785,7 +785,7 @@ function searchFocus(text: string): string | null {
   // sentence or names a weekday.
   const IGNORE = new Set([
     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
-    'each', 'every', 'when', 'find', 'the', 'nexus', 'crm', 'ai', 'run',
+    'each', 'every', 'when', 'find', 'the', 'figbolt', 'crm', 'ai', 'run',
   ]);
   const proper = [...text.matchAll(/(?:^|[^.!?]\s)([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]{2,})*)/g)]
     .map((m) => m[1]!.trim())

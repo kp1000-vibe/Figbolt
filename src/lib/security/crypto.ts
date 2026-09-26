@@ -79,12 +79,12 @@ export function sha256(value: string): string {
 /** One-way, salted hash for IPs written to the audit log. Not reversible. */
 export function hashIp(ip: string | null | undefined): string | null {
   if (!ip) return null;
-  return createHash('sha256').update(`nexus-ip:${ip}`).digest('hex').slice(0, 32);
+  return createHash('sha256').update(`figbolt-ip:${ip}`).digest('hex').slice(0, 32);
 }
 
 /* ── Envelope encryption for integration credentials ──────────────────────── */
 
-const AAD = Buffer.from('nexus:integration-token:v1');
+const AAD = Buffer.from('figbolt:integration-token:v1');
 
 function encryptionKey(): Buffer {
   const raw = env.INTEGRATION_TOKEN_KEY;
@@ -93,7 +93,7 @@ function encryptionKey(): Buffer {
       throw new Error('INTEGRATION_TOKEN_KEY is required to store integration credentials.');
     }
     // Deterministic dev key so a restart doesn't orphan locally stored tokens.
-    return createHash('sha256').update('nexus-dev-integration-key').digest();
+    return createHash('sha256').update('figbolt-dev-integration-key').digest();
   }
   const key = Buffer.from(raw, 'base64url');
   if (key.length !== 32) {

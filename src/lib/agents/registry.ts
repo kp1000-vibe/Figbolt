@@ -81,8 +81,8 @@ export type RegisteredTool = Omit<ToolDefinition<unknown>, 'input' | 'execute' |
  * duplicates or silently start from an empty map, and agent runs would break
  * until the server restarted.
  */
-const globalRef = globalThis as unknown as { __nexusToolRegistry?: Map<string, RegisteredTool> };
-const registry: Map<string, RegisteredTool> = (globalRef.__nexusToolRegistry ??= new Map());
+const globalRef = globalThis as unknown as { __figboltToolRegistry?: Map<string, RegisteredTool> };
+const registry: Map<string, RegisteredTool> = (globalRef.__figboltToolRegistry ??= new Map());
 
 export function registerTool<TInput>(tool: ToolDefinition<TInput>): void {
   if (!tool.readOnly && !tool.preview) {

@@ -16,7 +16,7 @@ import { stem, tokenize } from './local/nlp';
  * width must match `EMBEDDING_DIMENSIONS` and the schema's `vector(768)`.
  */
 export class LocalEmbeddingModel implements EmbeddingModel {
-  readonly id = 'nexus-local-hash-v1';
+  readonly id = 'figbolt-local-hash-v1';
 
   constructor(readonly dimensions: number) {}
 

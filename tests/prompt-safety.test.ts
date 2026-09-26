@@ -83,7 +83,7 @@ describe('untrusted content fencing', () => {
 describe('system prompt structure', () => {
   it('establishes the trust rules before any retrieved content appears', () => {
     const prompt = buildSystemPrompt({
-      operator: 'You are Nexus, a CRM assistant.',
+      operator: 'You are Figbolt, a CRM assistant.',
       workspace: 'We sell operations software to mid-market companies.',
       evidence: [
         { ref: { type: 'email', id: 'eml_1', label: 'Re: quote' }, content: HOSTILE, trust: 'untrusted' },

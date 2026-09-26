@@ -25,7 +25,7 @@ export default async function TasksPage({
     <PageShell>
       <PageHeader
         title="Tasks &amp; commitments"
-        description="Tasks you or an agent created, alongside the promises Nexus extracted from conversations."
+        description="Tasks you or an agent created, alongside the promises Figbolt extracted from conversations."
       />
 
       <div className="mt-5">

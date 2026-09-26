@@ -64,7 +64,7 @@ const WORKSPACE_SLUG = 'northwind-labs';
 
 async function main() {
   const started = Date.now();
-  console.log('▸ Seeding Nexus CRM demo workspace…\n');
+  console.log('▸ Seeding Figbolt demo workspace…\n');
 
   const { getHandle } = await import('@/db/client');
   const handle = await getHandle();
@@ -889,7 +889,7 @@ async function seedAgents(
 
 function buildInstructions(name: string, prompt: string): string {
   return [
-    `You are the "${name}" agent in Nexus CRM. You operate only on records in this workspace.`,
+    `You are the "${name}" agent in Figbolt. You operate only on records in this workspace.`,
     '',
     'What the user asked you to do:',
     prompt,

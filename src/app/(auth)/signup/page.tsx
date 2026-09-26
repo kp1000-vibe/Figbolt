@@ -19,15 +19,12 @@ export default async function SignupPage() {
           <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
             <svg viewBox="0 0 24 24" className="size-4.5" fill="none" aria-hidden>
               <path
-                d="M5 18V6l7 7 7-7v12"
-                stroke="currentColor"
-                strokeWidth="2.1"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
+                fill="currentColor"
               />
             </svg>
           </span>
-          <span className="text-base font-semibold tracking-tight text-text">Nexus</span>
+          <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
         </div>
 
         <h1 className="mt-8 text-xl font-semibold tracking-tight text-text">Create a workspace</h1>
@@ -41,7 +38,7 @@ export default async function SignupPage() {
         <SignupForm />
 
         <p className="mt-6 text-2xs leading-relaxed text-text-subtle text-pretty">
-          Nexus reads the email and meetings you connect in order to build customer memory. Nothing is
+          Figbolt reads the email and meetings you connect in order to build customer memory. Nothing is
           sent on your behalf without an explicit approval, and the demo deployment cannot send email
           at all.
         </p>

@@ -1,4 +1,4 @@
-# Nexus CRM
+# Figbolt
 
 An agent-native CRM. The premise is that the system of record should understand
 the relationship rather than store it: it reads the email, meetings, tickets and
@@ -115,7 +115,7 @@ The model narrates the score; it never invents it.
 ### Product usage and support are first-class
 
 A customer can reply warmly to every email while their team quietly stops opening
-the product. Nexus ingests daily usage rollups and support tickets through the
+the product. Figbolt ingests daily usage rollups and support tickets through the
 same pipeline as email, so the churn detector, expansion detector, account health
 and the Inbox all see the behaviour, not just the conversation. A ticket saying
 *"the sync keeps failing and we'll have to reconsider at renewal"* becomes a bug
@@ -187,7 +187,7 @@ go through the same permission checks, risk gates and audit log as the web app.
 ### REST
 
 ```bash
-curl -H "Authorization: Bearer $NEXUS_API_KEY" \
+curl -H "Authorization: Bearer $FIGBOLT_API_KEY" \
   http://localhost:3000/api/v1/accounts
 ```
 
@@ -198,7 +198,7 @@ have happened.
 ### MCP
 
 `POST /api/mcp` speaks JSON-RPC 2.0 Model Context Protocol, so another agent can
-use Nexus as a tool server. `tools/list` is filtered by the key's role — a
+use Figbolt as a tool server. `tools/list` is filtered by the key's role — a
 capability you cannot use is not even discoverable — and a high-risk `tools/call`
 returns `status: "awaiting_approval"` with instructions to describe it as
 pending, not complete.
@@ -207,7 +207,7 @@ pending, not complete.
 
 ```bash
 npm run cli -- keys:create --name "laptop"
-export NEXUS_API_KEY=nxk_...
+export FIGBOLT_API_KEY=fgb_...
 npm run cli -- accounts:list
 npm run cli -- ask "which deals are at risk and why?"
 npm run cli -- agents:run <agentId>
@@ -258,7 +258,7 @@ defines the provider interface, a fixture adapter that returns realistic
 candidates with no vendor, and an Apollo adapter selected by `APOLLO_API_KEY`
 with `INTEGRATION_MODE=live`. The interface fits Clay, People Data Labs and
 Clearbit-style services too. There is deliberately no generic scraping adapter:
-Nexus does not scrape sites whose terms prohibit it, and it drafts LinkedIn
+Figbolt does not scrape sites whose terms prohibit it, and it drafts LinkedIn
 messages for a human to send rather than automating them.
 
 ---

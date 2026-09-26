@@ -169,9 +169,9 @@ export function CommandBar({ open, onClose }: { open: boolean; onClose: () => vo
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Ask anything about your customers or tell Nexus what to do…"
+            placeholder="Ask anything about your customers or tell Figbolt what to do…"
             className="h-13 flex-1 bg-transparent text-sm text-text placeholder:text-text-subtle focus:outline-none"
-            aria-label="Ask anything about your customers or tell Nexus what to do"
+            aria-label="Ask anything about your customers or tell Figbolt what to do"
             autoComplete="off"
             spellCheck={false}
           />
@@ -204,7 +204,7 @@ export function CommandBar({ open, onClose }: { open: boolean; onClose: () => vo
                   onSelect={() => go(index)}
                   onHover={() => setCursor(index)}
                   icon={<Sparkle className="size-4 text-accent" />}
-                  title={`Ask Nexus: “${trimmed}”`}
+                  title={`Ask Figbolt: “${trimmed}”`}
                   subtitle="Searches your CRM, emails and meetings, then answers with citations"
                   trailing={<Kbd>↵</Kbd>}
                 />
@@ -257,7 +257,7 @@ export function CommandBar({ open, onClose }: { open: boolean; onClose: () => vo
 
           {trimmed.length >= 2 && rows.length <= 1 && !searching && (
             <p className="px-3 py-6 text-center text-xs text-text-subtle">
-              No records matched. Press <Kbd>↵</Kbd> to ask Nexus instead.
+              No records matched. Press <Kbd>↵</Kbd> to ask Figbolt instead.
             </p>
           )}
         </div>

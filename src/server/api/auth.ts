@@ -21,7 +21,7 @@ import { checkRateLimit } from '../rate-limit';
  *    service and tool applies the same scope and permission checks
  */
 
-const PREFIX = 'nxk';
+const PREFIX = 'fgb';
 
 export type ApiKeyContext = Ctx & {
   keyId: string;
@@ -113,7 +113,7 @@ export async function listApiKeys(ctx: Ctx) {
 /**
  * Authenticate a request.
  *
- * Accepts `Authorization: Bearer nxk_…` or `X-Api-Key: nxk_…`. Returns a `Ctx`
+ * Accepts `Authorization: Bearer fgb_…` or `X-Api-Key: fgb_…`. Returns a `Ctx`
  * on success so the caller can hand it straight to any service.
  */
 export async function authenticateRequest(

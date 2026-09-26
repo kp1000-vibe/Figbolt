@@ -33,7 +33,7 @@ type Handle = {
 
 // Next.js dev-mode module reloading would otherwise open a new WASM Postgres
 // (and a new connection pool) on every hot reload.
-const globalRef = globalThis as unknown as { __nexusDb?: Promise<Handle> };
+const globalRef = globalThis as unknown as { __figboltDb?: Promise<Handle> };
 
 async function createPglite(dataDir: string | undefined): Promise<Handle> {
   const { PGlite } = await import('@electric-sql/pglite');
@@ -68,11 +68,11 @@ async function createNodePg(url: string): Promise<Handle> {
 }
 
 export function getHandle(dataDirOverride?: string): Promise<Handle> {
-  if (!globalRef.__nexusDb) {
+  if (!globalRef.__figboltDb) {
     const url = env.DATABASE_URL;
-    globalRef.__nexusDb = url ? createNodePg(url) : createPglite(dataDirOverride);
+    globalRef.__figboltDb = url ? createNodePg(url) : createPglite(dataDirOverride);
   }
-  return globalRef.__nexusDb;
+  return globalRef.__figboltDb;
 }
 
 /** Resolve the shared Drizzle instance. */
@@ -85,9 +85,9 @@ export async function getDriver(): Promise<'pglite' | 'node-postgres'> {
 }
 
 export async function closeDb(): Promise<void> {
-  const existing = globalRef.__nexusDb;
+  const existing = globalRef.__figboltDb;
   if (!existing) return;
-  globalRef.__nexusDb = undefined;
+  globalRef.__figboltDb = undefined;
   await (await existing).close();
 }
 

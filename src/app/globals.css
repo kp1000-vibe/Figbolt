@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /**
- * Nexus design tokens.
+ * Figbolt design tokens.
  *
  * A restrained, dense, keyboard-first surface. The palette is deliberately
  * near-neutral with a single accent: in a product whose job is to surface
@@ -235,7 +235,7 @@
 
 /* ── Component-level animation primitives ─────────────────────────────────── */
 
-@keyframes nexus-fade-in {
+@keyframes figbolt-fade-in {
   from {
     opacity: 0;
     transform: translateY(2px);
@@ -246,7 +246,7 @@
   }
 }
 
-@keyframes nexus-scale-in {
+@keyframes figbolt-scale-in {
   from {
     opacity: 0;
     transform: scale(0.97);
@@ -257,18 +257,18 @@
   }
 }
 
-@keyframes nexus-shimmer {
+@keyframes figbolt-shimmer {
   100% {
     transform: translateX(100%);
   }
 }
 
 .animate-fade-in {
-  animation: nexus-fade-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: figbolt-fade-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-scale-in {
-  animation: nexus-scale-in 0.14s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: figbolt-scale-in 0.14s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Skeleton loading sheen. */
@@ -288,5 +288,5 @@
     color-mix(in oklch, var(--surface) 60%, transparent),
     transparent
   );
-  animation: nexus-shimmer 1.6s infinite;
+  animation: figbolt-shimmer 1.6s infinite;
 }

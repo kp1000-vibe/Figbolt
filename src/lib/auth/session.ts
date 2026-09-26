@@ -8,8 +8,8 @@ import { authSecret, env } from '@/lib/env';
 import { hashIp, randomToken, sha256 } from '@/lib/security/crypto';
 import { permissionsFor, type Permission } from '@/lib/security/permissions';
 
-export const SESSION_COOKIE = 'nexus_session';
-export const WORKSPACE_COOKIE = 'nexus_workspace';
+export const SESSION_COOKIE = 'figbolt_session';
+export const WORKSPACE_COOKIE = 'figbolt_workspace';
 const SESSION_TTL_DAYS = 30;
 
 /**
@@ -48,8 +48,8 @@ async function signSessionToken(userId: string, sessionId: string): Promise<stri
   return new SignJWT({ sub: userId, sid: sessionId })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setIssuer('nexus-crm')
-    .setAudience('nexus-app')
+    .setIssuer('figbolt')
+    .setAudience('figbolt-app')
     .setExpirationTime(`${SESSION_TTL_DAYS}d`)
     .sign(authSecret());
 }
@@ -57,8 +57,8 @@ async function signSessionToken(userId: string, sessionId: string): Promise<stri
 async function verifySessionToken(token: string): Promise<SessionClaims | null> {
   try {
     const { payload } = await jwtVerify(token, authSecret(), {
-      issuer: 'nexus-crm',
-      audience: 'nexus-app',
+      issuer: 'figbolt',
+      audience: 'figbolt-app',
     });
     if (typeof payload.sub !== 'string' || typeof payload.sid !== 'string') return null;
     return { sub: payload.sub, sid: payload.sid };

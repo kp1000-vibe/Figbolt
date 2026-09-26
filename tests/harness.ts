@@ -41,11 +41,11 @@ export type Harness = {
 };
 
 export async function createHarness(): Promise<Harness> {
-  const dir = await mkdtemp(path.join(tmpdir(), 'nexus-test-'));
+  const dir = await mkdtemp(path.join(tmpdir(), 'figbolt-test-'));
 
   // Reset the module-level handle so each harness gets its own database.
-  const globalRef = globalThis as unknown as { __nexusDb?: unknown };
-  globalRef.__nexusDb = undefined;
+  const globalRef = globalThis as unknown as { __figboltDb?: unknown };
+  globalRef.__figboltDb = undefined;
 
   const { runMigrations } = await import('@/db/migrate');
   await runMigrations({ log: false, dataDir: dir });
@@ -158,7 +158,7 @@ export async function createHarness(): Promise<Harness> {
     async cleanup() {
       await db.delete(workspaces).where(eq(workspaces.id, workspace!.id));
       await handle.close();
-      globalRef.__nexusDb = undefined;
+      globalRef.__figboltDb = undefined;
       await rm(dir, { recursive: true, force: true });
     },
   };

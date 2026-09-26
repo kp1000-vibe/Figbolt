@@ -42,7 +42,7 @@ const STEPS: Step[] = [
   { id: 'pipeline', title: 'Configure your pipeline', blurb: 'Stages and entry criteria.', optional: true },
   { id: 'team', title: 'Invite your team', blurb: 'Needs an outbound email provider.', optional: true },
   { id: 'permissions', title: 'Set AI permissions', blurb: 'What agents may do unattended.', optional: true },
-  { id: 'insights', title: 'Generate first insights', blurb: 'Nexus reads what it has and reports back.' },
+  { id: 'insights', title: 'Generate first insights', blurb: 'Figbolt reads what it has and reports back.' },
 ];
 
 export function OnboardingFlow({
@@ -132,15 +132,12 @@ export function OnboardingFlow({
           <span className="flex size-7 items-center justify-center rounded-[var(--radius-sm)] bg-accent text-white">
             <svg viewBox="0 0 24 24" className="size-4" fill="none" aria-hidden>
               <path
-                d="M5 18V6l7 7 7-7v12"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
+                fill="currentColor"
               />
             </svg>
           </span>
-          <span className="text-sm font-semibold tracking-tight text-text">Nexus</span>
+          <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
         </div>
 
         <p className="mt-6 text-sm text-text-muted">
@@ -322,7 +319,7 @@ export function OnboardingFlow({
             <StepPlaceholder
               icon="plug"
               title="Connect email and calendar"
-              body="This is where the CRM stops needing manual entry. Nexus reads mail and meetings, resolves them to accounts, and extracts commitments, objections and product requests automatically."
+              body="This is where the CRM stops needing manual entry. Figbolt reads mail and meetings, resolves them to accounts, and extracts commitments, objections and product requests automatically."
               actionLabel="Open Integrations"
               actionHref="/integrations"
               onSkip={() => setStepIndex(3)}
@@ -333,7 +330,7 @@ export function OnboardingFlow({
             <StepPlaceholder
               icon="building"
               title="Import existing CRM data"
-              body="HubSpot and Salesforce connectors import companies, contacts and deals, then keep them in sync. Nothing is required here — Nexus builds its own picture from interactions regardless."
+              body="HubSpot and Salesforce connectors import companies, contacts and deals, then keep them in sync. Nothing is required here — Figbolt builds its own picture from interactions regardless."
               actionLabel="Open Integrations"
               actionHref="/integrations"
               onSkip={() => setStepIndex(4)}
@@ -383,7 +380,7 @@ export function OnboardingFlow({
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-text">You&rsquo;re set up</p>
                     <p className="mt-1 text-xs leading-relaxed text-text-muted text-pretty">
-                      Nexus will build customer memory as interactions arrive. Cross-account patterns
+                      Figbolt will build customer memory as interactions arrive. Cross-account patterns
                       appear once there is enough closed history to compare — detectors that lack a
                       large enough cohort report nothing rather than a hedged guess.
                     </p>
@@ -405,7 +402,7 @@ export function OnboardingFlow({
 
                     <Button variant="primary" size="lg" className="mt-5" onClick={finish} disabled={pending}>
                       {pending && <Spinner className="size-4" />}
-                      Go to Nexus
+                      Go to Figbolt
                       <ArrowRight />
                     </Button>
                   </div>

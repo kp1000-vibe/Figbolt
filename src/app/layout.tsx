@@ -3,10 +3,10 @@ import './globals.css';
 import { ThemeScript } from '@/components/layout/theme';
 
 export const metadata: Metadata = {
-  title: { default: 'Nexus CRM', template: '%s · Nexus' },
+  title: { default: 'Figbolt', template: '%s · Figbolt' },
   description:
-    'An agent-native CRM. Nexus captures customer interactions, turns them into structured knowledge, and lets AI agents act on that history with humans in control.',
-  applicationName: 'Nexus CRM',
+    'An agent-native CRM. Figbolt captures customer interactions, turns them into structured knowledge, and lets AI agents act on that history with humans in control.',
+  applicationName: 'Figbolt',
   robots: { index: false, follow: false },
 };
 

@@ -219,7 +219,7 @@ export function ApiKeysPanel({ keys, maxRole }: { keys: ApiKeyRow[]; maxRole: st
         open={issued !== null}
         onClose={() => setIssued(null)}
         title="Copy your key now"
-        description="This is the only time it will be shown. Nexus stores only a hash of it."
+        description="This is the only time it will be shown. Figbolt stores only a hash of it."
       >
         <div className="space-y-3">
           <div className="flex items-center gap-2 rounded-md border border-border bg-surface-sunken p-3">
@@ -232,7 +232,7 @@ export function ApiKeysPanel({ keys, maxRole }: { keys: ApiKeyRow[]; maxRole: st
           <div className="rounded-md border border-border bg-surface-sunken p-3">
             <p className="text-2xs font-medium text-text">Use it from the CLI</p>
             <pre className="mt-1.5 overflow-x-auto font-mono text-2xs text-text-muted">
-              {`export NEXUS_API_KEY=${issued?.plaintext ?? ''}\nnpm run cli -- accounts:list`}
+              {`export FIGBOLT_API_KEY=${issued?.plaintext ?? ''}\nnpm run cli -- accounts:list`}
             </pre>
           </div>
 

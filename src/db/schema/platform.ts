@@ -634,7 +634,7 @@ export const apiKeys = pgTable(
       .notNull()
       .references(() => workspaces.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
-    /** First 8 chars of the key, for display: `nxk_a1b2c3d4…`. */
+    /** First 8 chars of the key, for display: `fgb_a1b2c3d4…`. */
     prefix: text('prefix').notNull(),
     tokenHash: text('token_hash').notNull(),
     role: text('role').$type<import('./identity').Role>().notNull().default('member'),

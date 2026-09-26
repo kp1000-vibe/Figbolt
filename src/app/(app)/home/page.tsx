@@ -68,7 +68,7 @@ export default async function HomePage() {
 
       <div className="mt-6">
         <AskInline
-          placeholder="Ask anything about your customers or tell Nexus what to do…"
+          placeholder="Ask anything about your customers or tell Figbolt what to do…"
           suggestions={[
             'Which deals are most likely to close this month?',
             'Which customers mentioned SOC 2?',
@@ -159,7 +159,7 @@ export default async function HomePage() {
           {/* ── AI insights ─────────────────────────────────────────── */}
           <section>
             <div className="mb-3 flex items-baseline justify-between gap-3">
-              <SectionLabel>What Nexus has noticed</SectionLabel>
+              <SectionLabel>What Figbolt has noticed</SectionLabel>
               <Link href="/analytics" className="text-2xs text-accent-text hover:underline">
                 All analytics
               </Link>

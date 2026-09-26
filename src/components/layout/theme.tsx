@@ -10,7 +10,7 @@ import * as React from 'react';
  * choice always wins over the system.
  */
 
-const STORAGE_KEY = 'nexus-theme';
+const STORAGE_KEY = 'figbolt-theme';
 
 export function ThemeScript() {
   const script = `

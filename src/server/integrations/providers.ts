@@ -31,7 +31,7 @@ export type ProviderSpec = {
   vendor: string;
   kind: ProviderKind;
   description: string;
-  /** What Nexus does with the data once connected. */
+  /** What Figbolt does with the data once connected. */
   capabilities: string[];
   scopes: string[];
   /** Env vars that must be present for live mode. */
@@ -47,7 +47,7 @@ export const PROVIDERS: ProviderSpec[] = [
     name: 'Gmail',
     vendor: 'Google',
     kind: 'mail',
-    description: 'Sync customer email so Nexus can resolve threads to accounts and extract commitments.',
+    description: 'Sync customer email so Figbolt can resolve threads to accounts and extract commitments.',
     capabilities: [
       'Incremental sync via historyId',
       'Thread preservation with RFC-5322 Message-ID',
@@ -237,7 +237,7 @@ export const PROVIDERS: ProviderSpec[] = [
     capabilities: [
       'Title and employer changes on existing contacts',
       'Job-change alerts on champions who move',
-      'Outreach drafts you send yourself — Nexus never automates messaging',
+      'Outreach drafts you send yourself — Figbolt never automates messaging',
     ],
     scopes: ['r_liteprofile', 'r_organization_social'],
     requiredEnv: ['LINKEDIN_CLIENT_ID', 'LINKEDIN_CLIENT_SECRET'],

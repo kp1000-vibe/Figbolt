@@ -12,7 +12,7 @@ import { getPipelineSummary } from '@/server/crm/opportunities';
 /**
  * Model Context Protocol server.
  *
- * This is the interface that makes Nexus agent-native rather than
+ * This is the interface that makes Figbolt agent-native rather than
  * agent-decorated: any MCP client — Claude Desktop, an internal agent, another
  * product's copilot — can read the customer world model and act on it through
  * exactly the same permission-checked, risk-gated, audited tools the in-app
@@ -33,7 +33,7 @@ import { getPipelineSummary } from '@/server/crm/opportunities';
  */
 
 const PROTOCOL_VERSION = '2025-06-18';
-const SERVER_INFO = { name: 'nexus-crm', version: '0.1.0' };
+const SERVER_INFO = { name: 'figbolt', version: '0.1.0' };
 
 type JsonRpcId = string | number | null;
 
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
         status: auth.failure.status,
         headers: {
           // Tell a client how to authenticate rather than leaving it guessing.
-          'www-authenticate': 'Bearer realm="nexus-crm"',
+          'www-authenticate': 'Bearer realm="figbolt"',
           'cache-control': 'no-store',
         },
       },
@@ -114,7 +114,7 @@ export async function GET() {
       authentication: {
         type: 'bearer',
         header: 'Authorization',
-        format: 'Bearer nxk_…',
+        format: 'Bearer fgb_…',
         note: 'Create a key in Settings → Security, or with `npm run cli -- keys:create`.',
       },
       methods: [
@@ -155,7 +155,7 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
                 prompts: { listChanged: false },
               },
               instructions: [
-                'Nexus CRM exposes a customer world model: accounts, contacts, deals, and the',
+                'Figbolt exposes a customer world model: accounts, contacts, deals, and the',
                 'emails, meetings and transcripts they were built from.',
                 '',
                 'Ground every claim about a customer in a tool result. Never invent a record,',
@@ -163,7 +163,7 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
                 '',
                 'Tools that change data or reach a customer may return',
                 '"status": "awaiting_approval" instead of executing. That means a human must',
-                'approve it in Nexus — report it as pending, never as done.',
+                'approve it in Figbolt — report it as pending, never as done.',
               ].join('\n'),
             });
 
@@ -233,7 +233,7 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
                 type: 'text',
                 text:
                   `NOT PERFORMED. "${name}" is ${outcome.riskLevel} risk and was queued for human ` +
-                  `approval in Nexus (approval id ${outcome.approvalId}). Describe this as pending, ` +
+                  `approval in Figbolt (approval id ${outcome.approvalId}). Describe this as pending, ` +
                   'not complete.',
               },
             ],
@@ -259,25 +259,25 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
         return rpcResult(id, {
           resources: [
             {
-              uri: 'nexus://briefing/today',
+              uri: 'figbolt://briefing/today',
               name: "Today's briefing",
               description: 'Ranked priorities, meetings, commitments due and agent activity.',
               mimeType: 'application/json',
             },
             {
-              uri: 'nexus://pipeline/summary',
+              uri: 'figbolt://pipeline/summary',
               name: 'Pipeline summary',
               description: 'Open, weighted and at-risk pipeline, plus quarter-to-date wins.',
               mimeType: 'application/json',
             },
             {
-              uri: 'nexus://insights',
+              uri: 'figbolt://insights',
               name: 'Cross-account patterns',
               description: 'Patterns computed from this workspace’s own history, with evidence.',
               mimeType: 'application/json',
             },
             {
-              uri: 'nexus://product-signals',
+              uri: 'figbolt://product-signals',
               name: 'Product demand',
               description: 'Requested capabilities grouped by theme, with accounts and pipeline attached.',
               mimeType: 'application/json',
@@ -342,7 +342,7 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
         const answer = await ask(ctx, { question, persist: false });
 
         return rpcResult(id, {
-          description: `Nexus answer, grounded in ${answer.sources.length} records.`,
+          description: `Figbolt answer, grounded in ${answer.sources.length} records.`,
           messages: [
             {
               role: 'user',
@@ -380,11 +380,11 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
 
 async function readResource(ctx: ApiKeyContext, uri: string): Promise<unknown> {
   switch (uri) {
-    case 'nexus://briefing/today':
+    case 'figbolt://briefing/today':
       return buildBriefing(ctx, ctx.keyName);
-    case 'nexus://pipeline/summary':
+    case 'figbolt://pipeline/summary':
       return getPipelineSummary(ctx);
-    case 'nexus://insights':
+    case 'figbolt://insights':
       return (await listInsights(ctx, 20)).map((i) => ({
         kind: i.kind,
         title: i.title,
@@ -394,7 +394,7 @@ async function readResource(ctx: ApiKeyContext, uri: string): Promise<unknown> {
         severity: i.severity,
         evidence: i.evidence,
       }));
-    case 'nexus://product-signals':
+    case 'figbolt://product-signals':
       return listThemes(ctx);
     default:
       return null;
