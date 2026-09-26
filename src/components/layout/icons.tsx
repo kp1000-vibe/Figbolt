@@ -104,6 +104,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <circle cx="18.5" cy="5.5" r="1.6" />
     </>
   ),
+  loop: (
+    <>
+      <path d="M20.5 11a8.5 8.5 0 0 0-14.6-5.4L3.5 8" />
+      <path d="M3.5 13a8.5 8.5 0 0 0 14.6 5.4l2.4-2.4" />
+      <path d="M3.5 3.5V8H8" />
+      <path d="M20.5 20.5V16H16" />
+    </>
+  ),
   settings: (
     <>
       <circle cx="12" cy="12" r="3" />

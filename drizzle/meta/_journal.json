@@ -15,6 +15,13 @@
       "when": 1789105404215,
       "tag": "0001_api_usage_support",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790461662650,
+      "tag": "0002_learning_loop",
+      "breakpoints": true
     }
   ]
 }

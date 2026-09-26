@@ -5,3 +5,4 @@ export * from './activity';
 export * from './memory';
 export * from './agents';
 export * from './platform';
+export * from './learning';

@@ -32,6 +32,7 @@ export type IconName =
   | 'chart'
   | 'signal'
   | 'radar'
+  | 'loop'
   | 'book'
   | 'plug'
   | 'settings';
@@ -69,6 +70,7 @@ export const NAV: NavGroup[] = [
       { href: '/analytics', label: 'Analytics', icon: 'chart' },
       { href: '/product-signals', label: 'Product signals', icon: 'signal' },
       { href: '/knowledge', label: 'Knowledge', icon: 'book' },
+      { href: '/learning', label: 'Learning', icon: 'loop' },
     ],
   },
   {

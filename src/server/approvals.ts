@@ -11,6 +11,7 @@ import {
 import { scope, scoped, ValidationError, type Ctx } from './context';
 import { ctxAssert } from './context';
 import { record } from './audit';
+import { recordSignal, taskForTool } from './learning/signals';
 
 /**
  * Human-in-the-loop approvals.
@@ -162,6 +163,23 @@ export async function decideApproval(ctx: Ctx, input: DecideInput): Promise<Deci
       metadata: { tool: approval.tool, note: input.note },
     });
 
+    // A refusal is a label: this output was wrong. Captured for the learning
+    // corpus, best-effort, never blocking the decision the user just made.
+    const rejectedTask = taskForTool(approval.tool);
+    if (rejectedTask) {
+      await recordSignal(ctx, {
+        kind: 'approval_decision',
+        task: rejectedTask,
+        verdict: 'negative',
+        subjectType: 'approval',
+        subjectId: approval.id,
+        inputText: inputTextOf(approval.payload),
+        modelOutput: approval.payload,
+        note: input.note ?? null,
+        model: 'agent',
+      });
+    }
+
     return { approval: updated!, executed: false };
   }
 
@@ -188,6 +206,24 @@ export async function decideApproval(ctx: Ctx, input: DecideInput): Promise<Deci
     approvalId: approval.id,
     metadata: { tool: approval.tool, edited: Boolean(input.editedPayload) },
   });
+
+  // An edit before approving is the most informative signal the product can
+  // get: the human both judged the output and supplied the right answer.
+  const approvedTask = taskForTool(approval.tool);
+  if (approvedTask) {
+    await recordSignal(ctx, {
+      kind: input.editedPayload ? 'payload_edit' : 'approval_decision',
+      task: approvedTask,
+      verdict: input.editedPayload ? 'corrected' : 'positive',
+      subjectType: 'approval',
+      subjectId: approval.id,
+      inputText: inputTextOf(approval.payload),
+      modelOutput: approval.payload,
+      humanOutput: input.editedPayload ?? null,
+      note: input.note ?? null,
+      model: 'agent',
+    });
+  }
 
   const { dispatchTool, ensureToolsLoaded } = await import('@/lib/agents/dispatch');
   await ensureToolsLoaded();
@@ -277,4 +313,20 @@ export async function expireStaleApprovals(ctx: Ctx): Promise<number> {
 
   for (const row of rows) await resolveNotification(ctx, row.id);
   return rows.length;
+}
+
+/**
+ * The text of a payload worth replaying.
+ *
+ * Only the fields a human would actually have read — a JSON dump of ids makes
+ * a useless eval case.
+ */
+function inputTextOf(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object') return null;
+  const p = payload as Record<string, unknown>;
+  for (const key of ['body', 'description', 'summary', 'title', 'question', 'note']) {
+    const v = p[key];
+    if (typeof v === 'string' && v.trim().length > 20) return v;
+  }
+  return null;
 }

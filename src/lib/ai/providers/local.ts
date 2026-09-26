@@ -12,6 +12,7 @@ import { composeAnswer, composeFollowUp, composeRelationshipDigest, labelForCate
 import {
   detectCompetitors,
   extractChurnRisk,
+  extractDefects,
   extractCommitments,
   extractFacts,
   extractObjections,
@@ -158,7 +159,9 @@ function runTask(task: TaskKind, request: StructuredRequest<unknown>): Record<st
     }
 
     case 'extract_product_signals': {
-      const items = extractProductSignals(utterances);
+      // Lexicon signals name a wanted capability; defects are symptom-shaped
+      // and need their own detector, or every bug in a ticket is dropped.
+      const items = [...extractProductSignals(utterances), ...extractDefects(utterances)];
       // Ticket extraction asks for a churn verdict alongside the signals; a
       // sales transcript asks only for the signals and ignores the extra key.
       const churn = extractChurnRisk(utterances);

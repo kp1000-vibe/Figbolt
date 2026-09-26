@@ -416,6 +416,77 @@ export function extractProductSignals(utterances: Utterance[]): ExtractedSignal[
   return dedupe(found, (s) => `${s.title}:${s.detail.toLowerCase()}`, 0.65);
 }
 
+/* ── Defects ──────────────────────────────────────────────────────────────── */
+
+/**
+ * Defect language.
+ *
+ * Bugs are not a noun in a lexicon the way "SSO" or "Salesforce" are — they
+ * are a *symptom*: something timed out, failed, duplicated, or silently
+ * stopped. So they need their own detector rather than another SIGNAL_LEXICON
+ * row, which is why the offline engine never produced a `bug` category until
+ * this existed and every defect in a support ticket was dropped.
+ *
+ * Two tiers, because "it is slow" and "it returns a 500" deserve different
+ * urgency.
+ */
+const DEFECT_HARD =
+  /\b(?:times? out|timed out|timing out|gateway error|5\d\d error|error 5\d\d|crashe?[sd]?|stack ?trace|fails? silently|failing silently|returns? (?:an? )?error|throws? an error|not working|stopped working|broken|data loss|duplicate[sd]? (?:alert|record|row|entr)\w*|wrong (?:number|count|total|owner))\b/i;
+
+const DEFECT_SOFT =
+  /\b(?:does ?n\'?t (?:work|load|save|sync|refresh)|will ?n\'?t (?:load|save|sync)|keeps? (?:failing|crashing|resetting|logging (?:me )?out)|resets? (?:on|every) \w+|unusable|too slow|takes? (?:forever|ages)|out of date\b|stale)\b/i;
+
+/** Pain that is not a defect and not a feature request: the workflow itself. */
+const WORKFLOW_PAIN =
+  /\b(?:bottleneck|defeats the purpose|end up (?:calling|emailing|doing)|back to (?:the )?(?:old )?spreadsheet|by hand|manually|four taps|too many (?:clicks|steps))\b/i;
+
+export function extractDefects(utterances: Utterance[]): ExtractedSignal[] {
+  const found: ExtractedSignal[] = [];
+
+  for (const utt of utterances) {
+    // Our own outbound apology about a bug is not the customer reporting one.
+    if (utt.isCustomer !== true) continue;
+
+    for (const sentence of splitSentences(utt.text)) {
+      if (sentence.length < 15) continue;
+
+      const hard = DEFECT_HARD.test(sentence);
+      const soft = !hard && DEFECT_SOFT.test(sentence);
+      const pain = !hard && !soft && WORKFLOW_PAIN.test(sentence);
+      if (!hard && !soft && !pain) continue;
+
+      found.push({
+        category: pain ? 'workflow_pain' : 'bug',
+        title: pain ? 'Workflow friction' : titleForDefect(sentence),
+        detail: truncateWords(sentence.replace(/\s+/g, ' ').trim(), 32),
+        urgency: hard ? 'blocking' : soft ? 'high' : 'medium',
+        quote: sentence.trim(),
+        confidence: clamp(hard ? 0.85 : soft ? 0.72 : 0.62),
+      });
+    }
+  }
+
+  return dedupe(found, (s) => `${s.category}:${s.detail.toLowerCase()}`, 0.6);
+}
+
+/** Name the broken thing, so two different bugs do not collapse in dedupe. */
+function titleForDefect(sentence: string): string {
+  const SUBJECTS: [RegExp, string][] = [
+    [/\b(?:bulk )?exports?\b/i, 'Export failure'],
+    [/\bimports?\b/i, 'Import failure'],
+    [/\bsyncs?(?:ing)?\b/i, 'Sync failure'],
+    [/\b(?:notification|alert)s\b/i, 'Notification defect'],
+    [/\blogin\b|\bsign(?:ing)? in\b|\bsso\b/i, 'Sign-in defect'],
+    [/\breports?\b|\bdashboards\b/i, 'Reporting defect'],
+    [/\bmobile\b|\btablets\b|\bphones\b/i, 'Mobile defect'],
+    [/\bapi\b|\brate limit\b/i, 'API defect'],
+    [/\bsearch\b|\bfilters?\b/i, 'Search defect'],
+    [/\bpermissions?\b|\baccess\b/i, 'Permissions defect'],
+  ];
+  for (const [re, name] of SUBJECTS) if (re.test(sentence)) return name;
+  return 'Reported defect';
+}
+
 /* ── Churn risk ───────────────────────────────────────────────────────────── */
 
 /**
