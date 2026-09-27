@@ -39,11 +39,12 @@ const schema = z.object({
   /**
    * Jev — the decision model that picks which LLM runs each job.
    * Off by default: turning it on sends a description of every AI job to
-   * TypeSafe via OpenRouter, which is a data-egress decision an operator
-   * should make deliberately rather than inherit.
+   * TypeSafe, which is a data-egress decision an operator should make
+   * deliberately rather than inherit.
    */
   JEV_ROUTER: z.enum(['on', 'off']).default('off'),
-  OPENROUTER_API_KEY: optional,
+  /** api.typesafe.ai key. The SDK and docs both call it TYPESAFE_API_KEY. */
+  TYPESAFE_API_KEY: optional,
   /** Opt in to sending the operator's own request text, never customer content. */
   JEV_SEND_CONTENT: bool(false),
   /** Which provider serves each tier, smallest first. */
