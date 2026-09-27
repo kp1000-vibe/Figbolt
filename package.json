@@ -17,6 +17,7 @@
     "db:seed": "tsx src/db/seed/index.ts",
     "db:refresh": "tsx src/db/refresh.ts",
     "eval": "tsx src/db/evaluate-cli.ts",
+    "jev:check": "tsx src/lib/ai/jev-check.ts",
     "db:reset": "tsx src/db/reset.ts",
     "setup": "npm run db:migrate && npm run db:seed",
     "cli": "tsx src/cli/index.ts",

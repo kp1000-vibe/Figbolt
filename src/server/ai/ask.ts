@@ -1,6 +1,6 @@
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { conversations, messages, workspaces, type SourceRef } from '@/db/schema';
-import { getLanguageModel } from '@/lib/ai';
+import { getLanguageModel, getModelForTask } from '@/lib/ai';
 import { s } from '@/lib/ai/providers/structured';
 import { fitEvidence } from '@/lib/ai/prompt';
 import type { AnswerEnvelope, EvidenceItem } from '@/lib/ai/types';
@@ -229,7 +229,14 @@ export type Intent = {
 };
 
 async function classifyIntent(ctx: Ctx, question: string): Promise<Intent> {
-  const model = getLanguageModel();
+  // Routed: a five-way label from one sentence is the cheapest job in the
+  // product and runs on every question asked. Paying top-tier prices for it
+  // is how an AI budget disappears with nothing to show.
+  const { model } = await getModelForTask({
+    task: 'classify_intent',
+    instruction: question,
+    expectsProse: false,
+  });
   try {
     const result = await model.completeStructured<Record<string, unknown>>({
       system:

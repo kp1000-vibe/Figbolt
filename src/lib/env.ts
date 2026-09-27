@@ -36,6 +36,22 @@ const schema = z.object({
   GOOGLE_API_KEY: optional,
   GOOGLE_MODEL: z.string().default('gemini-2.5-pro'),
 
+  /**
+   * Jev — the decision model that picks which LLM runs each job.
+   * Off by default: turning it on sends a description of every AI job to
+   * TypeSafe via OpenRouter, which is a data-egress decision an operator
+   * should make deliberately rather than inherit.
+   */
+  JEV_ROUTER: z.enum(['on', 'off']).default('off'),
+  OPENROUTER_API_KEY: optional,
+  /** Opt in to sending the operator's own request text, never customer content. */
+  JEV_SEND_CONTENT: bool(false),
+  /** Which provider serves each tier, smallest first. */
+  MODEL_TIER_TINY: optional,
+  MODEL_TIER_EVERYDAY: optional,
+  MODEL_TIER_LARGE: optional,
+  MODEL_TIER_HARDEST: optional,
+
   EMBEDDING_PROVIDER: z.enum(['local', 'openai']).default('local'),
   EMBEDDING_DIMENSIONS: z.coerce.number().int().positive().default(768),
 
