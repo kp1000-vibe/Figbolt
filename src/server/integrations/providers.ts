@@ -54,7 +54,10 @@ export const PROVIDERS: ProviderSpec[] = [
       'Contact and account resolution by address and domain',
       'Commitment, objection and product-signal extraction',
     ],
-    scopes: ['https://www.googleapis.com/auth/gmail.readonly'],
+    scopes: [
+      'https://www.googleapis.com/auth/gmail.readonly',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ],
     requiredEnv: ['GOOGLE_OAUTH_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_SECRET'],
     perUser: true,
     docsUrl: 'https://developers.google.com/gmail/api',
@@ -69,8 +72,14 @@ export const PROVIDERS: ProviderSpec[] = [
       'Incremental sync via syncToken',
       'Attendee resolution to contacts',
       'Automatic account and opportunity linking',
+      'Creates events and sends invitations when scheduling from Figbolt',
     ],
-    scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+    // `calendar.events` is read *and* write on events, which is what
+    // scheduling needs. Read-only cannot create an invite.
+    scopes: [
+      'https://www.googleapis.com/auth/calendar.events',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ],
     requiredEnv: ['GOOGLE_OAUTH_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_SECRET'],
     perUser: true,
     docsUrl: 'https://developers.google.com/calendar',
@@ -82,7 +91,7 @@ export const PROVIDERS: ProviderSpec[] = [
     kind: 'mail',
     description: 'Sync customer email from Microsoft 365 mailboxes.',
     capabilities: ['Delta query sync', 'Thread preservation', 'Extraction pipeline'],
-    scopes: ['Mail.Read', 'offline_access'],
+    scopes: ['Mail.Read', 'User.Read', 'offline_access'],
     requiredEnv: ['MICROSOFT_OAUTH_CLIENT_ID', 'MICROSOFT_OAUTH_CLIENT_SECRET'],
     perUser: true,
     docsUrl: 'https://learn.microsoft.com/graph/api/resources/mail-api-overview',
@@ -94,7 +103,9 @@ export const PROVIDERS: ProviderSpec[] = [
     kind: 'calendar',
     description: 'Sync meetings and attendees from Microsoft 365 calendars.',
     capabilities: ['Delta query sync', 'Attendee resolution'],
-    scopes: ['Calendars.Read', 'offline_access'],
+    // Calendars.ReadWrite is required to create an event; User.Read only
+    // supplies the signed-in address for the connection label.
+    scopes: ['Calendars.ReadWrite', 'User.Read', 'offline_access'],
     requiredEnv: ['MICROSOFT_OAUTH_CLIENT_ID', 'MICROSOFT_OAUTH_CLIENT_SECRET'],
     perUser: true,
     docsUrl: 'https://learn.microsoft.com/graph/api/resources/calendar',

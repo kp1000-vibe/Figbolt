@@ -29,8 +29,18 @@ const KIND_LABEL: Record<string, string> = {
   social: 'Professional network',
 };
 
-export default async function IntegrationsPage() {
+export default async function IntegrationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const ctx = await requireCtx();
+
+  // The OAuth callback redirects here with the outcome, because it is a
+  // top-level browser navigation and has no other way to report back.
+  const params = await searchParams;
+  const oauthError = params['error'];
+  const justConnected = params['connected'];
 
   const [integrations, jobs] = await Promise.all([listIntegrations(ctx), listSyncJobs(ctx)]);
 
@@ -43,6 +53,20 @@ export default async function IntegrationsPage() {
 
   return (
     <PageShell>
+      {oauthError && (
+        <div
+          role="alert"
+          className="mb-5 rounded-[var(--radius-md)] border border-danger/35 bg-danger-subtle px-4 py-3 text-sm text-danger-text"
+        >
+          <strong className="font-medium">Connection failed.</strong> {oauthError}
+        </div>
+      )}
+      {justConnected && !oauthError && (
+        <div className="mb-5 rounded-[var(--radius-md)] border border-success/30 bg-success-subtle px-4 py-3 text-sm text-success-text">
+          <strong className="font-medium">{titleCase(justConnected.replace(/_/g, ' '))} connected.</strong>{' '}
+          Figbolt can now create events and send invitations from this account.
+        </div>
+      )}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <h1 className="text-xl font-semibold tracking-tight text-text">Integrations</h1>

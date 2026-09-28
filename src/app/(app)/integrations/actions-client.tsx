@@ -32,6 +32,17 @@ export function IntegrationCardActions({
         : kind === 'disconnect'
           ? await disconnectIntegrationAction(provider)
           : await syncIntegrationAction(provider);
+    // A live connector answers with a consent URL instead of a result. Leave
+    // `pending` set so the button stays busy while the browser navigates away.
+    const redirectTo =
+      result.ok && kind === 'connect'
+        ? (result as { data?: { redirectTo?: string } }).data?.redirectTo
+        : undefined;
+    if (redirectTo) {
+      window.location.href = redirectTo;
+      return;
+    }
+
     setPending(null);
 
     toast(

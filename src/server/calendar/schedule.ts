@@ -5,7 +5,6 @@ import { scope, ValidationError, type Ctx } from '../context';
 import { record } from '../audit';
 import { addActivity, addTimelineEvent } from '../memory/timeline';
 import { resolveParties } from '../memory/ingest';
-import { getDecryptedTokens } from '../integrations/manage';
 import { buildIcs, icsUid, type IcsAttendee } from './ics';
 import { getCalendarProvider, type CalendarAuth } from './providers';
 
@@ -359,9 +358,13 @@ export async function scheduleMeeting(
  */
 async function organiserCalendarAuth(ctx: Ctx): Promise<CalendarAuth | null> {
   const provider = env.CALENDAR_PROVIDER === 'microsoft' ? 'outlook_calendar' : 'google_calendar';
-  const tokens = await getDecryptedTokens(ctx, provider);
-  if (!tokens?.accessToken) return null;
-  return { accessToken: tokens.accessToken };
+  // freshAccessToken refreshes an expired grant before handing it back. A
+  // token minted this morning would otherwise fail on an afternoon booking,
+  // and the failure would look like "the calendar is not connected".
+  const { freshAccessToken } = await import('../integrations/oauth');
+  const accessToken = await freshAccessToken(ctx, provider);
+  if (!accessToken) return null;
+  return { accessToken };
 }
 
 /**

@@ -22,10 +22,24 @@ async function guard<T>(fn: () => Promise<ActionResult<T>>): Promise<ActionResul
 
 const providerSchema = z.enum(INTEGRATION_PROVIDERS);
 
-export async function connectIntegrationAction(provider: string): Promise<ActionResult> {
+export async function connectIntegrationAction(
+  provider: string,
+): Promise<ActionResult<{ redirectTo?: string }>> {
   return guard(async () => {
     const parsed = providerSchema.safeParse(provider);
     if (!parsed.success) return { ok: false, error: 'Unknown provider.' };
+
+    // When the connector is genuinely configured, connecting means sending the
+    // person to the provider's consent screen rather than writing a demo row.
+    // The browser follows this; the token exchange happens in the callback.
+    const { oauthReady } = await import('@/server/integrations/oauth');
+    if (oauthReady(parsed.data)) {
+      return {
+        ok: true,
+        message: `Redirecting to ${parsed.data} to authorise...`,
+        data: { redirectTo: `/api/integrations/${parsed.data}/authorize` },
+      };
+    }
 
     const ctx = await requireCtx();
     await connectIntegration(ctx, parsed.data);
