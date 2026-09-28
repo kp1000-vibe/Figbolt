@@ -23,6 +23,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.unstubAllEnvs();
   process.env = { ...ORIGINAL };
 });
 
@@ -72,7 +73,7 @@ describe('the consent URL', () => {
     // production deployment that never set it would register
     // http://localhost:3000/... with Google, and every connection would fail
     // with a redirect_uri_mismatch. This was a real bug on the live site.
-    process.env['NODE_ENV'] = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
     delete process.env['APP_URL'];
     vi.resetModules();
 
@@ -86,7 +87,7 @@ describe('the consent URL', () => {
   });
 
   it('still uses localhost in development, where that is correct', async () => {
-    process.env['NODE_ENV'] = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
     process.env['APP_URL'] = 'http://localhost:3000';
     vi.resetModules();
 
@@ -269,14 +270,30 @@ describe('stored credentials', () => {
     expect(decryptSecret(sealed)).toBe(payload);
   });
 
-  it('fails closed on a tampered ciphertext instead of returning garbage', async () => {
+  it('fails closed on a tampered payload instead of returning garbage', async () => {
     const { encryptSecret, decryptSecret } = await import('@/lib/security/crypto');
-    const sealed = encryptSecret('{"accessToken":"a"}');
-    const parts = sealed.split('.');
-    // Flip the last character of the ciphertext.
-    const body = parts[3]!;
-    parts[3] = body.slice(0, -1) + (body.endsWith('A') ? 'B' : 'A');
+    const sealed = encryptSecret('{"accessToken":"ya29.secret","refreshToken":null}');
 
-    expect(() => decryptSecret(parts.join('.'))).toThrow();
+    // Flip a byte in the middle of each component in turn. The final base64
+    // character of a payload can carry only two significant bits, so flipping
+    // *that* may decode to the same bytes - a first version of this test did
+    // exactly that and passed while proving nothing.
+    const flip = (value: string) => {
+      const i = Math.floor(value.length / 2);
+      const c = value[i]!;
+      return value.slice(0, i) + (c === 'A' ? 'B' : 'A') + value.slice(i + 1);
+    };
+
+    for (const index of [1, 2, 3] as const) {
+      const parts = sealed.split('.');
+      parts[index] = flip(parts[index]!);
+      expect(
+        () => decryptSecret(parts.join('.')),
+        `tampering with component ${index} must fail`,
+      ).toThrow();
+    }
+
+    // And the intact payload still round-trips.
+    expect(decryptSecret(sealed)).toContain('ya29.secret');
   });
 });

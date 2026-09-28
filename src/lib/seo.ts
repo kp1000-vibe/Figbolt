@@ -1,4 +1,4 @@
-import { appOrigin } from '@/lib/app-url';
+import { publicOrigin } from '@/lib/app-url';
 
 /**
  * One source of truth for everything a crawler or a link preview reads.
@@ -33,8 +33,9 @@ export const SITE = {
 } as const;
 
 function canonicalOrigin(): string {
-  // One definition of where this deployment lives - see lib/app-url.
-  return appOrigin();
+  // publicOrigin, not appOrigin: a canonical tag or sitemap entry is read by
+  // crawlers and other people, so localhost is wrong even in development.
+  return publicOrigin();
 }
 
 export function absoluteUrl(path = '/'): string {

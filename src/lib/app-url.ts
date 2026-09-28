@@ -44,3 +44,19 @@ export function appOrigin(): string {
 export function appUrl(path = '/'): string {
   return `${appOrigin()}${path.startsWith('/') ? path : `/${path}`}`;
 }
+
+/**
+ * The origin to publish to the outside world.
+ *
+ * Distinct from `appOrigin()` on purpose, and the distinction is not cosmetic:
+ * a loopback OAuth redirect URI is *correct* in development, because that is
+ * what you register in a development OAuth app. A loopback canonical tag or
+ * sitemap entry is never correct in any environment - it is published for
+ * crawlers and other people, who cannot reach your machine.
+ *
+ * So this one never returns localhost, whatever NODE_ENV says.
+ */
+export function publicOrigin(): string {
+  const configured = env.APP_URL?.replace(/\/$/, '');
+  return configured && !isLoopback(configured) ? configured : FALLBACK;
+}
