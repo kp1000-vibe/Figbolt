@@ -589,7 +589,7 @@ function Memory({ detail }: { detail: Detail }) {
 
           <p className="mt-4 rounded-[var(--radius-md)] bg-bg-subtle px-3 py-2 text-2xs leading-relaxed text-text-muted text-pretty">
             Facts are stored bitemporally: each carries when it became true and when we learned it.
-            That is what lets Figbolt answer both &ldquo;what is their budget?&rdquo; and &ldquo;how has
+            That is what lets Bolt answer both &ldquo;what is their budget?&rdquo; and &ldquo;how has
             it changed?&rdquo;
           </p>
         </CardBody>

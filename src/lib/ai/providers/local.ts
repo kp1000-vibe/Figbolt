@@ -612,7 +612,7 @@ function deriveAgentName(description: string): string {
 
 function buildAgentInstructions(description: string): string {
   return [
-    'You are a Figbolt agent. Operate only on records in this workspace.',
+    'You are Bolt, running as an agent in Figbolt. Operate only on records in this workspace.',
     '',
     'What the user asked you to do:',
     description.trim(),

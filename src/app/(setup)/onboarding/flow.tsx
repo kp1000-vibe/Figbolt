@@ -42,7 +42,7 @@ const STEPS: Step[] = [
   { id: 'pipeline', title: 'Configure your pipeline', blurb: 'Stages and entry criteria.', optional: true },
   { id: 'team', title: 'Invite your team', blurb: 'Needs an outbound email provider.', optional: true },
   { id: 'permissions', title: 'Set AI permissions', blurb: 'What agents may do unattended.', optional: true },
-  { id: 'insights', title: 'Generate first insights', blurb: 'Figbolt reads what it has and reports back.' },
+  { id: 'insights', title: 'Generate first insights', blurb: 'Bolt reads what it has and reports back.' },
 ];
 
 export function OnboardingFlow({
@@ -319,7 +319,7 @@ export function OnboardingFlow({
             <StepPlaceholder
               icon="plug"
               title="Connect email and calendar"
-              body="This is where the CRM stops needing manual entry. Figbolt reads mail and meetings, resolves them to accounts, and extracts commitments, objections and product requests automatically."
+              body="This is where the CRM stops needing manual entry. Bolt reads mail and meetings, resolves them to accounts, and extracts commitments, objections and product requests automatically."
               actionLabel="Open Integrations"
               actionHref="/integrations"
               onSkip={() => setStepIndex(3)}
@@ -330,7 +330,7 @@ export function OnboardingFlow({
             <StepPlaceholder
               icon="building"
               title="Import existing CRM data"
-              body="HubSpot and Salesforce connectors import companies, contacts and deals, then keep them in sync. Nothing is required here — Figbolt builds its own picture from interactions regardless."
+              body="HubSpot and Salesforce connectors import companies, contacts and deals, then keep them in sync. Nothing is required here — Bolt builds its own picture from interactions regardless."
               actionLabel="Open Integrations"
               actionHref="/integrations"
               onSkip={() => setStepIndex(4)}
@@ -380,7 +380,7 @@ export function OnboardingFlow({
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-text">You&rsquo;re set up</p>
                     <p className="mt-1 text-xs leading-relaxed text-text-muted text-pretty">
-                      Figbolt will build customer memory as interactions arrive. Cross-account patterns
+                      Bolt will build customer memory as interactions arrive. Cross-account patterns
                       appear once there is enough closed history to compare — detectors that lack a
                       large enough cohort report nothing rather than a hedged guess.
                     </p>

@@ -30,7 +30,7 @@ export default async function NewAgentPage() {
     <PageShell>
       <PageHeader
         title="New agent"
-        description="Describe the task in plain English. Figbolt compiles it into a trigger, filters, a tool set and a plan — all of which you can edit before saving."
+        description="Describe the task in plain English. Bolt compiles it into a trigger, filters, a tool set and a plan — all of which you can edit before saving."
       />
 
       <div className="mt-6">

@@ -342,7 +342,7 @@ async function handle(ctx: ApiKeyContext, rpc: JsonRpcRequest) {
         const answer = await ask(ctx, { question, persist: false });
 
         return rpcResult(id, {
-          description: `Figbolt answer, grounded in ${answer.sources.length} records.`,
+          description: `Bolt answer, grounded in ${answer.sources.length} records.`,
           messages: [
             {
               role: 'user',

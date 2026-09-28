@@ -394,7 +394,7 @@ export function CommandBar({ open, onClose }: { open: boolean; onClose: () => vo
                   onSelect={() => go(index)}
                   onHover={() => setCursor(index)}
                   icon={<Sparkle className="size-4 text-accent" />}
-                  title={`Ask Figbolt: “${trimmed}”`}
+                  title={`Ask Bolt: “${trimmed}”`}
                   subtitle="Searches your CRM, emails and meetings, then answers with citations"
                   trailing={<Kbd>↵</Kbd>}
                 />
@@ -447,7 +447,7 @@ export function CommandBar({ open, onClose }: { open: boolean; onClose: () => vo
 
           {trimmed.length >= 2 && rows.length <= 1 && !searching && (
             <p className="px-3 py-6 text-center text-xs text-text-subtle">
-              No records matched. Press <Kbd>↵</Kbd> to ask Figbolt instead.
+              No records matched. Press <Kbd>↵</Kbd> to ask Bolt instead.
             </p>
           )}
         </div>

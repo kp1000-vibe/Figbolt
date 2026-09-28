@@ -59,7 +59,7 @@ export default async function ProspectingPage({
           className="mt-6"
           icon={<NavIcon name="signal" />}
           title="Not enough closed history to derive an ICP"
-          description="Prospecting works backwards from the deals you have actually won. Once at least three opportunities are closed-won, Figbolt derives the profile and scores lookalikes against it."
+          description="Prospecting works backwards from the deals you have actually won. Once at least three opportunities are closed-won, Bolt derives the profile and scores lookalikes against it."
         />
       ) : (
         <>

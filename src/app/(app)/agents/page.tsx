@@ -84,7 +84,7 @@ export default async function AgentsPage() {
               className="mt-3"
               icon={<NavIcon name="bot" />}
               title="No agents yet"
-              description="Describe a recurring task in plain English and Figbolt will compile it into a runnable agent you can review before saving."
+              description="Describe a recurring task in plain English and Bolt will compile it into a runnable agent you can review before saving."
               action={
                 <Link
                   href="/agents/new"

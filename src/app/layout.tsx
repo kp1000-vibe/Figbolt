@@ -1,13 +1,28 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ThemeScript } from '@/components/layout/theme';
+import { SITE } from '@/lib/seo';
 
+/**
+ * Metadata defaults for every route.
+ *
+ * `robots: { index: false, follow: false }` is deliberate and load-bearing: all
+ * but one route in this app is somebody's customer data behind a session. Pages
+ * opt *in* to being indexed, and today only the landing page does. See
+ * src/lib/seo.ts.
+ *
+ * metadataBase is what lets the pages below use relative OG image and canonical
+ * paths; without it a relative URL in a metadata field is a build error.
+ */
 export const metadata: Metadata = {
-  title: { default: 'Figbolt', template: '%s · Figbolt' },
-  description:
-    'An agent-native CRM. Figbolt captures customer interactions, turns them into structured knowledge, and lets AI agents act on that history with humans in control.',
-  applicationName: 'Figbolt',
+  metadataBase: new URL(SITE.url),
+  title: { default: `${SITE.name} — ${SITE.tagline.toLowerCase()}`, template: `%s · ${SITE.name}` },
+  description: SITE.description,
+  applicationName: SITE.name,
   robots: { index: false, follow: false },
+  // Telephone autodetection rewrites deal amounts and IDs into phone links on
+  // iOS, which looks broken in a CRM.
+  formatDetection: { telephone: false, address: false, email: false },
 };
 
 export const viewport: Viewport = {

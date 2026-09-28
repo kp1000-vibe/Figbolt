@@ -1,10 +1,43 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth/session';
+import { absoluteUrl, productJsonLd, SITE } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Figbolt — sweet deals, lightning fast',
-  description:
-    'A CRM nobody has to fill in. Figbolt derives the record from your email, meetings, tickets and product usage, and lets agents work on top of it — with humans holding anything consequential.',
+/**
+ * The one route that opts into being indexed.
+ *
+ * The root layout defaults every page to noindex because nearly all of them
+ * hold customer data; this page overrides that explicitly. If you add another
+ * public page, add it here and to PUBLIC_ROUTES in src/lib/seo.ts so the
+ * sitemap agrees with the meta tags.
+ */
+export const metadata: Metadata = {
+  title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
+  description: SITE.description,
+  robots: { index: true, follow: true },
+  alternates: { canonical: '/' },
+  keywords: [
+    'AI CRM',
+    'agent-native CRM',
+    'CRM without data entry',
+    'automatic CRM data capture',
+    'AI sales assistant',
+    'MCP CRM',
+    'CRM for small sales teams',
+  ],
+  openGraph: {
+    type: 'website',
+    url: absoluteUrl('/'),
+    siteName: SITE.name,
+    title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
+    description: SITE.description,
+    locale: SITE.locale,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
+    description: SITE.description,
+  },
 };
 
 /**
@@ -21,6 +54,13 @@ export default async function LandingPage() {
 
   return (
     <main className="min-h-dvh bg-bg">
+      {/* Structured data. Only claims this page itself makes — see src/lib/seo.ts. */}
+      <script
+        type="application/ld+json"
+        // The payload is built from our own constants, never from user input.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd()) }}
+      />
+
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">

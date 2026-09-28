@@ -57,7 +57,7 @@ export default async function AskPage({
   return (
     <PageShell wide>
       <PageHeader
-        title="Ask AI"
+        title="Ask Bolt"
         description="Answers come from this workspace's own records — emails, meeting transcripts, notes and CRM fields — with a citation for every claim."
         eyebrow={
           <Badge tone="accent">
@@ -69,7 +69,7 @@ export default async function AskPage({
 
       <div className="mt-5">
         <AskInline
-          placeholder="Ask anything about your customers or tell Figbolt what to do…"
+          placeholder="Ask anything about your customers or tell Bolt what to do…"
           scopeType={
             params.scopeType === 'account' || params.scopeType === 'opportunity' || params.scopeType === 'contact'
               ? params.scopeType
@@ -202,7 +202,7 @@ export default async function AskPage({
                 </li>
                 <li>
                   Retrieved customer content is treated as untrusted data. Instructions inside an
-                  email can never become instructions to Figbolt.
+                  email can never become instructions to Bolt.
                 </li>
                 <li>
                   Citations are validated against what was actually retrieved — a model cannot cite a
@@ -253,7 +253,7 @@ function Suggestions({ reports }: { reports: { id: string; label: string; exampl
       <EmptyState
         icon={<Sparkle />}
         title="Ask a question to get started"
-        description="Figbolt searches structured CRM fields, email bodies, meeting transcripts and your knowledge base, then answers with links back to the records it used."
+        description="Bolt searches structured CRM fields, email bodies, meeting transcripts and your knowledge base, then answers with links back to the records it used."
       />
 
       <div className="space-y-5">

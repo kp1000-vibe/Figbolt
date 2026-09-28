@@ -60,7 +60,7 @@ export default async function LoginPage({
               {
                 term: 'Every claim is traceable',
                 detail:
-                  'Answers cite the email or transcript behind them. When the evidence is thin, Figbolt says so instead of guessing.',
+                  'Answers cite the email or transcript behind them. When the evidence is thin, Bolt says so instead of guessing.',
               },
               {
                 term: 'Humans hold the consequential actions',

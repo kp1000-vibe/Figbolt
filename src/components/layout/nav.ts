@@ -42,7 +42,7 @@ export const NAV: NavGroup[] = [
     label: null,
     items: [
       { href: '/home', label: 'Home', icon: 'home' },
-      { href: '/ask', label: 'Ask AI', icon: 'sparkles' },
+      { href: '/ask', label: 'Ask Bolt', icon: 'sparkles' },
       { href: '/inbox', label: 'Inbox', icon: 'inbox', badge: 'inbox' },
     ],
   },

@@ -122,7 +122,7 @@ export default async function AnalyticsPage({
 
           <section>
             <div className="mb-3 flex items-baseline justify-between gap-3">
-              <SectionLabel>Patterns Figbolt has found</SectionLabel>
+              <SectionLabel>Patterns Bolt has found</SectionLabel>
               <span className="text-2xs text-text-subtle">{number(insights.length)} insights</span>
             </div>
 

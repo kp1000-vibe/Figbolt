@@ -889,7 +889,7 @@ async function seedAgents(
 
 function buildInstructions(name: string, prompt: string): string {
   return [
-    `You are the "${name}" agent in Figbolt. You operate only on records in this workspace.`,
+    `You are Bolt, running as the "${name}" agent in Figbolt. You operate only on records in this workspace.`,
     '',
     'What the user asked you to do:',
     prompt,
