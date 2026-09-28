@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { INTEGRATION_PROVIDERS, type IntegrationProvider } from '@/db/schema';
 import { env } from '@/lib/env';
+import { appOrigin } from '@/lib/app-url';
 import { UnauthenticatedError } from '@/lib/auth/session';
 import { ctxAssert, requireCtx, ValidationError } from '@/server/context';
 import { checkRateLimit } from '@/server/rate-limit';
@@ -31,7 +32,7 @@ export async function GET(
     ctx = await requireCtx();
   } catch (err) {
     if (err instanceof UnauthenticatedError) {
-      return NextResponse.redirect(new URL('/login', env.APP_URL));
+      return NextResponse.redirect(new URL('/login', appOrigin()));
     }
     throw err;
   }
@@ -84,7 +85,7 @@ export async function GET(
 
 /** Send the user back to the page they came from, with a readable reason. */
 function fail(message: string) {
-  const url = new URL('/integrations', env.APP_URL);
+  const url = new URL('/integrations', appOrigin());
   url.searchParams.set('error', message);
   return NextResponse.redirect(url);
 }

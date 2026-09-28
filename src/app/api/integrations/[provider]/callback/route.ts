@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { INTEGRATION_PROVIDERS, type IntegrationProvider } from '@/db/schema';
 import { env } from '@/lib/env';
+import { appOrigin } from '@/lib/app-url';
 import { UnauthenticatedError } from '@/lib/auth/session';
 import { requireCtx, ValidationError } from '@/server/context';
 import { connectIntegration } from '@/server/integrations/manage';
@@ -55,7 +56,7 @@ export async function GET(
     ctx = await requireCtx();
   } catch (err) {
     if (err instanceof UnauthenticatedError) {
-      return clear(NextResponse.redirect(new URL('/login', env.APP_URL)));
+      return clear(NextResponse.redirect(new URL('/login', appOrigin())));
     }
     throw err;
   }
@@ -88,7 +89,7 @@ export async function GET(
       ...(tokens.accountLabel ? { accountLabel: tokens.accountLabel } : {}),
     });
 
-    const ok = new URL('/integrations', env.APP_URL);
+    const ok = new URL('/integrations', appOrigin());
     ok.searchParams.set('connected', provider);
     return clear(NextResponse.redirect(ok));
   } catch (err) {
@@ -116,7 +117,7 @@ function clear(response: NextResponse): NextResponse {
 }
 
 function back(message: string) {
-  const url = new URL('/integrations', env.APP_URL);
+  const url = new URL('/integrations', appOrigin());
   url.searchParams.set('error', message);
   return NextResponse.redirect(url);
 }

@@ -1,4 +1,4 @@
-import { env } from '@/lib/env';
+import { appOrigin } from '@/lib/app-url';
 
 /**
  * One source of truth for everything a crawler or a link preview reads.
@@ -33,13 +33,8 @@ export const SITE = {
 } as const;
 
 function canonicalOrigin(): string {
-  // APP_URL defaults to localhost, which must never end up in a canonical tag
-  // or a sitemap. Production is figbolt.com unless APP_URL says otherwise.
-  const configured = env.APP_URL;
-  if (configured && !configured.includes('localhost') && !configured.includes('127.0.0.1')) {
-    return configured.replace(/\/$/, '');
-  }
-  return 'https://figbolt.com';
+  // One definition of where this deployment lives - see lib/app-url.
+  return appOrigin();
 }
 
 export function absoluteUrl(path = '/'): string {

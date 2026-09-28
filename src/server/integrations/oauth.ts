@@ -2,6 +2,7 @@ import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypt
 import { and, eq } from 'drizzle-orm';
 import { integrations, type IntegrationProvider } from '@/db/schema';
 import { env } from '@/lib/env';
+import { appOrigin } from '@/lib/app-url';
 import { decryptSecret, encryptSecret } from '@/lib/security/crypto';
 import { scope, ValidationError, type Ctx } from '../context';
 import { findProvider } from './providers';
@@ -123,8 +124,9 @@ export function oauthReady(provider: IntegrationProvider): boolean {
  * — an attacker-controlled Host header must not be able to steer the callback.
  */
 export function redirectUri(provider: IntegrationProvider): string {
-  const base = env.APP_URL.replace(/\/$/, '');
-  return `${base}/api/integrations/${provider}/callback`;
+  // appOrigin refuses to return localhost in production, because a loopback
+  // redirect URI can never match what is registered with the provider.
+  return `${appOrigin()}/api/integrations/${provider}/callback`;
 }
 
 /* ── Signed state ─────────────────────────────────────────────────────────── */

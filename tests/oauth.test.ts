@@ -67,6 +67,35 @@ describe('the consent URL', () => {
     );
   });
 
+  it('never emits a loopback redirect URI in production', async () => {
+    // APP_URL defaults to localhost so a fresh clone runs unconfigured. A
+    // production deployment that never set it would register
+    // http://localhost:3000/... with Google, and every connection would fail
+    // with a redirect_uri_mismatch. This was a real bug on the live site.
+    process.env['NODE_ENV'] = 'production';
+    delete process.env['APP_URL'];
+    vi.resetModules();
+
+    const { redirectUri } = await import('@/server/integrations/oauth');
+    const uri = redirectUri('google_calendar');
+
+    expect(uri).not.toContain('localhost');
+    expect(uri).not.toContain('127.0.0.1');
+    expect(uri.startsWith('https://')).toBe(true);
+    expect(uri.endsWith('/api/integrations/google_calendar/callback')).toBe(true);
+  });
+
+  it('still uses localhost in development, where that is correct', async () => {
+    process.env['NODE_ENV'] = 'development';
+    process.env['APP_URL'] = 'http://localhost:3000';
+    vi.resetModules();
+
+    const { redirectUri } = await import('@/server/integrations/oauth');
+    expect(redirectUri('google_calendar')).toBe(
+      'http://localhost:3000/api/integrations/google_calendar/callback',
+    );
+  });
+
   it('keeps the PKCE verifier out of the URL', async () => {
     const { buildAuthorizeUrl } = await oauth();
     const { url, cookieValue } = buildAuthorizeUrl(CTX, 'google_calendar');
