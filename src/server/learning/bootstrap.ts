@@ -132,6 +132,89 @@ const SEEDS: Seed[] = [
     grader: 'category',
     label: 'SCIM provisioning is a security requirement',
   },
+
+  /* ── Meeting transcripts ────────────────────────────────────────────────
+   * Spoken language is not written language, and the meeting pipeline feeds
+   * the same extractors as email. These cases exist because a transcript
+   * breaks the assumptions email does not: people hedge, interrupt, think out
+   * loud, and the speaker attribution decides whether a sentence is a
+   * customer's concern or our own rep's reassurance.
+   */
+  {
+    task: 'extract_commitments',
+    inputText:
+      "Right, so I'll get the updated pricing over to you before Friday and I'll loop in our security lead on the questionnaire.",
+    expected: { contains: ['pricing'] },
+    grader: 'contains',
+    label: 'meeting: two promises in one spoken sentence',
+    isCustomer: false,
+  },
+  {
+    task: 'extract_commitments',
+    inputText:
+      "I mean, we could send over the pricing at some point, I suppose, if that would be useful to you at all.",
+    expected: {},
+    grader: 'empty',
+    label: 'meeting: hedged musing is not a commitment',
+    isCustomer: false,
+  },
+  {
+    task: 'extract_commitments',
+    inputText:
+      'We will have the procurement paperwork back to you by the end of next week, once legal has had a look.',
+    expected: { contains: ['procurement'] },
+    grader: 'contains',
+    label: 'meeting: the customer can make a commitment too',
+  },
+  {
+    task: 'extract_objections',
+    inputText:
+      "Honestly the price is the sticking point for us — at that number it is hard to get it past our CFO this quarter.",
+    expected: { category: 'price' },
+    grader: 'category',
+    label: 'meeting: spoken price resistance is a price objection',
+  },
+  {
+    task: 'extract_objections',
+    inputText:
+      "So just to play back what I heard — the concern is the cost, and you need data residency in the EU. Have I got that right?",
+    expected: {},
+    grader: 'empty',
+    label: 'meeting: a rep summarising the concern back is not a new objection',
+    isCustomer: false,
+  },
+  {
+    task: 'extract_objections',
+    inputText:
+      'We are already fairly deep into an evaluation with one of your competitors, so this would have to be clearly better.',
+    expected: { category: 'competitor' },
+    grader: 'category',
+    label: 'meeting: an in-flight competitive evaluation is a competitor objection',
+  },
+  {
+    task: 'extract_product_signals',
+    inputText:
+      "If we are being blunt, unless the Salesforce sync lands before renewal I do not think we can justify keeping this.",
+    expected: {},
+    grader: 'non_empty',
+    label: 'meeting: a feature gap tied to renewal is a signal, not silence',
+  },
+  {
+    task: 'extract_product_signals',
+    inputText:
+      'The export button just crashes the whole settings page in Safari. Works fine in Chrome, but half our team is on Safari.',
+    expected: { category: 'bug' },
+    grader: 'category',
+    label: 'meeting: a reproducible crash is a bug',
+  },
+  {
+    task: 'extract_facts',
+    inputText:
+      'We are about four hundred people now, mostly in Manchester, and the whole revenue team sits in one office.',
+    expected: {},
+    grader: 'non_empty',
+    label: 'meeting: headcount and location stated out loud are facts',
+  },
 ];
 
 export async function bootstrapEvalCases(ctx: Ctx): Promise<{ created: number; existing: number }> {

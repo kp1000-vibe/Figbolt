@@ -1,0 +1,237 @@
+[
+  {
+    "label": "01-landing",
+    "path": "/",
+    "landed": "/",
+    "redirected": false,
+    "status": 200,
+    "title": "Figbolt — sweet deals, lightning fast",
+    "file": "01-landing.png",
+    "ok": true
+  },
+  {
+    "label": "02-login",
+    "path": "/login",
+    "landed": "/login",
+    "redirected": false,
+    "status": 200,
+    "title": "Sign in · Figbolt",
+    "file": "02-login.png",
+    "ok": true
+  },
+  {
+    "label": "03-home",
+    "path": "/home",
+    "landed": "/home",
+    "redirected": false,
+    "status": 200,
+    "title": "Home · Figbolt",
+    "file": "03-home.png",
+    "ok": true
+  },
+  {
+    "label": "04-ask-bolt",
+    "path": "/ask",
+    "landed": "/ask",
+    "redirected": false,
+    "status": 200,
+    "title": "Ask AI · Figbolt",
+    "file": "04-ask-bolt.png",
+    "ok": true
+  },
+  {
+    "label": "05-inbox",
+    "path": "/inbox",
+    "landed": "/inbox",
+    "redirected": false,
+    "status": 200,
+    "title": "Inbox · Figbolt",
+    "file": "05-inbox.png",
+    "ok": true
+  },
+  {
+    "label": "06-accounts",
+    "path": "/accounts",
+    "landed": "/accounts",
+    "redirected": false,
+    "status": 200,
+    "title": "Accounts · Figbolt",
+    "file": "06-accounts.png",
+    "ok": true
+  },
+  {
+    "label": "07-contacts",
+    "path": "/contacts",
+    "landed": "/contacts",
+    "redirected": false,
+    "status": 200,
+    "title": "Contacts · Figbolt",
+    "file": "07-contacts.png",
+    "ok": true
+  },
+  {
+    "label": "08-deals",
+    "path": "/opportunities",
+    "landed": "/opportunities",
+    "redirected": false,
+    "status": 200,
+    "title": "Deals · Figbolt",
+    "file": "08-deals.png",
+    "ok": true
+  },
+  {
+    "label": "09-tasks",
+    "path": "/tasks",
+    "landed": "/tasks",
+    "redirected": false,
+    "status": 200,
+    "title": "Tasks · Figbolt",
+    "file": "09-tasks.png",
+    "ok": true
+  },
+  {
+    "label": "10-meetings",
+    "path": "/meetings",
+    "landed": "/meetings",
+    "redirected": false,
+    "status": 200,
+    "title": "Meetings · Figbolt",
+    "file": "10-meetings.png",
+    "ok": true
+  },
+  {
+    "label": "11-agents",
+    "path": "/agents",
+    "landed": "/agents",
+    "redirected": false,
+    "status": 200,
+    "title": "Agents · Figbolt",
+    "file": "11-agents.png",
+    "ok": true
+  },
+  {
+    "label": "12-automations",
+    "path": "/automations",
+    "landed": "/automations",
+    "redirected": false,
+    "status": 200,
+    "title": "Automations · Figbolt",
+    "file": "12-automations.png",
+    "ok": true
+  },
+  {
+    "label": "13-prospecting",
+    "path": "/prospecting",
+    "landed": "/prospecting",
+    "redirected": false,
+    "status": 200,
+    "title": "Prospecting · Figbolt",
+    "file": "13-prospecting.png",
+    "ok": true
+  },
+  {
+    "label": "14-analytics",
+    "path": "/analytics",
+    "landed": "/analytics",
+    "redirected": false,
+    "status": 200,
+    "title": "Analytics · Figbolt",
+    "file": "14-analytics.png",
+    "ok": true
+  },
+  {
+    "label": "15-product-signals",
+    "path": "/product-signals",
+    "landed": "/product-signals",
+    "redirected": false,
+    "status": 200,
+    "title": "Product signals · Figbolt",
+    "file": "15-product-signals.png",
+    "ok": true
+  },
+  {
+    "label": "16-knowledge",
+    "path": "/knowledge",
+    "landed": "/knowledge",
+    "redirected": false,
+    "status": 200,
+    "title": "Knowledge · Figbolt",
+    "file": "16-knowledge.png",
+    "ok": true
+  },
+  {
+    "label": "17-learning",
+    "path": "/learning",
+    "landed": "/learning",
+    "redirected": false,
+    "status": 200,
+    "title": "Learning · Figbolt",
+    "file": "17-learning.png",
+    "ok": true
+  },
+  {
+    "label": "18-why-figbolt",
+    "path": "/why",
+    "landed": "/why",
+    "redirected": false,
+    "status": 200,
+    "title": "Why Figbolt · Figbolt",
+    "file": "18-why-figbolt.png",
+    "ok": true
+  },
+  {
+    "label": "19-integrations",
+    "path": "/integrations",
+    "landed": "/integrations",
+    "redirected": false,
+    "status": 200,
+    "title": "Integrations · Figbolt",
+    "file": "19-integrations.png",
+    "ok": true
+  },
+  {
+    "label": "20-settings",
+    "path": "/settings",
+    "landed": "/settings",
+    "redirected": false,
+    "status": 200,
+    "title": "Workspace settings · Figbolt",
+    "file": "20-settings.png",
+    "ok": true
+  },
+  {
+    "label": "21-bolt-launcher",
+    "path": "Ask Bolt launcher (hovered)",
+    "ok": true,
+    "file": "21-bolt-launcher.png",
+    "title": "Ask Bolt launcher (hovered)"
+  },
+  {
+    "label": "22-command-bar",
+    "path": "Command bar, opened from the launcher",
+    "ok": true,
+    "file": "22-command-bar.png",
+    "title": "Command bar, opened from the launcher"
+  },
+  {
+    "label": "23-schedule-meeting",
+    "path": "Schedule a meeting",
+    "ok": true,
+    "file": "23-schedule-meeting.png",
+    "title": "Schedule a meeting"
+  },
+  {
+    "label": "24-meeting-detail",
+    "path": "Meeting detail: transcript and CRM actions",
+    "ok": true,
+    "file": "24-meeting-detail.png",
+    "title": "Meeting detail: transcript and CRM actions"
+  },
+  {
+    "label": "25-dark-mode",
+    "path": "/home (dark)",
+    "ok": true,
+    "file": "25-dark-mode.png",
+    "title": "Dark mode"
+  }
+]

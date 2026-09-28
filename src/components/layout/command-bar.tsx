@@ -298,9 +298,9 @@ export function CommandBar({ open, onClose }: { open: boolean; onClose: () => vo
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Ask anything about your customers or tell Figbolt what to do…"
+            placeholder="Ask anything about your customers or tell Bolt what to do…"
             className="h-13 flex-1 bg-transparent text-sm text-text placeholder:text-text-subtle focus:outline-none"
-            aria-label="Ask anything about your customers or tell Figbolt what to do"
+            aria-label="Ask anything about your customers or tell Bolt what to do"
             autoComplete="off"
             spellCheck={false}
           />

@@ -40,7 +40,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <ThemeScript />
       </head>
-      <body className="min-h-dvh antialiased">{children}</body>
+      {/*
+        suppressHydrationWarning: extensions (password managers, dark-mode
+        and grammar tools) commonly inject style attributes such as
+        `isolation: isolate` onto <body> before React hydrates. That is a
+        mismatch we cannot prevent and do not care about; it suppresses
+        attribute warnings for this element only, not for its children.
+      */}
+      <body className="min-h-dvh antialiased" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }

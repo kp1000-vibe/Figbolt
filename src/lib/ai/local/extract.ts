@@ -73,7 +73,7 @@ export type Utterance = {
 const COMMIT_MODALS =
   /\b(will|'ll|shall|going to|gonna|plan to|planning to|intend to|plans to|plans on|commit to|promise to|agree to|agreed to|expects to)\b/i;
 const COMMIT_VERBS =
-  /\b(send|share|forward|provide|deliver|prepare|draft|schedule|set up|book|introduce|intro|loop in|follow up|circle back|get back|review|complete|sign|return|confirm|check|look into|put together|write up|walk through|demo|arrange|pull together|update|escalate|run|email)\b/i;
+  /\b(send|share|forward|provide|deliver|prepare|draft|schedule|set up|book|introduce|intro|loop in|follow up|circle back|get back|review|complete|sign|return|confirm|check|look into|put together|write up|walk through|demo|arrange|pull together|update|escalate|run|email|back to (?:you|us)|turn (?:it |them )?around|hand over)\b/i;
 const HEDGES = /\b(might|maybe|possibly|perhaps|could probably|if we can|no promises|not sure)\b/i;
 const NEGATION = /\b(won't|will not|can't|cannot|unable to|not going to)\b/i;
 
@@ -239,7 +239,7 @@ const OBJECTION_RULES: {
   },
   {
     category: 'competitor',
-    cues: /\b(also (?:looking at|evaluating|considering)|comparing (?:you )?(?:to|with)|competitor|incumbent|already use|currently using|bake-?off|rfp)\b/i,
+    cues: /\b(also (?:looking at|evaluating|considering)|comparing (?:you )?(?:to|with)|competitors?|incumbent|already use|evaluation with|currently using|bake-?off|rfp)\b/i,
     severity: 'high',
   },
   {
@@ -355,7 +355,7 @@ export function extractObjections(utterances: Utterance[]): ExtractedObjection[]
 /* ── Product signals ──────────────────────────────────────────────────────── */
 
 const REQUEST_CUES =
-  /\b(need|needs|require|requires|required|would (?:love|like|need)|wish|hoping (?:for|to)|looking for|must have|it'd be (?:great|good)|any (?:plans|chance|way) (?:for|to)|do you (?:support|have)|is there (?:a|an|any)|can (?:it|you|we) (?:support|do)|blocker|deal ?breaker|missing)\b/i;
+  /\b(need|needs|require|requires|required|would (?:love|like|need)|wish|hoping (?:for|to)|looking for|must have|it'd be (?:great|good)|any (?:plans|chance|way) (?:for|to)|do you (?:support|have)|is there (?:a|an|any)|can (?:it|you|we) (?:support|do)|blocker|deal ?breaker|missing|unless|waiting (?:on|for)|still (?:waiting|no|not)|depends on|justify (?:keeping|renewing|staying)|without (?:a|an|the))\b/i;
 
 /** Canonical themes with aliases; new terms are learned by the theme matcher. */
 export const SIGNAL_LEXICON: {
@@ -544,6 +544,55 @@ export function extractChurnRisk(utterances: Utterance[]): ExtractedChurnRisk {
 const MONEY = /(?:\$|usd\s?)\s?([\d,]+(?:\.\d+)?)\s?([kmb])?\b|\b([\d,]+(?:\.\d+)?)\s?([kmb])\b(?=\s*(?:dollars|usd|budget|arr|acv))/gi;
 const SEAT = /\b([\d,]{1,7})\s+(?:seats?|users?|licen[cs]es?|employees?)\b/i;
 
+/**
+ * Headcount and location, which people state out loud far more often than
+ * they write down - and almost always as words rather than digits. A
+ * transcript saying "about four hundred people" carried no fact at all
+ * until spelled numbers were handled.
+ */
+const HEADCOUNT =
+  /\b(?:we(?:'re| are)?|company|team|organisation|organization)?\s*(?:about|around|roughly|circa|just over|just under|nearly)?\s*([\d,]{1,9}|[a-z\s-]{3,40}?)\s+(?:people|employees|staff|headcount|strong)\b/i;
+
+const LOCATION =
+  /\b(?:based|headquartered|hq|located|mostly|primarily|offices?)\s+(?:in|out of|across)\s+([A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+){0,2})/;
+
+/** Spelled-out cardinals up to 999,999. Returns null for anything else. */
+export function spelledNumber(text: string): number | null {
+  const UNITS: Record<string, number> = {
+    zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7,
+    eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13,
+    fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18,
+    nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60,
+    seventy: 70, eighty: 80, ninety: 90,
+  };
+
+  const words = text.toLowerCase().replace(/-/g, ' ').split(/[\s,]+/).filter(Boolean);
+  let total = 0;
+  let current = 0;
+  let seen = false;
+
+  for (const word of words) {
+    if (word === 'and') continue;
+    if (word in UNITS) {
+      current += UNITS[word]!;
+      seen = true;
+    } else if (word === 'hundred') {
+      // "hundred" with nothing before it means one hundred.
+      current = (current || 1) * 100;
+      seen = true;
+    } else if (word === 'thousand') {
+      total += (current || 1) * 1000;
+      current = 0;
+      seen = true;
+    } else {
+      // Any other word ends the number; a trailing fragment is not a count.
+      return seen ? total + current : null;
+    }
+  }
+
+  return seen ? total + current : null;
+}
+
 export function extractFacts(utterances: Utterance[]): ExtractedFact[] {
   const facts: ExtractedFact[] = [];
 
@@ -593,6 +642,38 @@ export function extractFacts(utterances: Utterance[]): ExtractedFact[] {
             confidence: clamp(utt.isCustomer ? 0.78 : 0.62),
           });
         }
+      }
+
+      // Company size. Digits first, then spelled out - "four hundred people"
+      // is how it is said aloud, and transcripts are where this lands.
+      const head = HEADCOUNT.exec(sentence);
+      if (head?.[1]) {
+        const raw = head[1].trim();
+        const size = /^[\d,]+$/.test(raw)
+          ? Number(raw.replace(/,/g, ''))
+          : spelledNumber(raw);
+        if (size !== null && size > 0 && size < 10_000_000) {
+          facts.push({
+            key: 'company_size',
+            label: 'Company size',
+            valueNumber: size,
+            unit: 'people',
+            quote: sentence.trim(),
+            confidence: clamp(utt.isCustomer ? 0.78 : 0.6),
+          });
+        }
+      }
+
+      // Location
+      const place = LOCATION.exec(sentence);
+      if (place?.[1]) {
+        facts.push({
+          key: 'location',
+          label: 'Location',
+          valueText: place[1].trim(),
+          quote: sentence.trim(),
+          confidence: clamp(utt.isCustomer ? 0.72 : 0.58),
+        });
       }
 
       // Decision process
