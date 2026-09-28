@@ -79,6 +79,7 @@ export const PRIVATE_PREFIXES = [
   '/settings',
   '/signup',
   '/tasks',
+  '/why',
 ] as const;
 
 /**

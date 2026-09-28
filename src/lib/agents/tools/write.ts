@@ -422,6 +422,90 @@ registerTool(
 
 registerTool(
   defineTool({
+    name: 'schedule_meeting',
+    description:
+      'Schedule a meeting with a customer and send them a calendar invitation. HIGH RISK: this puts an event in an external person\'s calendar and emails them, so it always requires human approval.',
+    input: z.object({
+      title: z.string().min(3).max(200).describe('What the meeting is about.'),
+      startsAt: z
+        .string()
+        .describe('Start time as an ISO-8601 timestamp with a timezone, e.g. 2026-10-02T14:00:00Z.'),
+      durationMinutes: z.number().int().min(5).max(480).default(30),
+      attendeeEmails: z
+        .array(z.string())
+        .min(1)
+        .max(25)
+        .describe('Who to invite. Customer addresses; the organiser is added automatically.'),
+      description: z.string().max(4000).optional().describe('Agenda, shown in the invitation.'),
+      location: z.string().max(300).optional(),
+      meetingUrl: z.string().max(500).optional().describe('An existing video link. Omit to let the calendar create one.'),
+      accountId: z.string().optional(),
+      opportunityId: z.string().optional(),
+    }),
+    permission: 'meeting:manage',
+    risk: 'high',
+    readOnly: false,
+    async preview({ ctx }, input): Promise<ApprovalPreview> {
+      const label = await describeLink(ctx, input);
+      const starts = new Date(input.startsAt);
+      const valid = Number.isFinite(starts.getTime());
+
+      // The approver needs the real local-readable time and the real invitee
+      // list, because those are the two things that are embarrassing to get
+      // wrong in front of a customer.
+      return {
+        kind: 'text',
+        body: [
+          `Schedule "${input.title}"`,
+          valid
+            ? `When: ${starts.toUTCString()} for ${input.durationMinutes} minutes`
+            : `When: ${input.startsAt} (unparseable — this will be rejected)`,
+          `Invite: ${input.attendeeEmails.join(', ')}`,
+          input.location ? `Where: ${input.location}` : null,
+          input.meetingUrl ? `Link: ${input.meetingUrl}` : null,
+          label ? `Linked to ${label}` : null,
+          '',
+          'A calendar invitation will be emailed to each attendee.',
+          input.description ? `\nAgenda:\n${input.description}` : null,
+        ]
+          .filter(Boolean)
+          .join('\n'),
+      };
+    },
+    async execute({ ctx }, input): Promise<ToolResult> {
+      assertEmails(input.attendeeEmails);
+
+      const startsAt = new Date(input.startsAt);
+      if (!Number.isFinite(startsAt.getTime())) {
+        throw new ValidationError(`"${input.startsAt}" is not a valid timestamp.`);
+      }
+
+      const { scheduleMeeting } = await import('@/server/calendar/schedule');
+      const result = await scheduleMeeting(ctx, {
+        title: input.title,
+        description: input.description,
+        startsAt,
+        durationMinutes: input.durationMinutes,
+        attendeeEmails: input.attendeeEmails,
+        location: input.location,
+        meetingUrl: input.meetingUrl,
+        accountId: input.accountId,
+        opportunityId: input.opportunityId,
+      });
+
+      return {
+        summary:
+          result.inviteStatus === 'sent'
+            ? `Scheduled "${input.title}" for ${startsAt.toUTCString()} and invited ${result.attendees.join(', ')}.`
+            : `Recorded "${input.title}" but the invitation did not go out: ${result.error ?? 'unknown error'}.`,
+        data: result as unknown as Record<string, unknown>,
+      };
+    },
+  }),
+);
+
+registerTool(
+  defineTool({
     name: 'create_contact',
     description: 'Create a new contact.',
     input: z.object({

@@ -22,6 +22,13 @@
       "when": 1790461662650,
       "tag": "0002_learning_loop",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790575113448,
+      "tag": "0003_meeting_scheduling",
+      "breakpoints": true
     }
   ]
 }

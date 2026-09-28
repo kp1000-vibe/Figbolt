@@ -30,15 +30,34 @@ export type OutgoingMessage = {
   cc: string[];
   subject: string;
   body: string;
+  attachments?: EmailAttachment[];
+};
+
+/**
+ * A file sent with the message.
+ *
+ * `content` is UTF-8 text rather than a Buffer because the only thing that
+ * currently uses this is a calendar invitation, which is text by definition.
+ * Widening it to binary means changing this type and the provider encoders,
+ * which is the right place for that decision to be visible.
+ */
+export type EmailAttachment = {
+  filename: string;
+  /** e.g. 'text/calendar; method=REQUEST; charset=utf-8' */
+  contentType: string;
+  content: string;
 };
 
 class ConsoleProvider implements EmailProvider {
   readonly name = 'console';
   readonly delivers = false;
   async send(message: OutgoingMessage) {
+    const files = message.attachments?.length
+      ? ` with ${message.attachments.map((a) => a.filename).join(', ')}`
+      : '';
     console.info(
-      `[email:console] would send "${message.subject}" to ${message.to.join(', ')} (${message.body.length} chars). ` +
-        'Set EMAIL_PROVIDER to deliver for real.',
+      `[email:console] would send "${message.subject}" to ${message.to.join(', ')} ` +
+        `(${message.body.length} chars)${files}. Set EMAIL_PROVIDER to deliver for real.`,
     );
     return { id: null };
   }
@@ -59,6 +78,11 @@ class ResendProvider implements EmailProvider {
         cc: message.cc.length > 0 ? message.cc : undefined,
         subject: message.subject,
         text: message.body,
+        attachments: message.attachments?.map((a) => ({
+          filename: a.filename,
+          content: Buffer.from(a.content, 'utf8').toString('base64'),
+          content_type: a.contentType,
+        })),
       }),
       signal: AbortSignal.timeout(30_000),
     });
@@ -89,6 +113,7 @@ export type SendInput = {
   accountId?: string;
   contactId?: string;
   opportunityId?: string;
+  attachments?: EmailAttachment[];
 };
 
 export type SendResult = {
@@ -157,6 +182,7 @@ export async function sendEmail(ctx: Ctx, input: SendInput): Promise<SendResult>
       cc: input.cc ?? [],
       subject: input.subject,
       body: input.body,
+      attachments: input.attachments,
     });
     providerMessageId = result.id;
   } catch (err) {

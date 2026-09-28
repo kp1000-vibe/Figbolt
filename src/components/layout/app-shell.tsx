@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ToastProvider } from '@/components/ui/feedback';
+import { BoltLauncher } from './bolt-launcher';
 import { CommandBar } from './command-bar';
 import { Sidebar, type NavCounts, type SidebarUser, type SidebarWorkspace } from './sidebar';
 
@@ -67,6 +68,7 @@ export function AppShell({
         />
         <main className="min-w-0 flex-1">{children}</main>
       </div>
+      <BoltLauncher onOpen={() => setCommandOpen(true)} />
       <CommandBar open={commandOpen} onClose={() => setCommandOpen(false)} />
     </ToastProvider>
   );

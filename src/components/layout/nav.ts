@@ -35,6 +35,7 @@ export type IconName =
   | 'loop'
   | 'book'
   | 'plug'
+  | 'spark'
   | 'settings';
 
 export const NAV: NavGroup[] = [
@@ -76,6 +77,7 @@ export const NAV: NavGroup[] = [
   {
     label: 'Workspace',
     items: [
+      { href: '/why', label: 'Why Figbolt', icon: 'spark' },
       { href: '/integrations', label: 'Integrations', icon: 'plug' },
       { href: '/settings', label: 'Settings', icon: 'settings', match: ['/settings'] },
     ],

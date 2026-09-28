@@ -4,6 +4,7 @@ import { listMeetings, meetingCounts } from '@/server/crm/meetings';
 import { PageShell } from '@/components/layout/app-shell';
 import { Badge, Card, CardBody, EmptyState, PageHeader } from '@/components/ui/primitives';
 import { MeetingFilters } from './filters';
+import { ScheduleMeetingButton } from './schedule-form';
 import { NavIcon } from '@/components/layout/icons';
 import { number, shortDate, timeOfDay } from '@/lib/utils';
 
@@ -27,6 +28,7 @@ export default async function MeetingsPage({
       <PageHeader
         title="Meetings"
         description={`${number(counts.total)} recorded · ${number(counts.past)} with intelligence extracted from the transcript`}
+        actions={<ScheduleMeetingButton />}
       />
 
       <div className="mt-5">

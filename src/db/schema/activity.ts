@@ -96,6 +96,10 @@ export const emails = pgTable(
   ],
 );
 
+export type MeetingOrigin = 'synced' | 'scheduled_in_figbolt' | 'manual';
+export type InviteStatus = 'none' | 'pending' | 'sent' | 'failed';
+export type TranscriptionStatus = 'none' | 'pending' | 'done' | 'failed' | 'unsupported';
+
 export const meetings = pgTable(
   'meetings',
   {
@@ -116,6 +120,36 @@ export const meetings = pgTable(
       .$type<'scheduled' | 'completed' | 'cancelled' | 'no_show'>()
       .notNull()
       .default('scheduled'),
+    /**
+     * Where this row came from. A meeting we scheduled is a different thing
+     * from one we observed on a synced calendar: only the former may have an
+     * invite delivered on the workspace's behalf.
+     */
+    origin: text('origin')
+      .$type<MeetingOrigin>()
+      .notNull()
+      .default('synced'),
+    /** Delivery state of the calendar invite we sent. See server/calendar. */
+    inviteStatus: text('invite_status')
+      .$type<InviteStatus>()
+      .notNull()
+      .default('none'),
+    inviteProvider: text('invite_provider'),
+    inviteSentAt: timestamp('invite_sent_at', { withTimezone: true, mode: 'date' }),
+    inviteError: text('invite_error'),
+    /** The event id the calendar provider assigned, for later update/cancel. */
+    externalEventId: text('external_event_id'),
+    /** Transcription state, so a stuck job is visible rather than silent. */
+    transcriptionStatus: text('transcription_status')
+      .$type<TranscriptionStatus>()
+      .notNull()
+      .default('none'),
+    transcriptionError: text('transcription_error'),
+    /**
+     * Whether meeting intelligence has been turned into proposed CRM actions.
+     * Nullable timestamp rather than a boolean so a re-run is traceable.
+     */
+    actionsProposedAt: timestamp('actions_proposed_at', { withTimezone: true, mode: 'date' }),
     accountId: text('account_id').references(() => accounts.id, { onDelete: 'set null' }),
     opportunityId: text('opportunity_id').references(() => opportunities.id, {
       onDelete: 'set null',

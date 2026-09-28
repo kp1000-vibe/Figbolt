@@ -96,6 +96,13 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <path d="M12 17v4" />
     </>
   ),
+  spark: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2-2.4 3.6" />
+      <path d="M12 17.2h.01" />
+    </>
+  ),
   radar: (
     <>
       <path d="M12 12 16.9 7.1" />

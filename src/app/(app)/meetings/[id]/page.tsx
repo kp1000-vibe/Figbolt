@@ -18,6 +18,9 @@ import { CommitmentRow } from '@/components/crm/commitment-row';
 import { EvidenceQuote } from '@/components/ai/citation';
 import { TranscriptView } from './transcript-view';
 import { MeetingActions } from './meeting-actions';
+import { CapturePanel } from './capture-panel';
+import { pendingActionsForMeeting } from '@/server/meetings/propose';
+import { transcriptionAvailable } from '@/server/meetings/transcribe';
 import { AlertTriangle, NavIcon, Play } from '@/components/layout/icons';
 import { dayMonth, money, shortDate, timeOfDay, titleCase } from '@/lib/utils';
 
@@ -45,6 +48,11 @@ export default async function MeetingPage({ params }: { params: Promise<{ id: st
   }
 
   const { meeting, transcript, account, opportunity } = detail;
+
+  // The proposals this meeting has already produced, so the panel can show
+  // their live approval status rather than just "proposed".
+  const proposals = await pendingActionsForMeeting(ctx, meeting.id);
+  const canAutoTranscribe = transcriptionAvailable();
   const intel = meeting.intelligence;
   const durationMinutes = meeting.endsAt
     ? Math.round((meeting.endsAt.getTime() - meeting.startsAt.getTime()) / 60_000)
@@ -236,6 +244,24 @@ export default async function MeetingPage({ params }: { params: Promise<{ id: st
 
         {/* ── Right rail ────────────────────────────────────────────── */}
         <div className="min-w-0 space-y-5">
+          <CapturePanel
+            meetingId={meeting.id}
+            hasTranscript={Boolean(transcript)}
+            hasIntelligence={Boolean(intel)}
+            transcriptionStatus={meeting.transcriptionStatus}
+            transcriptionError={meeting.transcriptionError}
+            transcriptionAvailable={canAutoTranscribe}
+            actionsProposed={Boolean(meeting.actionsProposedAt)}
+            proposals={proposals.map((p) => ({
+              id: p.id,
+              tool: p.tool,
+              title: p.title,
+              rationale: p.rationale,
+              status: p.status,
+              riskLevel: p.riskLevel,
+            }))}
+          />
+
           <Card>
             <CardHeader>
               <CardTitle>Participants</CardTitle>

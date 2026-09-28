@@ -67,6 +67,26 @@ const schema = z.object({
   EMAIL_FROM: z.string().default('Figbolt <hello@figbolt.com>'),
   RESEND_API_KEY: optional,
 
+  /**
+   * Calendar writes. `console` is the default and delivers nothing: the
+   * meeting is recorded and an .ics is produced, but no event is created in
+   * anyone's calendar. A demo workspace putting real events in a stranger's
+   * Outlook would be a serious bug, so this has to be turned on deliberately.
+   */
+  CALENDAR_PROVIDER: z.enum(['console', 'google', 'microsoft']).default('console'),
+  GOOGLE_OAUTH_CLIENT_ID: optional,
+  GOOGLE_OAUTH_CLIENT_SECRET: optional,
+  MICROSOFT_OAUTH_CLIENT_ID: optional,
+  MICROSOFT_OAUTH_CLIENT_SECRET: optional,
+  MICROSOFT_TENANT_ID: optional,
+
+  /**
+   * Speech-to-text for meeting recordings. `none` means no automatic
+   * transcription; an uploaded transcript still works.
+   */
+  TRANSCRIPTION_PROVIDER: z.enum(['none', 'deepgram', 'openai']).default('none'),
+  DEEPGRAM_API_KEY: optional,
+
   STORAGE_PROVIDER: z.enum(['local', 's3']).default('local'),
   S3_ENDPOINT: optional,
   S3_REGION: optional,
