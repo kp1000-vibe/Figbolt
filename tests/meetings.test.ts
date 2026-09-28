@@ -184,6 +184,38 @@ describe('scheduling is gated like the customer-facing action it is', () => {
   });
 });
 
+describe('the invite never claims more than it did', () => {
+  it('reserves "sent" for something a person could actually receive', async () => {
+    const source = await import('node:fs').then((fs) =>
+      fs.readFileSync('src/server/calendar/schedule.ts', 'utf8'),
+    );
+
+    // With CALENDAR_PROVIDER=console and EMAIL_PROVIDER=console the meeting is
+    // recorded and nothing leaves the machine. Marking that `sent` would have
+    // a rep waiting on a reply that cannot come, so the status is derived from
+    // whether a delivering provider accepted it - not from "no error thrown".
+    expect(source).toContain('reachedSomeone');
+    expect(source).toContain('emailDelivered');
+    expect(source).not.toMatch(/const delivered = Boolean\(eventId\) \|\| emailed;/);
+    // inviteSentAt is a claim about the outside world; it needs the same gate.
+    expect(source).toContain('inviteSentAt: reachedSomeone ?');
+  });
+
+  it('tells the operator plainly when nothing was sent', async () => {
+    const source = await import('node:fs').then((fs) =>
+      fs.readFileSync('src/app/(app)/meetings/actions.ts', 'utf8'),
+    );
+
+    // The message must distinguish all four outcomes rather than assuming an
+    // email went out whenever no exception was raised.
+    expect(source).toContain('result.emailDelivered');
+    expect(source).toContain('nothing was sent');
+    // The bug was that this claim sat in the *else* branch of
+    // `result.delivered`, so it fired whenever no exception was raised.
+    expect(source).not.toMatch(/:\s*`Scheduled\. An invitation was emailed/);
+  });
+});
+
 describe('meeting-derived actions cannot bypass review', () => {
   it('only ever proposes tools that carry a preview and are not read-only', async () => {
     // propose.ts may only emit these three. Each one mutates the CRM, so each

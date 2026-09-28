@@ -59,6 +59,10 @@ export type ScheduleMeetingResult = {
   provider: string;
   /** True when an event reached a real calendar. */
   delivered: boolean;
+  /** True when the invitation email was actually handed to a sending provider. */
+  emailDelivered: boolean;
+  /** Which email provider handled it, so the caller can say so truthfully. */
+  emailProvider: string | null;
   eventId: string | null;
   meetingUrl: string | null;
   attendees: string[];
@@ -232,35 +236,51 @@ export async function scheduleMeeting(
   // The .ics goes out regardless of whether the API call worked: a customer
   // with an invitation in their inbox is the outcome that matters, and it is
   // the only path that exists at all in console mode.
-  let emailed = false;
+  // `queued` means the outbox row was written; `emailDelivered` means a
+  // provider that actually sends accepted it. Conflating the two is how a UI
+  // ends up telling someone an invitation went out when EMAIL_PROVIDER is
+  // still `console` and nothing left the machine.
+  let queued = false;
+  let emailDelivered = false;
+  let emailProvider: string | null = null;
+
   if (!input.skipInviteEmail) {
     try {
-      await sendInvitationEmail(ctx, {
+      const sent = await sendInvitationEmail(ctx, {
         meetingId,
         event: { ...event, meetingUrl: meetingUrl ?? undefined },
         organizerEmail: organizer.email,
         accountId: parties.accountId,
         opportunityId: parties.opportunityId,
       });
-      emailed = true;
+      queued = true;
+      emailDelivered = sent.delivered;
+      emailProvider = sent.provider;
     } catch (err) {
       failure ??= (err as Error).message.slice(0, 400);
     }
   }
 
-  const delivered = Boolean(eventId) || emailed;
-  const inviteStatus: 'sent' | 'failed' | 'none' = input.skipInviteEmail && !eventId
-    ? 'none'
-    : delivered
-      ? 'sent'
-      : 'failed';
+  // `sent` is reserved for something a customer could actually receive.
+  const reachedSomeone = Boolean(eventId) || emailDelivered;
+  const recordedOnly = queued && !reachedSomeone;
+  const inviteStatus: 'sent' | 'failed' | 'none' =
+    reachedSomeone ? 'sent' : recordedOnly || input.skipInviteEmail ? 'none' : 'failed';
+
+  if (recordedOnly && !failure) {
+    // Not an error, but it must not look like a delivery either.
+    failure =
+      `Recorded only: calendar provider is "${provider.name}" and email provider is ` +
+      `"${emailProvider ?? 'none'}", neither of which delivers.`;
+  }
 
   await ctx.db
     .update(meetings)
     .set({
       inviteStatus,
       inviteProvider: provider.name,
-      inviteSentAt: delivered ? new Date() : null,
+      // Only stamped when something actually reached a person.
+      inviteSentAt: reachedSomeone ? new Date() : null,
       inviteError: failure,
       externalEventId: eventId,
       meetingUrl,
@@ -278,7 +298,9 @@ export async function scheduleMeeting(
       startsAt: input.startsAt.toISOString(),
       attendees: attendeeEmails,
       provider: provider.name,
-      delivered,
+      calendarEventCreated: Boolean(eventId),
+      emailDelivered,
+      emailProvider,
       inviteStatus,
       ...(failure ? { error: failure } : {}),
     },
@@ -320,6 +342,8 @@ export async function scheduleMeeting(
     inviteStatus,
     provider: provider.name,
     delivered: Boolean(eventId),
+    emailDelivered,
+    emailProvider,
     eventId,
     meetingUrl,
     attendees: attendeeEmails,
@@ -357,7 +381,7 @@ async function sendInvitationEmail(
     accountId: string | null;
     opportunityId: string | null;
   },
-): Promise<void> {
+): Promise<{ delivered: boolean; provider: string }> {
   const { sendEmail } = await import('../email/send');
   const ics = buildIcs(args.event);
 
@@ -374,7 +398,7 @@ async function sendInvitationEmail(
   if (args.event.description) bodyLines.push('', args.event.description);
   bodyLines.push('', 'A calendar invitation is attached.');
 
-  await sendEmail(ctx, {
+  const result = await sendEmail(ctx, {
     to: args.event.attendees.map((a) => a.email),
     subject: `Invitation: ${args.event.title} — ${when}`,
     body: bodyLines.join('\n'),
@@ -388,4 +412,6 @@ async function sendInvitationEmail(
       },
     ],
   });
+
+  return { delivered: result.delivered, provider: result.provider };
 }

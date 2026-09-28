@@ -82,16 +82,26 @@ export async function scheduleMeetingAction(
     revalidatePath('/meetings');
 
     const who = result.attendees.join(', ');
-    return {
-      ok: true,
-      meetingId: result.meetingId,
-      message:
-        result.inviteStatus === 'sent'
-          ? result.delivered
-            ? `Scheduled and added to your ${result.provider} calendar. ${who} invited.`
-            : `Scheduled. An invitation was emailed to ${who}.`
-          : `Saved the meeting, but the invitation failed: ${result.error ?? 'unknown error'}`,
-    };
+
+    // Only claim an invitation went out when a provider that actually delivers
+    // accepted it. In console mode the meeting is recorded and nothing is sent,
+    // and saying otherwise would have a rep waiting on a reply that cannot come.
+    let message: string;
+    if (result.inviteStatus === 'failed') {
+      message = `Saved the meeting, but the invitation failed: ${result.error ?? 'unknown error'}`;
+    } else if (result.delivered && result.emailDelivered) {
+      message = `Scheduled in your ${result.provider} calendar and emailed to ${who}.`;
+    } else if (result.delivered) {
+      message = `Added to your ${result.provider} calendar. ${who} invited.`;
+    } else if (result.emailDelivered) {
+      message = `Scheduled. An invitation was emailed to ${who}.`;
+    } else {
+      message =
+        `Meeting recorded, but nothing was sent — the calendar and email providers are ` +
+        `in console mode. Set CALENDAR_PROVIDER and EMAIL_PROVIDER to invite ${who} for real.`;
+    }
+
+    return { ok: true, meetingId: result.meetingId, message };
   } catch (err) {
     if (err instanceof ValidationError) return { ok: false, message: err.message };
     console.error('[meetings] schedule failed:', err);
