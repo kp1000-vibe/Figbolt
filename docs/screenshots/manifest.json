@@ -20,6 +20,16 @@
     "ok": true
   },
   {
+    "label": "18-why-figbolt",
+    "path": "/why",
+    "landed": "/why",
+    "redirected": false,
+    "status": 200,
+    "title": "Why Figbolt instead of Salesforce or HubSpot · Figbolt",
+    "file": "18-why-figbolt.png",
+    "ok": true
+  },
+  {
     "label": "03-home",
     "path": "/home",
     "landed": "/home",
@@ -167,16 +177,6 @@
     "status": 200,
     "title": "Learning · Figbolt",
     "file": "17-learning.png",
-    "ok": true
-  },
-  {
-    "label": "18-why-figbolt",
-    "path": "/why",
-    "landed": "/why",
-    "redirected": false,
-    "status": 200,
-    "title": "Why Figbolt · Figbolt",
-    "file": "18-why-figbolt.png",
     "ok": true
   },
   {

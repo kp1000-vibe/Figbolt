@@ -1,0 +1,832 @@
+<title>Figbolt Verification Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+  /* ── Tokens ─────────────────────────────────────────────────────────────
+     Taken from the product's own globals.css so the report and the thing it
+     documents share one palette. Neutrals carry a slight blue bias toward the
+     indigo accent rather than sitting at pure grey. */
+  :root {
+    --ground: #f7f8fa;
+    --surface: #ffffff;
+    --surface-sunk: #f0f2f6;
+    --line: #e2e5ec;
+    --line-strong: #cdd2dd;
+    --ink: #16181d;
+    --ink-muted: #565c6b;
+    --ink-faint: #838a99;
+    --accent: #3b5bd4;
+    --accent-ink: #2f4bc3;
+    --accent-wash: #eef1fc;
+    --accent-line: #c3cdf3;
+    --good: #1f7a4d;
+    --good-wash: #e8f5ee;
+    --warn: #8a5a00;
+    --warn-wash: #fdf3e0;
+    --bad: #b3261e;
+    --bad-wash: #fdecea;
+    --term-bg: #14161c;
+    --term-ink: #d6dae4;
+    --term-faint: #7d8596;
+    --shadow: 0 1px 2px rgba(20, 22, 28, .05), 0 6px 20px -12px rgba(20, 22, 28, .28);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0f1014;
+      --surface: #16181d;
+      --surface-sunk: #1b1e25;
+      --line: #292b31;
+      --line-strong: #3a3d46;
+      --ink: #f1f2f4;
+      --ink-muted: #a2a5aa;
+      --ink-faint: #767b86;
+      --accent: #6e91fa;
+      --accent-ink: #9ab3ff;
+      --accent-wash: #1a2340;
+      --accent-line: #2f3f6e;
+      --good: #57c98c;
+      --good-wash: #14291f;
+      --warn: #d8a24a;
+      --warn-wash: #2a2115;
+      --bad: #f08079;
+      --bad-wash: #2c1717;
+      --term-bg: #0a0b0e;
+      --term-ink: #d6dae4;
+      --term-faint: #7d8596;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -14px rgba(0, 0, 0, .7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0f1014;
+    --surface: #16181d;
+    --surface-sunk: #1b1e25;
+    --line: #292b31;
+    --line-strong: #3a3d46;
+    --ink: #f1f2f4;
+    --ink-muted: #a2a5aa;
+    --ink-faint: #767b86;
+    --accent: #6e91fa;
+    --accent-ink: #9ab3ff;
+    --accent-wash: #1a2340;
+    --accent-line: #2f3f6e;
+    --good: #57c98c;
+    --good-wash: #14291f;
+    --warn: #d8a24a;
+    --warn-wash: #2a2115;
+    --bad: #f08079;
+    --bad-wash: #2c1717;
+    --term-bg: #0a0b0e;
+    --term-ink: #d6dae4;
+    --term-faint: #7d8596;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -14px rgba(0, 0, 0, .7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 72px;
+  }
+
+  /* ── Masthead ─────────────────────────────────────────────────────────── */
+  .masthead {
+    border-bottom: 1px solid var(--line);
+    padding-block: 52px 32px;
+    display: grid;
+    gap: 20px;
+  }
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .bolt {
+    width: 22px; height: 22px;
+    display: grid; place-items: center;
+    border-radius: 6px;
+    background: var(--accent);
+    flex: none;
+  }
+  .bolt svg { width: 13px; height: 13px; fill: #fff; }
+  h1 {
+    margin: 0;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -.028em;
+    font-weight: 600;
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+  .standfirst {
+    margin: 0;
+    max-width: 68ch;
+    color: var(--ink-muted);
+    font-size: 16.5px;
+    text-wrap: pretty;
+  }
+  .meta {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  /* ── Scoreboard ───────────────────────────────────────────────────────── */
+  .scores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-block: 32px;
+  }
+  .score { background: var(--surface); padding: 18px 20px; display: grid; gap: 3px; }
+  .score b {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 27px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .score span { font-size: 12.5px; color: var(--ink-muted); }
+  .score.pass b { color: var(--good); }
+
+  /* ── Sections ─────────────────────────────────────────────────────────── */
+  section { margin-block: 52px; scroll-margin-top: 20px; }
+  h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    letter-spacing: -.02em;
+    font-weight: 600;
+    text-wrap: balance;
+  }
+  .lede { margin: 0 0 22px; color: var(--ink-muted); max-width: 72ch; text-wrap: pretty; }
+  h3 { margin: 0 0 4px; font-size: 15.5px; font-weight: 600; }
+
+  /* ── Findings ─────────────────────────────────────────────────────────── */
+  .findings { display: grid; gap: 14px; }
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--bad);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: grid;
+    gap: 10px;
+  }
+  .finding.fixed { border-left-color: var(--good); }
+  .finding-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .tag {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 2.5px 7px;
+    border-radius: 4px;
+    background: var(--good-wash);
+    color: var(--good);
+    white-space: nowrap;
+  }
+  .finding p { margin: 0; color: var(--ink-muted); max-width: 78ch; text-wrap: pretty; }
+  .quote {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 9px 12px;
+    color: var(--ink);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .quote em { color: var(--ink-faint); font-style: normal; }
+
+  /* ── Terminal ─────────────────────────────────────────────────────────── */
+  .term {
+    background: var(--term-bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .term-bar {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    color: var(--term-faint);
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #3a3f4b; flex: none; }
+  .term pre {
+    margin: 0;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--term-ink);
+    tab-size: 2;
+  }
+  .term .ok { color: #6fce9a; }
+  .term .dim { color: var(--term-faint); }
+  .term .hi { color: #8fa9ff; }
+
+  /* ── Tables ───────────────────────────────────────────────────────────── */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 520px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    background: var(--surface-sunk);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.num {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  td.file { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; }
+
+  /* ── Gallery ──────────────────────────────────────────────────────────── */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 20px;
+  }
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+  figure button {
+    display: block; padding: 0; border: 0; background: var(--surface-sunk);
+    cursor: zoom-in; width: 100%; line-height: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  figure img { width: 100%; height: auto; display: block; max-width: 100%; }
+  figcaption { padding: 12px 14px; display: grid; gap: 3px; }
+  figcaption b { font-size: 13.5px; font-weight: 600; }
+  figcaption span {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    word-break: break-all;
+  }
+  figure.wide { grid-column: 1 / -1; }
+
+  /* ── Lightbox ─────────────────────────────────────────────────────────── */
+  dialog#lightbox {
+    border: 0; padding: 0; background: transparent;
+    max-width: 96vw; max-height: 94vh;
+  }
+  dialog#lightbox::backdrop { background: rgba(10, 11, 14, .82); backdrop-filter: blur(3px); }
+  dialog#lightbox img {
+    max-width: 96vw; max-height: 84vh; width: auto; height: auto;
+    display: block; border-radius: 9px; border: 1px solid var(--line-strong);
+  }
+  dialog#lightbox p {
+    margin: 10px 2px 0; color: #e6e8ee; font-size: 13px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+  }
+
+  /* ── Bits ─────────────────────────────────────────────────────────────── */
+  .note {
+    background: var(--accent-wash);
+    border: 1px solid var(--accent-line);
+    border-radius: 10px;
+    padding: 15px 18px;
+    color: var(--ink);
+    max-width: 80ch;
+  }
+  .note p { margin: 0; text-wrap: pretty; }
+  .note p + p { margin-top: 9px; }
+  code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .88em;
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="kicker">
+      <span class="bolt" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"/></svg>
+      </span>
+      Figbolt · verification
+    </div>
+    <h1>Meeting scheduling, verified end to end</h1>
+    <p class="standfirst">
+      Evals, edge cases, unit tests and screenshots for the meeting pipeline — scheduling a
+      customer call, transcribing it, and turning what was said into CRM actions a human
+      approves. Everything on this page was run, not asserted: the eval output and the test
+      counts are copied from real runs, and all 25 screenshots are captures of the running
+      application, not mockups.
+    </p>
+    <div class="meta">
+      <span>28 September 2026</span>
+      <span>Figbolt · Next.js 16.3.4</span>
+      <span>workspace: Northwind Labs (demo data)</span>
+    </div>
+  </header>
+
+  <div class="scores">
+    <div class="score pass"><b>197</b><span>unit tests passing</span></div>
+    <div class="score pass"><b>21/21</b><span>eval cases passing</span></div>
+    <div class="score pass"><b>29</b><span>edge cases</span></div>
+    <div class="score"><b>25</b><span>screens captured</span></div>
+    <div class="score"><b>4</b><span>bugs the evals found</span></div>
+  </div>
+
+  <!-- ══ Findings ══════════════════════════════════════════════════════ -->
+  <section id="findings">
+    <h2>What the evals found</h2>
+    <p class="lede">
+      Nine new eval cases covering meeting transcripts were added to the corpus. On the first
+      run they scored <strong>17 of 21</strong>. All four failures were real defects in the
+      extraction engine, not bad test cases — spoken language breaks assumptions that written
+      email does not. Each is fixed below, and the corpus now scores 21 of 21.
+    </p>
+
+    <div class="findings">
+
+      <article class="finding fixed">
+        <div class="finding-head">
+          <h3>A word boundary made every plural invisible</h3>
+          <span class="tag">fixed</span>
+        </div>
+        <div class="quote">- cues: /\b(…|competitor|incumbent|…)/i
++ cues: /\b(…|competitors?|incumbent|…|evaluation with)/i</div>
+        <p>
+          <code>\bcompetitor\b</code> cannot match the word “competitors” — the boundary after
+          the final <em>r</em> fails against the <em>s</em>. Any sentence using the plural
+          scored as having no competitive objection at all. The eval case that caught it:
+          “we are already fairly deep into an evaluation with one of your competitors.”
+        </p>
+      </article>
+
+      <article class="finding fixed">
+        <div class="finding-head">
+          <h3>Spoken promises carry no listed action verb</h3>
+          <span class="tag">fixed</span>
+        </div>
+        <div class="quote">"We will have the procurement paperwork <em>back to you</em> by the end of next week."</div>
+        <p>
+          The commitment detector requires a modal plus an action verb. Here the verb is
+          “have”, and the promise actually lives in “back to you” — a construction nobody
+          writes in an email and everybody says out loud. The customer’s own commitments were
+          being dropped. Added <code>back to you</code>, <code>turn around</code> and
+          <code>hand over</code> as commitment phrases.
+        </p>
+      </article>
+
+      <article class="finding fixed">
+        <div class="finding-head">
+          <h3>Product signals recognised asking, but not depending</h3>
+          <span class="tag">fixed</span>
+        </div>
+        <div class="quote">"<em>Unless</em> the Salesforce sync lands before renewal I do not think we can justify keeping this."</div>
+        <p>
+          The request cues covered “we need X” and “is there a way to X”, but not a feature gap
+          expressed as a dependency — which is the commercially urgent form, because it is
+          attached to a renewal. It scored as silence. Added <code>unless</code>,
+          <code>waiting on</code>, <code>still no</code>, <code>depends on</code> and
+          <code>justify keeping</code>.
+        </p>
+      </article>
+
+      <article class="finding fixed">
+        <div class="finding-head">
+          <h3>Numbers said out loud were not numbers</h3>
+          <span class="tag">fixed</span>
+        </div>
+        <div class="quote">"We are about <em>four hundred</em> people now, mostly in Manchester."</div>
+        <p>
+          The fact extractor had no company-size rule, and its seat pattern required digits.
+          In a transcript, quantities are words. Added a cardinal parser for spelled-out
+          numbers up to 999,999, plus company-size and location rules. It returns
+          <code>null</code> rather than a guess for anything it cannot parse — “quite a lot of
+          people” produces no fact, which is the correct answer.
+        </p>
+      </article>
+
+    </div>
+
+    <div class="note" style="margin-top: 22px;">
+      <p>
+        <strong>One fix then over-fired, and that is worth recording.</strong> Widening the
+        request cues to catch “unless the sync lands” also made
+        <em>“we use Slack without any issues, it has been great”</em> register as a Slack
+        feature request — praise turned into a roadmap item.
+      </p>
+      <p>
+        It was caught by probing the change directly rather than trusting a green suite.
+        <code>without</code> is now constrained to a determiner form
+        (<code>without a|an|the</code>), and both directions are pinned as tests so the
+        trade-off cannot silently reverse.
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ Eval run ══════════════════════════════════════════════════════ -->
+  <section id="evals">
+    <h2>Eval run</h2>
+    <p class="lede">
+      The eval corpus replays each case against the current extraction engine and grades the
+      output. Cases come from two places: behaviours a person verified during development, and
+      corrections real users made in the product. Every case here is deterministic — no model
+      call, so a failure means the engine changed, not that a model had an off day.
+    </p>
+
+    <div class="term">
+      <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;npm run eval -- --no-propose</div>
+<pre>▸ Learning loop — Northwind Labs
+
+  promoted 0 new case(s) from usage
+
+  <span class="ok">21/21 passed (100%)</span> in 6709ms
+
+  extract_commitments      ████████████████  5/5  100%
+  extract_facts            ████████████████  1/1  100%
+  extract_objections       ████████████████  8/8  100%
+  extract_product_signals  ████████████████  7/7  100%</pre>
+    </div>
+
+    <p class="lede" style="margin-top: 22px;">
+      The nine cases added for meeting transcripts:
+    </p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Case</th><th>Task</th><th>Grader</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>two promises in one spoken sentence</td><td class="file">extract_commitments</td><td class="file">contains</td></tr>
+          <tr><td>hedged musing is not a commitment</td><td class="file">extract_commitments</td><td class="file">empty</td></tr>
+          <tr><td>the customer can make a commitment too</td><td class="file">extract_commitments</td><td class="file">contains</td></tr>
+          <tr><td>spoken price resistance is a price objection</td><td class="file">extract_objections</td><td class="file">category</td></tr>
+          <tr><td>a rep summarising the concern back is not a new objection</td><td class="file">extract_objections</td><td class="file">empty</td></tr>
+          <tr><td>an in-flight competitive evaluation is a competitor objection</td><td class="file">extract_objections</td><td class="file">category</td></tr>
+          <tr><td>a feature gap tied to renewal is a signal, not silence</td><td class="file">extract_product_signals</td><td class="file">non_empty</td></tr>
+          <tr><td>a reproducible crash is a bug</td><td class="file">extract_product_signals</td><td class="file">category</td></tr>
+          <tr><td>headcount and location stated out loud are facts</td><td class="file">extract_facts</td><td class="file">non_empty</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ Tests ═════════════════════════════════════════════════════════ -->
+  <section id="tests">
+    <h2>Test suite</h2>
+    <p class="lede">
+      197 tests across 11 files. The two added for this work are
+      <code>meetings.test.ts</code> and <code>edge-cases.test.ts</code>.
+    </p>
+
+    <div class="term">
+      <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;npx vitest run</div>
+<pre> RUN  v5.0.0 C:/Users/Aradhana Panigraphy/AI CRM
+
+ Test Files  <span class="ok">11 passed (11)</span>
+      Tests  <span class="ok">197 passed (197)</span>
+   Start at  00:08:42
+   Duration  16.19s (tests 67%, import 23%, transform 9%, setup 1%)</pre>
+    </div>
+
+    <div class="table-scroll" style="margin-top: 20px;">
+      <table>
+        <thead>
+          <tr><th>File</th><th>Tests</th><th>What it protects</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="file">jev-router.test.ts</td><td class="num">35</td><td>Model routing never blocks, guesses or leaks customer content</td></tr>
+          <tr><td class="file">edge-cases.test.ts</td><td class="num">29</td><td>Inputs that look fine in a demo and break in the field</td></tr>
+          <tr><td class="file">click-budget.test.ts</td><td class="num">23</td><td>Every everyday job stays within three clicks</td></tr>
+          <tr><td class="file">extraction.test.ts</td><td class="num">21</td><td>The offline extraction engine’s behaviour</td></tr>
+          <tr><td class="file">agent-tools.test.ts</td><td class="num">17</td><td>Tool schemas, previews and risk classes</td></tr>
+          <tr><td class="file">learning-loop.test.ts</td><td class="num">16</td><td>Corrections become eval cases and proposals</td></tr>
+          <tr><td class="file">meetings.test.ts</td><td class="num">15</td><td>ICS validity, provider defaults, human-review invariant</td></tr>
+          <tr><td class="file">authorization.test.ts</td><td class="num">13</td><td>An agent can never exceed its authoriser</td></tr>
+          <tr><td class="file">prompt-safety.test.ts</td><td class="num">12</td><td>Untrusted content cannot become instructions</td></tr>
+          <tr><td class="file">seo.test.ts</td><td class="num">11</td><td>No route holding customer data is indexable</td></tr>
+          <tr><td class="file">offline-agent-loop.test.ts</td><td class="num">5</td><td>The agent loop runs with no model provider</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ Edge cases ════════════════════════════════════════════════════ -->
+  <section id="edges">
+    <h2>Edge cases</h2>
+    <p class="lede">
+      One rule runs through all of these: for input we cannot interpret, produce
+      <em>nothing</em>, never a guess. A missed extraction costs a rep one manual entry; a
+      fabricated one puts a false claim in the CRM, where an answer will later cite it as
+      evidence.
+    </p>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Input</th><th>Why it breaks things</th><th>Expected</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Attendee named <code>Smith, Jane (Legal; VP)</code></td>
+            <td>An unescaped comma inside <code>CN=</code> truncates the ICS attendee list — the invite silently reaches fewer people</td>
+            <td>Escaped, all attendees present</td>
+          </tr>
+          <tr>
+            <td>Meeting spanning 25 Oct 2026 01:00</td>
+            <td>UK clocks go back; a local-time calculation changes the duration</td>
+            <td>Exactly 60 minutes, UTC stamps</td>
+          </tr>
+          <tr>
+            <td>Meeting spanning 31 Oct → 1 Nov</td>
+            <td>Month and midnight rollover</td>
+            <td>Correct DTSTART / DTEND</td>
+          </tr>
+          <tr>
+            <td>29 February 2028</td>
+            <td>Leap day</td>
+            <td><code>20280229T120000Z</code></td>
+          </tr>
+          <tr>
+            <td>Title with an emoji at octet 75</td>
+            <td>Folding by character count splits a multi-byte codepoint — renders fine in an ASCII test, corrupts in Outlook</td>
+            <td>Folded on an octet boundary, character intact</td>
+          </tr>
+          <tr>
+            <td>Description of CJK text</td>
+            <td>Every character is multi-byte, so a naive fold overruns the 75-octet limit on every line</td>
+            <td>No line over 75 octets</td>
+          </tr>
+          <tr>
+            <td>Title of only <code>;;,,\\</code> and newlines</td>
+            <td>Each character terminates a property value early</td>
+            <td>Valid VEVENT, no raw newline in a property</td>
+          </tr>
+          <tr>
+            <td>Empty and whitespace-only text</td>
+            <td>Extractors receiving nothing</td>
+            <td>Empty result from all four extractors</td>
+          </tr>
+          <tr>
+            <td>“Will you send the SOW by Friday?”</td>
+            <td>Modal plus action verb, but it is a request — logging it makes the follow-up agent chase a promise nobody made</td>
+            <td>Not a commitment</td>
+          </tr>
+          <tr>
+            <td>“Should I log a call with Acme?”</td>
+            <td>Contains a command verb; treating it as a command writes to the CRM from a question</td>
+            <td>Not parsed as a command</td>
+          </tr>
+          <tr>
+            <td>“We use Slack without any issues”</td>
+            <td>Praise containing a product name and a widened cue</td>
+            <td>Not a feature request</td>
+          </tr>
+          <tr>
+            <td>Transcript with CRLF endings</td>
+            <td>Pasted from a Windows notetaker</td>
+            <td>Parsed into the right number of turns</td>
+          </tr>
+          <tr>
+            <td><code>00:14:32 - and then…</code></td>
+            <td>A timestamp prefix read as a speaker name</td>
+            <td>Rejected as a speaker line</td>
+          </tr>
+          <tr>
+            <td>“quite a lot of people”</td>
+            <td>Unparseable quantity</td>
+            <td>No company-size fact at all</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ Safety ════════════════════════════════════════════════════════ -->
+  <section id="safety">
+    <h2>The invariant under all of it</h2>
+    <p class="lede">
+      A meeting transcript is untrusted content. A customer can say anything into it, including
+      an instruction. So the module that turns a meeting into CRM actions has exactly one exit,
+      and it is the approval queue.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Rule</th><th>How it is enforced</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Everything waits for a human</td>
+            <td>Every proposal is written as a pending approval regardless of the tool’s own risk class. A test asserts <code>dispatchTool</code> is never called in that module.</td>
+          </tr>
+          <tr>
+            <td>Nothing malformed reaches the queue</td>
+            <td>Each payload is parsed with the real tool’s Zod schema first; failures are discarded, not queued.</td>
+          </tr>
+          <tr>
+            <td>The approver sees the real effect</td>
+            <td>Previews come from the registered tool’s own <code>preview()</code>, never a paraphrase — and the payload approved is the payload executed.</td>
+          </tr>
+          <tr>
+            <td>A transcript can never email a customer</td>
+            <td>It may propose <code>draft_email</code> and never <code>send_email</code>. Asserted against the source.</td>
+          </tr>
+          <tr>
+            <td>Nothing reaches a real calendar by default</td>
+            <td><code>CALENDAR_PROVIDER</code> defaults to <code>console</code>, which delivers nothing. Live writes need it set <em>and</em> <code>INTEGRATION_MODE=live</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ Screens ═══════════════════════════════════════════════════════ -->
+  <section id="screens">
+    <h2>Every screen</h2>
+    <p class="lede">
+      All 25 captured from the running application by
+      <code>scripts/capture-screenshots.mjs</code>, signed in as the demo owner. Click any
+      image to enlarge. The company names and figures are seeded demo data, not a real
+      customer’s.
+    </p>
+
+    <div class="note" style="margin-bottom: 24px;">
+      <p>
+        <strong>The first version of the capture script lied.</strong> It shot after a fixed
+        delay, and produced three screenshots of <em>closed</em> dialogs that it reported as
+        successes — the exact failure mode these documents usually ship with.
+      </p>
+      <p>
+        It now waits for the element it opened and records a failure if that element never
+        appears. Chasing that down also surfaced two real bugs: the command bar’s own
+        placeholder still said “Figbolt” after the assistant was renamed to Bolt, and
+        <code>&lt;body&gt;</code> was missing <code>suppressHydrationWarning</code>, so browser
+        extensions injecting <code>isolation: isolate</code> produced a hydration error.
+      </p>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <!-- ══ Reproduce ═════════════════════════════════════════════════════ -->
+  <section id="repro">
+    <h2>Reproducing this</h2>
+    <div class="term">
+      <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;from the repository root</div>
+<pre><span class="dim"># type checking</span>
+npx tsc --noEmit
+
+<span class="dim"># 197 unit tests</span>
+npx vitest run
+
+<span class="dim"># 21 eval cases against the extraction engine</span>
+npm run eval -- --no-propose
+
+<span class="dim"># 25 screenshots (needs a dev server on :3000 and seeded demo data)</span>
+npm run dev
+node scripts/capture-screenshots.mjs <span class="hi">http://localhost:3000</span> docs/screenshots</pre>
+    </div>
+    <p class="lede" style="margin-top: 18px;">
+      Capture against <code>localhost</code>, not <code>127.0.0.1</code> — the dev server’s HMR
+      socket fails on the raw address and the page never becomes interactive, so every
+      click-driven capture silently produces a static page.
+    </p>
+  </section>
+
+  <footer>
+    Generated for the Figbolt meeting-scheduling work · figbolt.com · demo workspace data is fictional
+  </footer>
+</div>
+
+<dialog id="lightbox">
+  <img id="lightbox-img" alt="">
+  <p id="lightbox-cap"></p>
+</dialog>
+
+<script>
+  // Screens, in the order the capture script walks them. `wide` marks the
+  // full-page captures, which are tall and deserve the full row.
+  const SHOTS = [
+    ['01-landing', 'Landing page', 'figbolt.com', true],
+    ['18-why-figbolt', 'Why Figbolt — public comparison page', 'figbolt.com/why · no sign-in', true],
+    ['02-login', 'Sign in', '/login'],
+    ['03-home', 'Home', '/home'],
+    ['04-ask-bolt', 'Ask Bolt', '/ask'],
+    ['05-inbox', 'Inbox', '/inbox'],
+    ['06-accounts', 'Accounts', '/accounts'],
+    ['07-contacts', 'Contacts', '/contacts'],
+    ['08-deals', 'Deals', '/opportunities'],
+    ['09-tasks', 'Tasks', '/tasks'],
+    ['10-meetings', 'Meetings', '/meetings'],
+    ['23-schedule-meeting', 'Schedule a meeting — the new flow', '/meetings · modal'],
+    ['24-meeting-detail', 'Meeting detail — transcript capture and CRM actions', '/meetings/[id]', true],
+    ['21-bolt-launcher', 'Ask Bolt launcher, hovered', 'every page · bottom right'],
+    ['22-command-bar', 'Command bar, opened from the launcher', 'any page · ⌘K'],
+    ['11-agents', 'Agents and approvals', '/agents'],
+    ['12-automations', 'Automations', '/automations'],
+    ['13-prospecting', 'Prospecting', '/prospecting'],
+    ['14-analytics', 'Analytics', '/analytics'],
+    ['15-product-signals', 'Product signals', '/product-signals'],
+    ['16-knowledge', 'Knowledge', '/knowledge'],
+    ['17-learning', 'Learning loop', '/learning', true],
+    ['19-integrations', 'Integrations', '/integrations'],
+    ['20-settings', 'Settings', '/settings'],
+    ['25-dark-mode', 'Dark theme', '/home · dark'],
+  ];
+
+  const gallery = document.getElementById('gallery');
+  const dialog = document.getElementById('lightbox');
+  const dialogImg = document.getElementById('lightbox-img');
+  const dialogCap = document.getElementById('lightbox-cap');
+
+  for (const [file, title, where, wide] of SHOTS) {
+    const fig = document.createElement('figure');
+    if (wide) fig.className = 'wide';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Enlarge: ' + title);
+
+    const img = document.createElement('img');
+    img.src = 'screenshots/' + file + '.png';
+    img.alt = title;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    btn.appendChild(img);
+    btn.addEventListener('click', () => {
+      dialogImg.src = img.src;
+      dialogImg.alt = title;
+      dialogCap.textContent = title + '  ·  ' + where;
+      dialog.showModal();
+    });
+
+    const cap = document.createElement('figcaption');
+    const b = document.createElement('b');
+    b.textContent = title;
+    const s = document.createElement('span');
+    s.textContent = where;
+    cap.append(b, s);
+
+    fig.append(btn, cap);
+    gallery.appendChild(fig);
+  }
+
+  // Click the backdrop to dismiss.
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>

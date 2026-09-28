@@ -1,19 +1,24 @@
-import { PageShell } from '@/components/layout/app-shell';
+import type { Metadata } from 'next';
+import Link from 'next/link';
 import {
   Badge,
   Card,
   CardBody,
   CardHeader,
   CardTitle,
-  PageHeader,
   SectionLabel,
 } from '@/components/ui/primitives';
 import { CLICK_JOBS, CLICK_CEILING, budgetSummary } from '@/lib/ux/click-budget';
-
-export const metadata = { title: 'Why Figbolt' };
+import { absoluteUrl, SITE } from '@/lib/seo';
+import { getCurrentUser } from '@/lib/auth/session';
 
 /**
- * The explainer tab.
+ * The comparison page — public, and deliberately so.
+ *
+ * This is the page a rep sends a prospect who asks "why not just use
+ * Salesforce", so it has to be readable without an account. It sits outside
+ * the (app) route group for that reason: no session, no sidebar, and one of
+ * only two routes in the whole product that opt into being indexed.
  *
  * Written for a person, not a procurement form: short sentences, no jargon,
  * and a claim only where the product actually does the thing. The click counts
@@ -25,17 +30,54 @@ export const metadata = { title: 'Why Figbolt' };
  * gets discounted entirely; naming the real trade-offs is what makes the rest
  * worth believing.
  */
-export default function WhyPage() {
+
+const TITLE = 'Why Figbolt instead of Salesforce or HubSpot';
+const DESCRIPTION =
+  'Salesforce and HubSpot are filing cabinets somebody has to fill in. Figbolt builds the record from your email, meetings and tickets — and says where it is still the weaker choice.';
+
+export const metadata: Metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  robots: { index: true, follow: true },
+  alternates: { canonical: '/why' },
+  keywords: [
+    'Salesforce alternative',
+    'HubSpot alternative',
+    'AI CRM comparison',
+    'CRM without data entry',
+    'agent-native CRM',
+  ],
+  openGraph: {
+    type: 'article',
+    url: absoluteUrl('/why'),
+    siteName: SITE.name,
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: SITE.locale,
+  },
+  twitter: { card: 'summary_large_image', title: TITLE, description: DESCRIPTION },
+};
+
+export default async function WhyPage() {
   const budget = budgetSummary();
   const oneStep = CLICK_JOBS.filter((j) => j.steps.length <= 1).length;
+  const signedIn = Boolean(await getCurrentUser());
 
   return (
-    <PageShell>
-      <PageHeader
-        eyebrow={<Badge tone="accent">In plain language</Badge>}
-        title="Why Figbolt is different"
-        description="What this is, what it does that a traditional CRM does not, and where the older tools are still the better choice."
-      />
+    <main className="min-h-dvh bg-bg">
+      <SiteHeader signedIn={signedIn} />
+
+      <div className="mx-auto w-full max-w-5xl px-5 sm:px-8 py-10 lg:py-14">
+        <header>
+          <Badge tone="accent">In plain language</Badge>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-text text-balance sm:text-4xl">
+            Why Figbolt is different
+          </h1>
+          <p className="mt-3 max-w-2xl text-base text-text-muted text-pretty">
+            What this is, what it does that a traditional CRM does not, and where the older
+            tools are still the better choice.
+          </p>
+        </header>
 
       {/* ── The one-liner ─────────────────────────────────────────────────── */}
       <Card className="mt-6 border-accent-border bg-accent-subtle">
@@ -176,11 +218,87 @@ export default function WhyPage() {
       </Card>
 
       <p className="mt-6 max-w-3xl text-sm text-text-muted text-pretty">
-        The short version: if your problem is that you need a hundred teams on one heavily
-        customised system, buy the incumbent. If your problem is that your CRM is out of date
-        because nobody has time to update it, that is the problem Figbolt is built for.
-      </p>
-    </PageShell>
+          The short version: if your problem is that you need a hundred teams on one heavily
+          customised system, buy the incumbent. If your problem is that your CRM is out of date
+          because nobody has time to update it, that is the problem Figbolt is built for.
+        </p>
+
+        <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-border pt-8">
+          <Link
+            href={signedIn ? '/home' : '/signup'}
+            className="rounded-[var(--radius-md)] bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
+          >
+            {signedIn ? 'Go to dashboard' : 'Start free'}
+          </Link>
+          <Link
+            href="/"
+            className="rounded-[var(--radius-sm)] px-3 py-2.5 text-sm text-text-muted transition-colors hover:text-text"
+          >
+            Back to the overview
+          </Link>
+        </div>
+      </div>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-6 sm:px-8">
+          <span className="text-2xs text-text-subtle">
+            Figbolt — sweet deals, lightning fast.
+          </span>
+          <span className="text-2xs text-text-subtle">
+            Comparisons describe generally documented product behaviour, not benchmarks.
+          </span>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+/** The public shell's header. Mirrors the landing page so the two feel like one site. */
+function SiteHeader({ signedIn }: { signedIn: boolean }) {
+  return (
+    <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5 sm:px-8">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
+            <svg viewBox="0 0 24 24" className="size-4.5" aria-hidden>
+              <path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z" fill="currentColor" />
+            </svg>
+          </span>
+          <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
+        </Link>
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <Link
+            href="/"
+            className="hidden rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text sm:block"
+          >
+            Overview
+          </Link>
+          {signedIn ? (
+            <Link
+              href="/home"
+              className="rounded-[var(--radius-md)] bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
+            >
+              Go to dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-[var(--radius-md)] bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
+              >
+                Start free
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
+    </header>
   );
 }
 

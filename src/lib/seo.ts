@@ -50,7 +50,7 @@ export function absoluteUrl(path = '/'): string {
  * Routes a crawler may index. Everything else inherits the root layout's
  * `robots: { index: false }`, and robots.txt disallows the app outright.
  */
-export const PUBLIC_ROUTES = ['/'] as const;
+export const PUBLIC_ROUTES = ['/', '/why'] as const;
 
 /**
  * Route prefixes that hold customer data or a session, and must never be
@@ -79,7 +79,6 @@ export const PRIVATE_PREFIXES = [
   '/settings',
   '/signup',
   '/tasks',
-  '/why',
 ] as const;
 
 /**

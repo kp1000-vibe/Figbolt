@@ -25,6 +25,7 @@ const PASSWORD = 'demo1234';
 const PAGES = [
   ['01-landing', '/', { anon: true, full: true }],
   ['02-login', '/login', { anon: true }],
+  ['18-why-figbolt', '/why', { anon: true, full: true }],
   ['03-home', '/home', {}],
   ['04-ask-bolt', '/ask', {}],
   ['05-inbox', '/inbox', {}],
@@ -40,7 +41,6 @@ const PAGES = [
   ['15-product-signals', '/product-signals', {}],
   ['16-knowledge', '/knowledge', {}],
   ['17-learning', '/learning', { full: true }],
-  ['18-why-figbolt', '/why', { full: true }],
   ['19-integrations', '/integrations', {}],
   ['20-settings', '/settings', {}],
 ];

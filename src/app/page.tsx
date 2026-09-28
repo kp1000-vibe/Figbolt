@@ -78,6 +78,12 @@ export default async function LandingPage() {
             >
               For agents
             </a>
+            <Link
+              href="/why"
+              className="hidden rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text sm:block"
+            >
+              vs Salesforce
+            </Link>
             {signedIn ? (
               <Link
                 href="/home"

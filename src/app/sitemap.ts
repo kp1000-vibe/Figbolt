@@ -19,6 +19,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: absoluteUrl(route),
     lastModified: BUILT_AT,
     changeFrequency: 'weekly' as const,
-    priority: route === '/' ? 1 : 0.7,
+    priority: route === '/' ? 1 : 0.8,
   }));
 }

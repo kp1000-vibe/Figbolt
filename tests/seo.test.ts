@@ -25,8 +25,11 @@ describe('nothing is indexable by accident', () => {
     expect(rootMetadata.robots).toMatchObject({ index: false, follow: false });
   });
 
-  it('opts exactly one page into indexing', () => {
-    // Every page.tsx under src/app, checked for an explicit index: true.
+  it('opts exactly the declared public routes into indexing', () => {
+    // Every page.tsx under src/app, checked for an explicit index: true. The
+    // set must match PUBLIC_ROUTES exactly - a page that opts in without being
+    // declared public would be indexed but absent from the sitemap, and a
+    // declared public page that forgot to opt in would be listed but noindex.
     const pages = globSync('**/page.tsx', { cwd: APP }).sort();
     expect(pages.length).toBeGreaterThan(10);
 
@@ -35,8 +38,12 @@ describe('nothing is indexable by accident', () => {
       return /index:\s*true/.test(source);
     });
 
+    const expected = PUBLIC_ROUTES.map((route) =>
+      route === '/' ? 'page.tsx' : `${route.replace(/^\//, '')}${path.sep}page.tsx`,
+    ).sort();
+
     // If this fails, a route holding customer data just became crawlable.
-    expect(indexable).toEqual(['page.tsx']);
+    expect(indexable.sort()).toEqual(expected);
   });
 
   it('indexes the landing page with a canonical URL', () => {
