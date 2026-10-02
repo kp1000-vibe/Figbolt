@@ -1,0 +1,1042 @@
+[
+  {
+    "route": "/home",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "a",
+        "label": "Open inbox",
+        "size": "57x16"
+      },
+      {
+        "tag": "a",
+        "label": "Continental — Dock Scheduling",
+        "size": "166x22"
+      },
+      {
+        "tag": "a",
+        "label": "Halcyon Health — Clinical Ops",
+        "size": "166x22"
+      }
+    ],
+    "failingCount": 28,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 40
+  },
+  {
+    "route": "/ask",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      }
+    ],
+    "failingCount": 3,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 47
+  },
+  {
+    "route": "/inbox",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "a",
+        "label": "Meridian Telecom",
+        "size": "122x22"
+      },
+      {
+        "tag": "a",
+        "label": "Meridian — Provisioning Workflows",
+        "size": "166x22"
+      },
+      {
+        "tag": "a",
+        "label": "Kestrel Analytics",
+        "size": "115x22"
+      }
+    ],
+    "failingCount": 54,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 115
+  },
+  {
+    "route": "/accounts",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "At risk",
+        "size": "52x22"
+      },
+      {
+        "tag": "button",
+        "label": "No contact 30d+",
+        "size": "104x22"
+      }
+    ],
+    "failingCount": 5,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 58
+  },
+  {
+    "route": "/contacts",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "End user31",
+        "size": "80x22"
+      },
+      {
+        "tag": "button",
+        "label": "Champion26",
+        "size": "88x22"
+      },
+      {
+        "tag": "button",
+        "label": "Influencer17",
+        "size": "86x22"
+      }
+    ],
+    "failingCount": 16,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 208
+  },
+  {
+    "route": "/opportunities",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [
+      {
+        "tag": "svg",
+        "cls": "size-5 shrink-0",
+        "right": 917
+      },
+      {
+        "tag": "path",
+        "cls": "",
+        "right": 913
+      },
+      {
+        "tag": "path",
+        "cls": "",
+        "right": 915
+      }
+    ],
+    "clippedCount": 3,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "At risk",
+        "size": "52x22"
+      },
+      {
+        "tag": "button",
+        "label": "No contact 14d+",
+        "size": "104x22"
+      },
+      {
+        "tag": "button",
+        "label": "Closing in 30d",
+        "size": "91x22"
+      }
+    ],
+    "failingCount": 59,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 30
+  },
+  {
+    "route": "/tasks",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "All open5",
+        "size": "76x22"
+      },
+      {
+        "tag": "button",
+        "label": "Overdue5",
+        "size": "76x22"
+      },
+      {
+        "tag": "button",
+        "label": "Due today5",
+        "size": "84x22"
+      }
+    ],
+    "failingCount": 44,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 27
+  },
+  {
+    "route": "/meetings",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Past55",
+        "size": "58x22"
+      },
+      {
+        "tag": "button",
+        "label": "Upcoming0",
+        "size": "82x22"
+      },
+      {
+        "tag": "button",
+        "label": "Awaiting processing0",
+        "size": "129x22"
+      }
+    ],
+    "failingCount": 6,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 26
+  },
+  {
+    "route": "/agents",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      }
+    ],
+    "failingCount": 3,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 27
+  },
+  {
+    "route": "/automations",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      }
+    ],
+    "failingCount": 3,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 27
+  },
+  {
+    "route": "/prospecting",
+    "scrollsSideways": false,
+    "bodyWidth": 484,
+    "viewport": 390,
+    "clipped": [
+      {
+        "tag": "div",
+        "cls": "rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var",
+        "right": 484
+      },
+      {
+        "tag": "div",
+        "cls": "px-4 pb-4 flex-1",
+        "right": 483
+      },
+      {
+        "tag": "div",
+        "cls": "flex items-start justify-between gap-3",
+        "right": 467
+      },
+      {
+        "tag": "div",
+        "cls": "shrink-0 text-right",
+        "right": 467
+      },
+      {
+        "tag": "div",
+        "cls": "text-lg font-semibold tabular text-text",
+        "right": 467
+      },
+      {
+        "tag": "div",
+        "cls": "text-3xs uppercase tracking-wide text-text-subtle",
+        "right": 467
+      }
+    ],
+    "clippedCount": 300,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "a",
+        "label": "Vertex Manufacturing",
+        "size": "114x16"
+      },
+      {
+        "tag": "a",
+        "label": "Willow Creek Bank",
+        "size": "98x16"
+      },
+      {
+        "tag": "a",
+        "label": "Brightpath Retail",
+        "size": "88x16"
+      }
+    ],
+    "failingCount": 17,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 49
+  },
+  {
+    "route": "/analytics",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "a",
+        "label": "Beacon — Outage Coordination — quiet",
+        "size": "166x22"
+      },
+      {
+        "tag": "a",
+        "label": "Cascade — Exception Management — qui",
+        "size": "166x22"
+      },
+      {
+        "tag": "a",
+        "label": "Atlas — Maintenance Escalations — qu",
+        "size": "166x22"
+      }
+    ],
+    "failingCount": 41,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 40
+  },
+  {
+    "route": "/product-signals",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Security28",
+        "size": "76x22"
+      },
+      {
+        "tag": "button",
+        "label": "Integration12",
+        "size": "91x22"
+      },
+      {
+        "tag": "a",
+        "label": "Audit logging",
+        "size": "88x20"
+      }
+    ],
+    "failingCount": 9,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 25
+  },
+  {
+    "route": "/knowledge",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      }
+    ],
+    "failingCount": 3,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 26
+  },
+  {
+    "route": "/learning",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      }
+    ],
+    "failingCount": 3,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 26
+  },
+  {
+    "route": "/integrations",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      },
+      {
+        "tag": "a",
+        "label": "Docs",
+        "size": "52x16"
+      },
+      {
+        "tag": "a",
+        "label": "Docs",
+        "size": "52x16"
+      },
+      {
+        "tag": "a",
+        "label": "Docs",
+        "size": "52x16"
+      }
+    ],
+    "failingCount": 47,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 69
+  },
+  {
+    "route": "/settings",
+    "scrollsSideways": false,
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [
+      {
+        "tag": "button",
+        "label": "Light",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "Dark",
+        "size": "70x22"
+      },
+      {
+        "tag": "button",
+        "label": "System",
+        "size": "70x22"
+      }
+    ],
+    "failingCount": 3,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26"
+      }
+    ],
+    "tightCount": 29
+  }
+]

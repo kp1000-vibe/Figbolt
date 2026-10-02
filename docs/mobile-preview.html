@@ -1,0 +1,264 @@
+<title>Figbolt Mobile Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #f6f7f9;
+    --surface: #ffffff;
+    --line: #e3e6ec;
+    --ink: #15171c;
+    --ink-soft: #5a6070;
+    --ink-faint: #868d9c;
+    --accent: #3b5bd4;
+    --accent-ink: #2f4bc3;
+    --accent-wash: #eef1fc;
+    --accent-line: #c6cff4;
+    --good: #1f7a4d;
+    --good-wash: #e9f5ee;
+    --warn-ink: #8a5a00;
+    --warn-wash: #fdf3e1;
+    --bezel: #1b1d23;
+    --shadow: 0 1px 2px rgba(18,20,26,.05), 0 18px 40px -24px rgba(18,20,26,.45);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0e0f13;
+      --surface: #16181d;
+      --line: #272a31;
+      --ink: #f0f1f4;
+      --ink-soft: #a4a9b5;
+      --ink-faint: #767c89;
+      --accent: #6e91fa;
+      --accent-ink: #9ab3ff;
+      --accent-wash: #171f36;
+      --accent-line: #2d3a5c;
+      --good: #57c98c;
+      --good-wash: #13261d;
+      --warn-ink: #d8a24a;
+      --warn-wash: #27200f;
+      --bezel: #000000;
+      --shadow: 0 1px 2px rgba(0,0,0,.5), 0 20px 44px -26px rgba(0,0,0,.9);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0e0f13;
+    --surface: #16181d;
+    --line: #272a31;
+    --ink: #f0f1f4;
+    --ink-soft: #a4a9b5;
+    --ink-faint: #767c89;
+    --accent: #6e91fa;
+    --accent-ink: #9ab3ff;
+    --accent-wash: #171f36;
+    --accent-line: #2d3a5c;
+    --good: #57c98c;
+    --good-wash: #13261d;
+    --warn-ink: #d8a24a;
+    --warn-wash: #27200f;
+    --bezel: #000000;
+    --shadow: 0 1px 2px rgba(0,0,0,.5), 0 20px 44px -26px rgba(0,0,0,.9);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding-inline: 20px; padding-block: 0 80px; }
+
+  header.top { padding-block: 48px 28px; border-bottom: 1px solid var(--line); display: grid; gap: 16px; }
+  .kicker {
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--accent-ink);
+    display: flex; align-items: center; gap: 9px;
+  }
+  .bolt { width: 22px; height: 22px; border-radius: 6px; background: var(--accent); display: grid; place-items: center; }
+  .bolt svg { width: 13px; height: 13px; fill: #fff; }
+  h1 { margin: 0; font-size: clamp(27px, 4.5vw, 38px); line-height: 1.08; letter-spacing: -.03em; font-weight: 600; text-wrap: balance; }
+  .standfirst { margin: 0; max-width: 64ch; color: var(--ink-soft); font-size: 16px; text-wrap: pretty; }
+
+  .status {
+    margin-top: 26px;
+    border: 1px solid var(--accent-line); background: var(--accent-wash);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .status h2 { margin: 0 0 10px; font-size: 15px; font-weight: 600; }
+  .steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .steps li { display: flex; gap: 10px; align-items: baseline; font-size: 14px; color: var(--ink-soft); }
+  .pill {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .06em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex: none;
+  }
+  .pill.done { background: var(--good-wash); color: var(--good); }
+  .pill.now { background: var(--warn-wash); color: var(--warn-ink); }
+  .pill.next { background: var(--surface); color: var(--ink-faint); border: 1px solid var(--line); }
+
+  h2.section { margin: 44px 0 4px; font-size: 20px; letter-spacing: -.02em; font-weight: 600; }
+  .lede { margin: 0 0 24px; color: var(--ink-soft); max-width: 70ch; text-wrap: pretty; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 30px 24px; }
+
+  figure { margin: 0; display: grid; gap: 12px; justify-items: center; }
+
+  /* A phone bezel, so the screenshots read as a device rather than a crop. */
+  .phone {
+    width: 100%; max-width: 250px;
+    background: var(--bezel);
+    border-radius: 34px;
+    padding: 9px;
+    box-shadow: var(--shadow);
+    cursor: zoom-in;
+    border: 0;
+    display: block;
+    line-height: 0;
+    transition: transform .18s ease;
+  }
+  .phone:hover { transform: translateY(-3px); }
+  .phone:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .phone img { width: 100%; height: auto; display: block; border-radius: 26px; max-width: 100%; }
+
+  figcaption { text-align: center; display: grid; gap: 2px; }
+  figcaption b { font-size: 13.5px; font-weight: 600; }
+  figcaption span { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-faint); }
+
+  dialog {
+    border: 0; padding: 0; background: transparent; max-width: 94vw; max-height: 94vh;
+  }
+  dialog::backdrop { background: rgba(10,11,14,.85); backdrop-filter: blur(4px); }
+  dialog img { max-width: min(420px, 92vw); max-height: 88vh; width: auto; border-radius: 28px; display: block; }
+  dialog p { margin: 10px 0 0; text-align: center; color: #e8eaef; font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+
+  .note {
+    margin-top: 34px; border: 1px solid var(--line); background: var(--surface);
+    border-radius: 12px; padding: 18px 20px; max-width: 78ch;
+  }
+  .note p { margin: 0; color: var(--ink-soft); text-wrap: pretty; }
+  .note p + p { margin-top: 10px; }
+  code {
+    font-family: "IBM Plex Mono", monospace; font-size: .88em;
+    background: var(--ground); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px;
+  }
+  footer { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 20px; color: var(--ink-faint); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="kicker">
+      <span class="bolt" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"/></svg></span>
+      Figbolt · mobile
+    </div>
+    <h1>What the mobile app will show</h1>
+    <p class="standfirst">
+      Captured from the running app at iPhone 13 size (390&times;844). The Capacitor shell
+      renders this exact UI, so these are the real screens — what the native build adds is the
+      chrome around them: push notifications, biometric unlock, camera and a store listing.
+    </p>
+  </header>
+
+  <div class="status">
+    <h2>Where the native build actually is</h2>
+    <ul class="steps">
+      <li><span class="pill done">done</span> Mobile parity measured across 17 routes — no route scrolls sideways</li>
+      <li><span class="pill done">done</span> Touch targets and iOS input zoom fixed in the shared primitives</li>
+      <li><span class="pill now">now</span> Clipped content on Pipeline and Prospecting</li>
+      <li><span class="pill next">next</span> PWA layer — manifest, icons, offline shell</li>
+      <li><span class="pill next">next</span> Capacitor projects for iOS and Android</li>
+      <li><span class="pill next">next</span> Native push, biometric unlock, camera</li>
+      <li><span class="pill next">you</span> Apple Developer + Play accounts, signing, submission</li>
+    </ul>
+  </div>
+
+  <h2 class="section">Screens</h2>
+  <p class="lede">Tap any screen to enlarge. Company names and figures are seeded demo data.</p>
+  <div class="grid" id="grid"></div>
+
+  <div class="note">
+    <p>
+      <strong>Want to try it on your own phone right now?</strong> Open
+      <code>figbolt.com</code> and sign in — it is the same app. On iOS, Share → Add to Home
+      Screen already gives you an icon and a full-screen window; the PWA step below makes that
+      properly offline-capable, and the Capacitor step turns it into a real store app.
+    </p>
+    <p>
+      The two screens still being fixed are <strong>Pipeline</strong> and
+      <strong>Prospecting</strong>, where some content sits past the right edge on a narrow
+      screen. Everything else measured clean.
+    </p>
+  </div>
+
+  <footer>Figbolt — captured at 390&times;844, device pixel ratio 3 · demo workspace data is fictional</footer>
+</div>
+
+<dialog id="lightbox">
+  <img id="lightbox-img" alt="">
+  <p id="lightbox-cap"></p>
+</dialog>
+
+<script>
+  const SCREENS = [
+    ['01-home', 'Home', '/home'],
+    ['02-ask-bolt', 'Ask Bolt', '/ask'],
+    ['11-command-bar', 'Command bar', 'anywhere'],
+    ['03-inbox', 'Inbox', '/inbox'],
+    ['04-accounts', 'Accounts', '/accounts'],
+    ['05-opportunities', 'Pipeline', '/opportunities'],
+    ['06-meetings', 'Meetings', '/meetings'],
+    ['07-tasks', 'Tasks', '/tasks'],
+    ['08-agents', 'Agents & approvals', '/agents'],
+    ['09-integrations', 'Integrations', '/integrations'],
+    ['10-analytics', 'Analytics', '/analytics'],
+    ['00-login', 'Sign in', '/login'],
+  ];
+
+  const grid = document.getElementById('grid');
+  const dialog = document.getElementById('lightbox');
+  const dialogImg = document.getElementById('lightbox-img');
+  const dialogCap = document.getElementById('lightbox-cap');
+
+  for (const [file, label, route] of SCREENS) {
+    const fig = document.createElement('figure');
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'phone';
+    btn.setAttribute('aria-label', 'Enlarge ' + label);
+
+    const img = document.createElement('img');
+    img.src = 'mobile/screens/' + file + '.png';
+    img.alt = label + ' on a phone';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    btn.appendChild(img);
+    btn.addEventListener('click', () => {
+      dialogImg.src = img.src;
+      dialogImg.alt = label;
+      dialogCap.textContent = label + '  ·  ' + route;
+      dialog.showModal();
+    });
+
+    const cap = document.createElement('figcaption');
+    const b = document.createElement('b');
+    b.textContent = label;
+    const s = document.createElement('span');
+    s.textContent = route;
+    cap.append(b, s);
+
+    fig.append(btn, cap);
+    grid.appendChild(fig);
+  }
+
+  dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+</script>

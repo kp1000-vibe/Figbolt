@@ -32,10 +32,10 @@ const buttonVariants = cva(
       },
       size: {
         xs: 'h-6 rounded-[var(--radius-xs)] px-2 text-2xs [&_svg]:size-3',
-        sm: 'h-7.5 rounded-[var(--radius-sm)] px-2.5 text-xs [&_svg]:size-3.5',
-        md: 'h-9 rounded-[var(--radius-md)] px-3.5 text-sm [&_svg]:size-4',
+        sm: 'h-9 sm:h-7.5 rounded-[var(--radius-sm)] px-2.5 text-xs [&_svg]:size-3.5',
+        md: 'h-11 sm:h-9 rounded-[var(--radius-md)] px-3.5 text-sm [&_svg]:size-4',
         lg: 'h-11 rounded-[var(--radius-md)] px-5 text-sm [&_svg]:size-4',
-        icon: 'size-8 rounded-[var(--radius-sm)] [&_svg]:size-4',
+        icon: 'size-11 sm:size-8 rounded-[var(--radius-sm)] [&_svg]:size-4',
         iconSm: 'size-6.5 rounded-[var(--radius-xs)] [&_svg]:size-3.5',
       },
     },
@@ -140,7 +140,14 @@ export function Input({ className, ...props }: React.ComponentPropsWithoutRef<'i
   return (
     <input
       className={cn(
-        'h-9 w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 text-sm text-text',
+        // 44px and 16px on touch, 36px and 14px from `sm` up.
+        //
+        // The font size is not cosmetic: iOS Safari and WKWebView zoom the
+        // whole page when a focused input is under 16px, which throws the
+        // layout off and cannot be dismissed without pinching. `text-base`
+        // on small screens is the fix, and it is invisible on desktop.
+        'h-11 w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 text-base text-text',
+        'sm:h-9 sm:text-sm',
         'placeholder:text-text-subtle',
         'transition-[border-color,box-shadow] focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/15',
         'disabled:cursor-not-allowed disabled:bg-bg-muted disabled:text-text-subtle',
@@ -156,7 +163,9 @@ export function Textarea({ className, ...props }: React.ComponentPropsWithoutRef
   return (
     <textarea
       className={cn(
-        'w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2 text-sm text-text',
+        // See Input: 16px on small screens stops iOS zooming on focus.
+        'w-full rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2 text-base text-text',
+        'sm:text-sm',
         'placeholder:text-text-subtle',
         'transition-[border-color,box-shadow] focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/15',
         'disabled:cursor-not-allowed disabled:bg-bg-muted',
@@ -172,7 +181,8 @@ export function Select({ className, children, ...props }: React.ComponentPropsWi
     <div className="relative">
       <select
         className={cn(
-          'h-9 w-full appearance-none rounded-[var(--radius-md)] border border-border bg-surface pr-8 pl-3 text-sm text-text',
+          'h-11 w-full appearance-none rounded-[var(--radius-md)] border border-border bg-surface pr-8 pl-3 text-base text-text',
+          'sm:h-9 sm:text-sm',
           'transition-[border-color,box-shadow] focus:border-accent focus:outline-none focus:ring-3 focus:ring-accent/15',
           'disabled:cursor-not-allowed disabled:bg-bg-muted',
           className,
