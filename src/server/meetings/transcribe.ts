@@ -59,7 +59,9 @@ class DisabledTranscriptionProvider implements TranscriptionProvider {
   readonly transcribes = false;
   async transcribe(): Promise<never> {
     throw new ValidationError(
-      'Automatic transcription is off. Set TRANSCRIPTION_PROVIDER, or paste the transcript in.',
+      'Automatic transcription is off. Run a local Whisper server and set ' +
+        'TRANSCRIPTION_PROVIDER=local for a free, self-hosted option — or paste ' +
+        'the transcript in.',
     );
   }
 }
@@ -109,10 +111,32 @@ class DeepgramProvider implements TranscriptionProvider {
   }
 }
 
-class OpenAiTranscriptionProvider implements TranscriptionProvider {
-  readonly name = 'openai';
+/**
+ * Any server speaking Whisper's `/v1/audio/transcriptions` API.
+ *
+ * One implementation covers two very different deployments, because the wire
+ * format is the same:
+ *
+ *   openai   api.openai.com, paid per minute
+ *   local    whisper.cpp, faster-whisper, Speaches or LocalAI on your own
+ *            hardware - free, open source, and the audio never leaves it
+ *
+ * The local case is the one that matters for a small team. Meeting
+ * transcription billed per minute is a cost that scales with exactly the
+ * behaviour the product is trying to encourage, which is a bad shape; a
+ * self-hosted Whisper removes it entirely.
+ */
+class WhisperApiProvider implements TranscriptionProvider {
   readonly transcribes = true;
-  constructor(private readonly apiKey: string) {}
+
+  constructor(
+    readonly name: string,
+    private readonly baseUrl: string,
+    private readonly model: string,
+    private readonly apiKey: string | null,
+    /** Local CPU transcription is far slower than a hosted GPU. */
+    private readonly timeoutMs: number,
+  ) {}
 
   async transcribe(recordingUrl: string) {
     const audio = await fetch(recordingUrl, { signal: AbortSignal.timeout(120_000) });
@@ -120,17 +144,20 @@ class OpenAiTranscriptionProvider implements TranscriptionProvider {
 
     const form = new FormData();
     form.append('file', new Blob([await audio.arrayBuffer()]), 'recording.mp4');
-    form.append('model', 'whisper-1');
+    form.append('model', this.model);
     form.append('response_format', 'verbose_json');
 
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const res = await fetch(`${this.baseUrl.replace(/\/$/, '')}/audio/transcriptions`, {
       method: 'POST',
-      headers: { authorization: `Bearer ${this.apiKey}` },
+      // A local server needs no key; sending an empty bearer breaks some.
+      headers: this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {},
       body: form,
-      signal: AbortSignal.timeout(300_000),
+      signal: AbortSignal.timeout(this.timeoutMs),
     });
     if (!res.ok) {
-      throw new Error(`Whisper rejected the recording: ${res.status} ${await res.text().catch(() => '')}`.slice(0, 300));
+      throw new Error(
+        `${this.name} rejected the recording: ${res.status} ${await res.text().catch(() => '')}`.slice(0, 300),
+      );
     }
 
     const json = (await res.json()) as {
@@ -139,9 +166,11 @@ class OpenAiTranscriptionProvider implements TranscriptionProvider {
       segments?: { text?: string; start?: number }[];
     };
 
-    // Whisper does not diarize. Rather than invent speakers, every segment is
-    // attributed to "Unknown speaker", which the resolver below then treats as
-    // customer speech — the conservative direction.
+    // Whisper does not diarize, in either deployment. Rather than invent
+    // speakers, every segment is attributed to "Unknown speaker", which the
+    // resolver below then treats as customer speech — the conservative
+    // direction. Pair it with a notetaker, or edit the transcript, if speaker
+    // attribution matters for a given meeting.
     const utterances = (json.segments ?? [])
       .filter((s) => (s.text ?? '').trim().length > 0)
       .map((s) => ({
@@ -160,13 +189,45 @@ class OpenAiTranscriptionProvider implements TranscriptionProvider {
 
 export function getTranscriptionProvider(): TranscriptionProvider {
   const live = env.INTEGRATION_MODE === 'live';
+
+  /*
+   * `local` is deliberately NOT gated on INTEGRATION_MODE.
+   *
+   * That flag is a data-egress guard: it exists so a copied production .env
+   * cannot start shipping customer audio to a third party from someone's
+   * laptop. A self-hosted Whisper sends the audio nowhere - it is the same
+   * machine, or one the operator runs - so there is nothing to guard against,
+   * and gating it would only make the free option the hardest to turn on.
+   */
+  if (env.TRANSCRIPTION_PROVIDER === 'local') {
+    return new WhisperApiProvider(
+      'local-whisper',
+      env.WHISPER_BASE_URL,
+      env.WHISPER_MODEL,
+      null,
+      // A CPU transcribing an hour of audio can take several minutes.
+      30 * 60_000,
+    );
+  }
+
   if (env.TRANSCRIPTION_PROVIDER === 'deepgram' && live && env.DEEPGRAM_API_KEY) {
     return new DeepgramProvider(env.DEEPGRAM_API_KEY);
   }
   if (env.TRANSCRIPTION_PROVIDER === 'openai' && live && env.OPENAI_API_KEY) {
-    return new OpenAiTranscriptionProvider(env.OPENAI_API_KEY);
+    return new WhisperApiProvider(
+      'openai',
+      'https://api.openai.com/v1',
+      'whisper-1',
+      env.OPENAI_API_KEY,
+      5 * 60_000,
+    );
   }
   return new DisabledTranscriptionProvider();
+}
+
+/** True when transcription costs nothing per minute. */
+export function transcriptionIsFree(): boolean {
+  return env.TRANSCRIPTION_PROVIDER === 'local';
 }
 
 export function transcriptionAvailable(): boolean {

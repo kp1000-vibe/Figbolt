@@ -27,8 +27,24 @@ export type ResolvedConnector =
 /** Providers with a working sync adapter, for the UI and for tests. */
 export const SYNCABLE: readonly IntegrationProvider[] = ['gmail', 'google_calendar'];
 
+/**
+ * Providers that genuinely work but not through the sync path.
+ *
+ * `local_whisper` is a transcription backend, not a source to pull from:
+ * there is nothing to list or page, and "connecting" it means pointing at a
+ * URL. It is still a real, working integration, so it must count as
+ * implemented - otherwise the honesty check below would force it to
+ * understate itself as catalogue-only.
+ */
+export const IMPLEMENTED_NON_SYNC: readonly IntegrationProvider[] = ['local_whisper'];
+
 export function hasConnector(provider: IntegrationProvider): boolean {
   return SYNCABLE.includes(provider);
+}
+
+/** Backed by real code somewhere, whether or not it syncs. */
+export function isImplemented(provider: IntegrationProvider): boolean {
+  return hasConnector(provider) || IMPLEMENTED_NON_SYNC.includes(provider);
 }
 
 /**

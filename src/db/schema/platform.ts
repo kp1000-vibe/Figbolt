@@ -317,6 +317,11 @@ export const INTEGRATION_PROVIDERS = [
   'fireflies',
   'otter',
   'gong',
+  // Free / open source, self-hosted - no per-minute transcription bill
+  'local_whisper',
+  'meetily',
+  'amurex',
+  'jitsi',
   // Scheduling links
   'calendly',
   'cal_com',

@@ -36,7 +36,12 @@ export type ProviderKind =
  * asks the operator to paste a key, and `none` is a catalogue entry with no
  * connection path yet.
  */
-export type ProviderAuth = 'oauth2' | 'api_key' | 'none';
+export type ProviderAuth =
+  | 'oauth2'
+  | 'api_key'
+  /** You run the service; Figbolt is pointed at your instance by URL. */
+  | 'self_hosted'
+  | 'none';
 
 /**
  * How far a connector is actually built. Stated per provider rather than
@@ -79,6 +84,9 @@ const LEVELS: Partial<Record<IntegrationProvider, ProviderLevel>> = {
   // Real sync adapters live in ./connectors - these two actually pull data.
   gmail: 'adapter',
   google_calendar: 'adapter',
+  // Self-hosted Whisper is implemented in server/meetings/transcribe.ts
+  // and needs no OAuth - pointing at a URL is the whole connection.
+  local_whisper: 'adapter',
   google_drive: 'oauth',
   outlook_mail: 'oauth',
   outlook_calendar: 'oauth',
@@ -658,6 +666,81 @@ export const PROVIDERS: ProviderSpec[] = [
     requiredEnv: ['XERO_OAUTH_CLIENT_ID', 'XERO_OAUTH_CLIENT_SECRET'],
     perUser: false,
     docsUrl: 'https://developer.xero.com/documentation',
+  },
+  /* ── Free and open source ──────────────────────────────────────────────
+   * Transcription billed per minute scales with exactly the behaviour this
+   * product is trying to encourage, which is the wrong shape for a small
+   * team. Each of these removes that cost: you run them, and the audio never
+   * leaves hardware you control.
+   */
+  {
+    provider: 'local_whisper',
+    name: 'Local Whisper',
+    vendor: 'OpenAI Whisper (self-hosted)',
+    kind: 'notetaker',
+    description:
+      'Transcribe recordings on your own hardware with whisper.cpp, faster-whisper, Speaches or LocalAI. Free, open source, and no audio leaves the machine.',
+    capabilities: [
+      'Unlimited transcription at no per-minute cost',
+      'Audio never leaves hardware you control',
+      'Works offline and in demo mode',
+      'Any server speaking the Whisper /v1/audio/transcriptions API',
+    ],
+    scopes: [],
+    requiredEnv: ['WHISPER_BASE_URL'],
+    perUser: false,
+    docsUrl: 'https://github.com/ggml-org/whisper.cpp',
+    auth: 'self_hosted',
+  },
+  {
+    provider: 'meetily',
+    name: 'Meetily',
+    vendor: 'Zackriya Solutions (open source)',
+    kind: 'notetaker',
+    description:
+      'Self-hosted open-source meeting assistant that captures audio locally and produces transcripts and notes.',
+    capabilities: [
+      'Local capture and transcription',
+      'Transcript and summary intake',
+      'No per-seat or per-minute vendor cost',
+    ],
+    scopes: [],
+    requiredEnv: ['MEETILY_BASE_URL'],
+    perUser: true,
+    docsUrl: 'https://github.com/Zackriya-Solutions/meeting-minutes',
+    auth: 'self_hosted',
+  },
+  {
+    provider: 'amurex',
+    name: 'Amurex',
+    vendor: 'Amurex (open source)',
+    kind: 'notetaker',
+    description:
+      'Open-source meeting copilot that records, transcribes and summarises calls; self-host it and point Figbolt at your instance.',
+    capabilities: ['Transcript intake', 'Summary and action-item intake', 'Self-hosted, no vendor lock-in'],
+    scopes: [],
+    requiredEnv: ['AMUREX_BASE_URL'],
+    perUser: true,
+    docsUrl: 'https://github.com/thepersonalaicompany/amurex',
+    auth: 'self_hosted',
+  },
+  {
+    provider: 'jitsi',
+    name: 'Jitsi Meet',
+    vendor: 'Jitsi (open source)',
+    kind: 'meetings',
+    description:
+      'Open-source video meetings you can self-host. Recordings are handed to transcription like any other source.',
+    capabilities: [
+      'Self-hosted video meetings',
+      'Recording intake for transcription',
+      'No per-host licence',
+    ],
+    scopes: [],
+    requiredEnv: ['JITSI_BASE_URL'],
+    perUser: false,
+    docsUrl: 'https://jitsi.github.io/handbook/',
+    auth: 'self_hosted',
   },
 ];
 

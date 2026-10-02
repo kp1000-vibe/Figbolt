@@ -84,8 +84,15 @@ const schema = z.object({
    * Speech-to-text for meeting recordings. `none` means no automatic
    * transcription; an uploaded transcript still works.
    */
-  TRANSCRIPTION_PROVIDER: z.enum(['none', 'deepgram', 'openai']).default('none'),
+  TRANSCRIPTION_PROVIDER: z.enum(['none', 'local', 'deepgram', 'openai']).default('none'),
   DEEPGRAM_API_KEY: optional,
+  /**
+   * A self-hosted Whisper server speaking the OpenAI audio API: whisper.cpp's
+   * whisper-server, faster-whisper-server, Speaches or LocalAI all do. Free,
+   * open source, and the audio never leaves the machine you run it on.
+   */
+  WHISPER_BASE_URL: z.string().url().default('http://127.0.0.1:8080/v1'),
+  WHISPER_MODEL: z.string().default('whisper-1'),
 
   STORAGE_PROVIDER: z.enum(['local', 's3']).default('local'),
   S3_ENDPOINT: optional,

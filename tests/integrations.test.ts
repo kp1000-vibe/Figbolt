@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { INTEGRATION_PROVIDERS, type IntegrationProvider } from '@/db/schema';
 import {
   PROVIDERS,
@@ -6,7 +6,12 @@ import {
   providerLevel,
   findProvider,
 } from '@/server/integrations/providers';
-import { SYNCABLE, hasConnector } from '@/server/integrations/connectors';
+import {
+  IMPLEMENTED_NON_SYNC,
+  SYNCABLE,
+  hasConnector,
+  isImplemented,
+} from '@/server/integrations/connectors';
 
 /**
  * The integration catalogue, and the one thing it must not do.
@@ -56,16 +61,27 @@ describe('the catalogue is internally consistent', () => {
 });
 
 describe('a connector cannot claim more than it does', () => {
-  it('only marks a provider "adapter" when a real connector exists', async () => {
+  it('only marks a provider "adapter" when real code backs it', async () => {
     const claiming = PROVIDERS.filter((p) => providerLevel(p) === 'adapter').map((p) => p.provider);
 
-    // This is the load-bearing assertion. Promoting a provider in the level
-    // table without writing its connector would ship a page that says "Syncs"
-    // next to something that pulls nothing.
+    // The load-bearing assertion. Promoting a provider in the level table
+    // without writing its implementation would ship a page that says "Syncs"
+    // next to something that does nothing.
+    //
+    // Not every adapter is a *sync* adapter, though: local_whisper is a
+    // transcription backend with nothing to page through, so the check is
+    // "backed by code", not "appears in SYNCABLE".
     for (const provider of claiming) {
-      expect(hasConnector(provider), `${provider} claims to sync`).toBe(true);
+      expect(isImplemented(provider), `${provider} claims to be built`).toBe(true);
     }
-    expect([...claiming].sort()).toEqual([...SYNCABLE].sort());
+    expect([...claiming].sort()).toEqual([...SYNCABLE, ...IMPLEMENTED_NON_SYNC].sort());
+  });
+
+  it('keeps the sync registry and the transcription registry distinct', () => {
+    // A transcription backend must never be offered a "Sync now" button.
+    for (const provider of IMPLEMENTED_NON_SYNC) {
+      expect(hasConnector(provider), `${provider} is not a sync source`).toBe(false);
+    }
   });
 
   it('only marks a provider "oauth" when an OAuth spec exists for it', async () => {
@@ -81,6 +97,9 @@ describe('a connector cannot claim more than it does', () => {
 
     for (const spec of PROVIDERS) {
       const level = providerLevel(spec);
+      // Only OAuth connectors need an OAuth spec. A self-hosted provider is
+      // connected by pointing at a URL, and a key-based one by pasting a key.
+      if (providerAuth(spec) !== 'oauth2') continue;
       if (level === 'oauth' || level === 'adapter') {
         expect(map.includes(`${spec.provider}:`), `${spec.provider} claims OAuth`).toBe(true);
       }
@@ -89,9 +108,17 @@ describe('a connector cannot claim more than it does', () => {
 
   it('defaults an unlisted provider to catalogue, never to something better', () => {
     // The safe direction: a new provider understates until promoted.
-    const unlisted = PROVIDERS.filter(
-      (p) => !['gmail', 'google_calendar', 'google_drive', 'outlook_mail', 'outlook_calendar', 'onedrive', 'ms_teams'].includes(p.provider),
-    );
+    const promoted = [
+      'gmail',
+      'google_calendar',
+      'google_drive',
+      'outlook_mail',
+      'outlook_calendar',
+      'onedrive',
+      'ms_teams',
+      'local_whisper',
+    ];
+    const unlisted = PROVIDERS.filter((p) => !promoted.includes(p.provider));
     expect(unlisted.length).toBeGreaterThan(25);
     for (const spec of unlisted) {
       expect(providerLevel(spec), spec.provider).toBe('catalogue');
@@ -163,5 +190,69 @@ describe('sync reports what happened', () => {
     );
     expect(source).toContain('MAX_PAGES_PER_RUN');
     expect(source).toContain('syncCursor: cursor');
+  });
+});
+
+describe('the free transcription path', () => {
+  const ORIGINAL = { ...process.env };
+
+  afterEach(() => {
+    process.env = { ...ORIGINAL };
+    vi.resetModules();
+  });
+
+  it('is off until asked for', async () => {
+    delete process.env['TRANSCRIPTION_PROVIDER'];
+    vi.resetModules();
+    const { getTranscriptionProvider } = await import('@/server/meetings/transcribe');
+    expect(getTranscriptionProvider().transcribes).toBe(false);
+  });
+
+  it('works without INTEGRATION_MODE=live, unlike the paid providers', async () => {
+    // INTEGRATION_MODE is a data-egress guard. A self-hosted Whisper sends the
+    // audio nowhere, so gating it would only make the free option the hardest
+    // one to turn on - which is backwards.
+    process.env['TRANSCRIPTION_PROVIDER'] = 'local';
+    process.env['INTEGRATION_MODE'] = 'demo';
+    vi.resetModules();
+
+    const { getTranscriptionProvider, transcriptionIsFree } = await import(
+      '@/server/meetings/transcribe'
+    );
+    const provider = getTranscriptionProvider();
+
+    expect(provider.transcribes).toBe(true);
+    expect(provider.name).toBe('local-whisper');
+    expect(transcriptionIsFree()).toBe(true);
+  });
+
+  it('still gates the paid providers behind live mode', async () => {
+    process.env['TRANSCRIPTION_PROVIDER'] = 'openai';
+    process.env['OPENAI_API_KEY'] = 'sk-test';
+    process.env['INTEGRATION_MODE'] = 'demo';
+    vi.resetModules();
+
+    const { getTranscriptionProvider, transcriptionIsFree } = await import(
+      '@/server/meetings/transcribe'
+    );
+    expect(getTranscriptionProvider().transcribes).toBe(false);
+    expect(transcriptionIsFree()).toBe(false);
+  });
+
+  it('defaults to a loopback address, so nothing leaves by accident', async () => {
+    delete process.env['WHISPER_BASE_URL'];
+    vi.resetModules();
+    const { env } = await import('@/lib/env');
+    expect(env.WHISPER_BASE_URL).toMatch(/^https?:\/\/(127\.0\.0\.1|localhost)/);
+  });
+
+  it('declares the free notetakers as self-hosted, not as a paid service', () => {
+    for (const provider of ['local_whisper', 'meetily', 'amurex', 'jitsi']) {
+      const spec = findProvider(provider as IntegrationProvider);
+      expect(spec, provider).toBeDefined();
+      expect(providerAuth(spec!), provider).toBe('self_hosted');
+      // No API key to buy, so none should be demanded.
+      expect(spec!.requiredEnv.some((e) => /KEY|SECRET|TOKEN/.test(e)), provider).toBe(false);
+    }
   });
 });
