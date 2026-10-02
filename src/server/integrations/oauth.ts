@@ -101,8 +101,11 @@ const MICROSOFT: OAuthSpec = {
 const OAUTH: Partial<Record<IntegrationProvider, OAuthSpec>> = {
   gmail: GOOGLE,
   google_calendar: GOOGLE,
+  google_drive: GOOGLE,
   outlook_mail: MICROSOFT,
   outlook_calendar: MICROSOFT,
+  onedrive: MICROSOFT,
+  ms_teams: MICROSOFT,
 };
 
 export function supportsOAuth(provider: IntegrationProvider): boolean {

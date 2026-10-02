@@ -17,13 +17,37 @@ import type { IntegrationProvider } from '@/db/schema';
 export type ProviderKind =
   | 'mail'
   | 'calendar'
-  | 'messaging'
   | 'meetings'
+  | 'notetaker'
+  | 'scheduling'
+  | 'calling'
+  | 'storage'
   | 'crm'
-  | 'product_analytics'
   | 'support'
+  | 'product_analytics'
   | 'billing'
+  | 'accounting'
+  | 'messaging'
   | 'social';
+
+/**
+ * How a connector authenticates. This drives what the Connect button does:
+ * an `oauth2` provider redirects to a consent screen, an `api_key` provider
+ * asks the operator to paste a key, and `none` is a catalogue entry with no
+ * connection path yet.
+ */
+export type ProviderAuth = 'oauth2' | 'api_key' | 'none';
+
+/**
+ * How far a connector is actually built. Stated per provider rather than
+ * implied, because a list of logos that all look connectable is the most
+ * common lie an integrations page tells.
+ *
+ *   adapter    OAuth (or key) plus a working sync adapter - data really flows
+ *   oauth      the connection works; no sync adapter yet, so nothing is pulled
+ *   catalogue  declared with correct metadata; demo fixtures only
+ */
+export type ProviderLevel = 'adapter' | 'oauth' | 'catalogue';
 
 export type ProviderSpec = {
   provider: IntegrationProvider;
@@ -39,7 +63,36 @@ export type ProviderSpec = {
   /** Per-user connection (a mailbox) vs workspace-wide (Slack, Salesforce). */
   perUser: boolean;
   docsUrl: string;
+  /** Defaults to 'oauth2'; set explicitly where the provider uses a key. */
+  auth?: ProviderAuth;
 };
+
+/**
+ * Build state per connector, kept in one table rather than scattered across
+ * the specs so the honest answer to "what actually works?" is one glance.
+ *
+ * Anything absent is `catalogue`. Promote an entry here only when the adapter
+ * it claims genuinely exists - this map is what the UI shows a buyer.
+ */
+const LEVELS: Partial<Record<IntegrationProvider, ProviderLevel>> = {
+  // OAuth flow implemented in server/integrations/oauth.ts.
+  // Real sync adapters live in ./connectors - these two actually pull data.
+  gmail: 'adapter',
+  google_calendar: 'adapter',
+  google_drive: 'oauth',
+  outlook_mail: 'oauth',
+  outlook_calendar: 'oauth',
+  onedrive: 'oauth',
+  ms_teams: 'oauth',
+};
+
+export function providerLevel(spec: ProviderSpec): ProviderLevel {
+  return LEVELS[spec.provider] ?? 'catalogue';
+}
+
+export function providerAuth(spec: ProviderSpec): ProviderAuth {
+  return spec.auth ?? 'oauth2';
+}
 
 export const PROVIDERS: ProviderSpec[] = [
   {
@@ -254,6 +307,357 @@ export const PROVIDERS: ProviderSpec[] = [
     requiredEnv: ['LINKEDIN_CLIENT_ID', 'LINKEDIN_CLIENT_SECRET'],
     perUser: true,
     docsUrl: 'https://learn.microsoft.com/linkedin',
+  },
+  /* ── Notetakers ────────────────────────────────────────────────────────
+   * The highest-value category for this product: a notetaker produces the
+   * transcript, and the transcript is what the memory engine actually reads.
+   * Most of these authenticate with a workspace API key rather than OAuth.
+   */
+  {
+    provider: 'granola',
+    name: 'Granola',
+    vendor: 'Granola',
+    kind: 'notetaker',
+    description: 'Import Granola meeting notes and transcripts so commitments and objections are extracted automatically.',
+    capabilities: [
+      'Transcript and enhanced-notes import',
+      'Attendee resolution to contacts',
+      'Commitment, objection and product-signal extraction',
+      'Proposed CRM actions for human approval',
+    ],
+    scopes: ['notes:read'],
+    requiredEnv: ['GRANOLA_API_KEY'],
+    perUser: true,
+    docsUrl: 'https://www.granola.ai',
+    auth: 'api_key',
+  },
+  {
+    provider: 'fathom',
+    name: 'Fathom',
+    vendor: 'Fathom',
+    kind: 'notetaker',
+    description: 'Pull Fathom call recordings and transcripts into the customer timeline.',
+    capabilities: ['Transcript import', 'Recording links', 'Action-item extraction'],
+    scopes: ['recordings:read'],
+    requiredEnv: ['FATHOM_API_KEY'],
+    perUser: true,
+    docsUrl: 'https://fathom.video',
+    auth: 'api_key',
+  },
+  {
+    provider: 'fireflies',
+    name: 'Fireflies.ai',
+    vendor: 'Fireflies',
+    kind: 'notetaker',
+    description: 'Import Fireflies transcripts and speaker labels for every recorded call.',
+    capabilities: ['GraphQL transcript import', 'Speaker diarisation', 'Topic and question extraction'],
+    scopes: ['transcript:read'],
+    requiredEnv: ['FIREFLIES_API_KEY'],
+    perUser: false,
+    docsUrl: 'https://docs.fireflies.ai',
+    auth: 'api_key',
+  },
+  {
+    provider: 'otter',
+    name: 'Otter.ai',
+    vendor: 'Otter',
+    kind: 'notetaker',
+    description: 'Import Otter conversations so meeting notes become structured customer memory.',
+    capabilities: ['Conversation import', 'Speaker labels', 'Summary extraction'],
+    scopes: ['conversations:read'],
+    requiredEnv: ['OTTER_API_KEY'],
+    perUser: true,
+    docsUrl: 'https://otter.ai',
+    auth: 'api_key',
+  },
+  {
+    provider: 'gong',
+    name: 'Gong',
+    vendor: 'Gong.io',
+    kind: 'notetaker',
+    description: 'Import Gong call transcripts and trackers alongside your own meeting record.',
+    capabilities: ['Call and transcript import', 'Tracker and topic signals', 'Talk-ratio metrics'],
+    scopes: ['api:calls:read:transcript', 'api:calls:read:basic'],
+    requiredEnv: ['GONG_ACCESS_KEY', 'GONG_ACCESS_SECRET'],
+    perUser: false,
+    docsUrl: 'https://help.gong.io/docs/receive-data-via-api',
+    auth: 'api_key',
+  },
+
+  /* ── Meetings ──────────────────────────────────────────────────────────── */
+  {
+    provider: 'ms_teams',
+    name: 'Microsoft Teams',
+    vendor: 'Microsoft',
+    kind: 'meetings',
+    description: 'Sync Teams meetings, recordings and transcripts through Microsoft Graph.',
+    capabilities: ['Online meeting sync', 'Recording and transcript retrieval', 'Attendee resolution'],
+    scopes: ['OnlineMeetings.Read', 'OnlineMeetingTranscript.Read.All', 'offline_access'],
+    requiredEnv: ['MICROSOFT_OAUTH_CLIENT_ID', 'MICROSOFT_OAUTH_CLIENT_SECRET'],
+    perUser: true,
+    docsUrl: 'https://learn.microsoft.com/graph/api/resources/onlinemeeting',
+  },
+
+  /* ── Scheduling ────────────────────────────────────────────────────────── */
+  {
+    provider: 'calendly',
+    name: 'Calendly',
+    vendor: 'Calendly',
+    kind: 'scheduling',
+    description: 'Capture inbound bookings as meetings, with the invitee resolved to a contact.',
+    capabilities: ['Scheduled-event sync', 'Invitee questions captured as facts', 'Automatic account linking'],
+    scopes: ['default'],
+    requiredEnv: ['CALENDLY_OAUTH_CLIENT_ID', 'CALENDLY_OAUTH_CLIENT_SECRET'],
+    perUser: true,
+    docsUrl: 'https://developer.calendly.com',
+  },
+  {
+    provider: 'cal_com',
+    name: 'Cal.com',
+    vendor: 'Cal.com',
+    kind: 'scheduling',
+    description: 'Capture Cal.com bookings as meetings on the customer timeline.',
+    capabilities: ['Booking sync', 'Attendee resolution', 'Cancellation and reschedule tracking'],
+    scopes: ['bookings:read'],
+    requiredEnv: ['CAL_COM_API_KEY'],
+    perUser: true,
+    docsUrl: 'https://cal.com/docs/api-reference',
+    auth: 'api_key',
+  },
+
+  /* ── Calling ───────────────────────────────────────────────────────────── */
+  {
+    provider: 'aircall',
+    name: 'Aircall',
+    vendor: 'Aircall',
+    kind: 'calling',
+    description: 'Log calls, durations and recordings against the right contact automatically.',
+    capabilities: ['Call log sync', 'Recording and transcript links', 'Contact matching by number'],
+    scopes: ['public_api'],
+    requiredEnv: ['AIRCALL_API_ID', 'AIRCALL_API_TOKEN'],
+    perUser: false,
+    docsUrl: 'https://developer.aircall.io',
+    auth: 'api_key',
+  },
+  {
+    provider: 'dialpad',
+    name: 'Dialpad',
+    vendor: 'Dialpad',
+    kind: 'calling',
+    description: 'Sync Dialpad calls and AI transcripts into the customer record.',
+    capabilities: ['Call and transcript sync', 'Contact matching by number', 'Sentiment signals'],
+    scopes: ['calls:read', 'recordings:read'],
+    requiredEnv: ['DIALPAD_API_KEY'],
+    perUser: false,
+    docsUrl: 'https://developers.dialpad.com',
+    auth: 'api_key',
+  },
+  {
+    provider: 'twilio',
+    name: 'Twilio',
+    vendor: 'Twilio',
+    kind: 'calling',
+    description: 'Attach Twilio call and SMS activity to the contact it belongs to.',
+    capabilities: ['Call and message log sync', 'Recording retrieval', 'Contact matching by number'],
+    scopes: [],
+    requiredEnv: ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN'],
+    perUser: false,
+    docsUrl: 'https://www.twilio.com/docs/usage/api',
+    auth: 'api_key',
+  },
+
+  /* ── Documents and storage ─────────────────────────────────────────────── */
+  {
+    provider: 'google_drive',
+    name: 'Google Drive',
+    vendor: 'Google',
+    kind: 'storage',
+    description: 'Index proposals, decks and contracts so answers can cite the document they came from.',
+    capabilities: ['Document indexing', 'Change-watch for updated files', 'Citation back to the source file'],
+    scopes: ['https://www.googleapis.com/auth/drive.readonly', 'https://www.googleapis.com/auth/userinfo.email'],
+    requiredEnv: ['GOOGLE_OAUTH_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_SECRET'],
+    perUser: true,
+    docsUrl: 'https://developers.google.com/drive',
+  },
+  {
+    provider: 'box',
+    name: 'Box',
+    vendor: 'Box',
+    kind: 'storage',
+    description: 'Index Box folders so contracts and proposals are searchable alongside email and meetings.',
+    capabilities: ['Folder and file indexing', 'Text extraction', 'Citation back to the source file'],
+    scopes: ['root_readonly'],
+    requiredEnv: ['BOX_OAUTH_CLIENT_ID', 'BOX_OAUTH_CLIENT_SECRET'],
+    perUser: true,
+    docsUrl: 'https://developer.box.com/guides/authentication/oauth2',
+  },
+  {
+    provider: 'dropbox',
+    name: 'Dropbox',
+    vendor: 'Dropbox',
+    kind: 'storage',
+    description: 'Index Dropbox documents into the knowledge base.',
+    capabilities: ['File indexing', 'Text extraction', 'Incremental sync by cursor'],
+    scopes: ['files.metadata.read', 'files.content.read'],
+    requiredEnv: ['DROPBOX_OAUTH_CLIENT_ID', 'DROPBOX_OAUTH_CLIENT_SECRET'],
+    perUser: true,
+    docsUrl: 'https://www.dropbox.com/developers/documentation',
+  },
+  {
+    provider: 'onedrive',
+    name: 'OneDrive & SharePoint',
+    vendor: 'Microsoft',
+    kind: 'storage',
+    description: 'Index OneDrive and SharePoint documents through Microsoft Graph.',
+    capabilities: ['Drive item indexing', 'Delta sync', 'Citation back to the source file'],
+    scopes: ['Files.Read.All', 'Sites.Read.All', 'offline_access'],
+    requiredEnv: ['MICROSOFT_OAUTH_CLIENT_ID', 'MICROSOFT_OAUTH_CLIENT_SECRET'],
+    perUser: true,
+    docsUrl: 'https://learn.microsoft.com/graph/api/resources/onedrive',
+  },
+  {
+    provider: 'notion',
+    name: 'Notion',
+    vendor: 'Notion',
+    kind: 'storage',
+    description: 'Index Notion pages and databases so internal knowledge is answerable.',
+    capabilities: ['Page and database indexing', 'Block text extraction', 'Incremental re-index'],
+    scopes: [],
+    requiredEnv: ['NOTION_OAUTH_CLIENT_ID', 'NOTION_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://developers.notion.com',
+  },
+
+  /* ── CRM import ────────────────────────────────────────────────────────── */
+  {
+    provider: 'pipedrive',
+    name: 'Pipedrive',
+    vendor: 'Pipedrive',
+    kind: 'crm',
+    description: 'Import organisations, people and deals from Pipedrive, then keep building on top of them.',
+    capabilities: ['Organisation, person and deal import', 'Pipeline stage mapping', 'Owner mapping to teammates'],
+    scopes: ['deals:read', 'contacts:read'],
+    requiredEnv: ['PIPEDRIVE_OAUTH_CLIENT_ID', 'PIPEDRIVE_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://developers.pipedrive.com',
+  },
+  {
+    provider: 'attio',
+    name: 'Attio',
+    vendor: 'Attio',
+    kind: 'crm',
+    description: 'Import Attio records and lists.',
+    capabilities: ['Record and list import', 'Attribute mapping', 'Owner mapping to teammates'],
+    scopes: ['record:read', 'object_configuration:read'],
+    requiredEnv: ['ATTIO_API_KEY'],
+    perUser: false,
+    docsUrl: 'https://developers.attio.com',
+    auth: 'api_key',
+  },
+  {
+    provider: 'airtable',
+    name: 'Airtable',
+    vendor: 'Airtable',
+    kind: 'crm',
+    description: 'Import a pipeline that currently lives in an Airtable base.',
+    capabilities: ['Base and table import', 'Field mapping to CRM records', 'One-off migration or recurring sync'],
+    scopes: ['data.records:read', 'schema.bases:read'],
+    requiredEnv: ['AIRTABLE_OAUTH_CLIENT_ID', 'AIRTABLE_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://airtable.com/developers/web/api/oauth-reference',
+  },
+
+  /* ── Support desks ─────────────────────────────────────────────────────── */
+  {
+    provider: 'front',
+    name: 'Front',
+    vendor: 'Front',
+    kind: 'support',
+    description: 'Sync Front conversations so shared-inbox threads become customer memory.',
+    capabilities: ['Conversation and comment sync', 'Contact resolution', 'Churn-risk and defect extraction'],
+    scopes: ['shared_resources'],
+    requiredEnv: ['FRONT_OAUTH_CLIENT_ID', 'FRONT_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://dev.frontapp.com',
+  },
+  {
+    provider: 'help_scout',
+    name: 'Help Scout',
+    vendor: 'Help Scout',
+    kind: 'support',
+    description: 'Sync Help Scout conversations into the account timeline.',
+    capabilities: ['Conversation sync', 'Customer resolution', 'Satisfaction and defect signals'],
+    scopes: [],
+    requiredEnv: ['HELPSCOUT_OAUTH_CLIENT_ID', 'HELPSCOUT_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://developer.helpscout.com',
+  },
+
+  /* ── Product analytics ─────────────────────────────────────────────────── */
+  {
+    provider: 'mixpanel',
+    name: 'Mixpanel',
+    vendor: 'Mixpanel',
+    kind: 'product_analytics',
+    description: 'Read product usage so a quiet account shows up before it churns.',
+    capabilities: ['Event and cohort export', 'Account-level usage trends', 'Power-user identification'],
+    scopes: [],
+    requiredEnv: ['MIXPANEL_SERVICE_ACCOUNT', 'MIXPANEL_SERVICE_SECRET'],
+    perUser: false,
+    docsUrl: 'https://developer.mixpanel.com',
+    auth: 'api_key',
+  },
+  {
+    provider: 'amplitude',
+    name: 'Amplitude',
+    vendor: 'Amplitude',
+    kind: 'product_analytics',
+    description: 'Read Amplitude usage data for account health and churn signals.',
+    capabilities: ['Event export', 'Account-level usage trends', 'Engagement scoring'],
+    scopes: [],
+    requiredEnv: ['AMPLITUDE_API_KEY', 'AMPLITUDE_SECRET_KEY'],
+    perUser: false,
+    docsUrl: 'https://amplitude.com/docs/apis',
+    auth: 'api_key',
+  },
+  {
+    provider: 'segment',
+    name: 'Segment',
+    vendor: 'Twilio Segment',
+    kind: 'product_analytics',
+    description: 'Receive Segment events as a single stream instead of wiring each analytics tool separately.',
+    capabilities: ['Webhook event intake', 'Identity resolution to contacts', 'Account usage rollups'],
+    scopes: [],
+    requiredEnv: ['SEGMENT_WEBHOOK_SECRET'],
+    perUser: false,
+    docsUrl: 'https://segment.com/docs/connections/destinations/catalog/webhooks',
+    auth: 'api_key',
+  },
+
+  /* ── Accounting ────────────────────────────────────────────────────────── */
+  {
+    provider: 'quickbooks',
+    name: 'QuickBooks',
+    vendor: 'Intuit',
+    kind: 'accounting',
+    description: 'See invoices and payment status next to the deal that produced them.',
+    capabilities: ['Invoice and payment sync', 'Customer matching to accounts', 'Overdue-payment risk signals'],
+    scopes: ['com.intuit.quickbooks.accounting'],
+    requiredEnv: ['QUICKBOOKS_OAUTH_CLIENT_ID', 'QUICKBOOKS_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://developer.intuit.com/app/developer/qbo/docs/get-started',
+  },
+  {
+    provider: 'xero',
+    name: 'Xero',
+    vendor: 'Xero',
+    kind: 'accounting',
+    description: 'Match Xero invoices and payments to the account and deal they belong to.',
+    capabilities: ['Invoice and payment sync', 'Contact matching to accounts', 'Overdue-payment risk signals'],
+    scopes: ['accounting.transactions.read', 'accounting.contacts.read', 'offline_access'],
+    requiredEnv: ['XERO_OAUTH_CLIENT_ID', 'XERO_OAUTH_CLIENT_SECRET'],
+    perUser: false,
+    docsUrl: 'https://developer.xero.com/documentation',
   },
 ];
 

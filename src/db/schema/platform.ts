@@ -301,19 +301,57 @@ export const automationRuns = pgTable(
 /* ── Integrations ─────────────────────────────────────────────────────────── */
 
 export const INTEGRATION_PROVIDERS = [
+  // Mail
   'gmail',
-  'google_calendar',
   'outlook_mail',
+  // Calendar
+  'google_calendar',
   'outlook_calendar',
-  'slack',
+  // Meetings and recordings
   'zoom',
   'google_meet',
+  'ms_teams',
+  // Notetakers - these produce the transcripts the memory engine reads
+  'granola',
+  'fathom',
+  'fireflies',
+  'otter',
+  'gong',
+  // Scheduling links
+  'calendly',
+  'cal_com',
+  // Calling
+  'aircall',
+  'dialpad',
+  'twilio',
+  // Documents and storage
+  'google_drive',
+  'box',
+  'dropbox',
+  'onedrive',
+  'notion',
+  // CRM import
   'hubspot',
   'salesforce',
-  'posthog',
+  'pipedrive',
+  'attio',
+  'airtable',
+  // Support desks
   'zendesk',
   'intercom',
+  'front',
+  'help_scout',
+  // Product analytics
+  'posthog',
+  'mixpanel',
+  'amplitude',
+  'segment',
+  // Billing and accounting
   'stripe',
+  'quickbooks',
+  'xero',
+  // Messaging and social
+  'slack',
   'linkedin',
 ] as const;
 export type IntegrationProvider = (typeof INTEGRATION_PROVIDERS)[number];

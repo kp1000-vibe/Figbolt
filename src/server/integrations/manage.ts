@@ -5,7 +5,16 @@ import { decryptSecret, encryptSecret } from '@/lib/security/crypto';
 import { NotFoundError, scope, scoped, ValidationError, type Ctx } from '../context';
 import { ctxAssert } from '../context';
 import { record } from '../audit';
-import { PROVIDERS, connectorStatus, findProvider, isLiveConfigured } from './providers';
+import {
+  PROVIDERS,
+  connectorStatus,
+  findProvider,
+  isLiveConfigured,
+  providerAuth,
+  providerLevel,
+  type ProviderAuth,
+  type ProviderLevel,
+} from './providers';
 
 /**
  * Integration state.
@@ -35,6 +44,9 @@ export type IntegrationRow = {
   recordsSynced: number;
   docsUrl: string;
   perUser: boolean;
+  /** How far this connector is actually built - see providers.ts. */
+  level: ProviderLevel;
+  auth: ProviderAuth;
 };
 
 export async function listIntegrations(ctx: Ctx): Promise<IntegrationRow[]> {
@@ -85,6 +97,8 @@ export async function listIntegrations(ctx: Ctx): Promise<IntegrationRow[]> {
       recordsSynced: row?.recordsSynced ?? 0,
       docsUrl: spec.docsUrl,
       perUser: spec.perUser,
+      level: providerLevel(spec),
+      auth: providerAuth(spec),
     };
   });
 }
@@ -233,6 +247,10 @@ export async function listSyncJobs(ctx: Ctx, provider?: IntegrationProvider) {
     .limit(25);
 }
 
+/** One run pulls at most this much, so a large mailbox cannot hang a request. */
+const PAGE_SIZE = 100;
+const MAX_PAGES_PER_RUN = 10;
+
 /**
  * Run a sync.
  *
@@ -276,19 +294,75 @@ export async function runSync(
     .where(eq(integrations.id, integration.id));
 
   try {
-    const detail =
-      integration.mode === 'demo'
-        ? 'Demo mode: this workspace is already populated with fixture data through the same ingestion pipeline. Connect real credentials to sync live records.'
-        : 'Live sync requires the provider adapter to be enabled for this deployment.';
+    let detail: string;
+    let processed = 0;
+    let created = 0;
+    let cursor = kind === 'initial' ? null : integration.syncCursor;
+
+    if (integration.mode === 'demo') {
+      detail =
+        'Demo mode: this workspace is already populated with fixture data through the same ingestion pipeline. Connect real credentials to sync live records.';
+    } else {
+      const { resolveConnector, hasConnector } = await import('./connectors');
+
+      if (!hasConnector(provider)) {
+        // Said plainly rather than reported as a successful sync of nothing,
+        // which is what this used to do and is how an integrations page ends
+        // up lying about which connectors work.
+        detail = `${provider} is connected, but no sync adapter is implemented yet, so nothing was pulled.`;
+      } else {
+        const resolved = await resolveConnector(ctx, provider, integration.accountLabel);
+        if (!resolved) {
+          throw new ValidationError(
+            `No usable ${provider} credentials. Reconnect the account and try again.`,
+          );
+        }
+
+        const { applySyncPage } = await import('./sync-run');
+
+        // Paged with a hard ceiling: one run must terminate even against a
+        // mailbox with a decade of history. The cursor is persisted after
+        // every page, so the next run resumes rather than restarting.
+        let pages = 0;
+        let hasMore = true;
+        while (hasMore && pages < MAX_PAGES_PER_RUN) {
+          const outcome = await applySyncPage(ctx, resolved, cursor, PAGE_SIZE);
+          processed += outcome.processed;
+          created += outcome.created;
+          cursor = outcome.nextCursor;
+          hasMore = outcome.hasMore;
+          pages++;
+
+          await ctx.db
+            .update(integrations)
+            .set({ syncCursor: cursor })
+            .where(eq(integrations.id, integration.id));
+        }
+
+        detail = hasMore
+          ? `Pulled ${processed} record(s), created ${created}. More remain — run again to continue.`
+          : `Pulled ${processed} record(s), created ${created}. Up to date.`;
+      }
+    }
 
     await ctx.db
       .update(syncJobs)
-      .set({ status: 'succeeded', finishedAt: new Date(), recordsProcessed: 0, recordsCreated: 0 })
+      .set({
+        status: 'succeeded',
+        finishedAt: new Date(),
+        recordsProcessed: processed,
+        recordsCreated: created,
+      })
       .where(eq(syncJobs.id, job!.id));
 
     await ctx.db
       .update(integrations)
-      .set({ status: integration.mode === 'demo' ? 'demo' : 'connected', lastSyncedAt: new Date() })
+      .set({
+        status: integration.mode === 'demo' ? 'demo' : 'connected',
+        lastSyncedAt: new Date(),
+        syncCursor: cursor,
+        lastError: null,
+      })
       .where(eq(integrations.id, integration.id));
 
     await record(ctx, {
@@ -296,7 +370,7 @@ export async function runSync(
       resourceType: 'integration',
       resourceId: provider,
       riskLevel: 'low',
-      metadata: { kind, mode: integration.mode },
+      metadata: { kind, mode: integration.mode, processed, created },
     });
 
     return { status: 'succeeded', detail };

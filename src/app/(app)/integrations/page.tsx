@@ -20,13 +20,58 @@ export const metadata = { title: 'Integrations' };
 const KIND_LABEL: Record<string, string> = {
   mail: 'Email',
   calendar: 'Calendar',
-  messaging: 'Messaging',
   meetings: 'Meetings & recordings',
+  notetaker: 'Notetakers & transcripts',
+  scheduling: 'Scheduling links',
+  calling: 'Phone & SMS',
+  storage: 'Documents & storage',
   crm: 'CRM import',
-  product_analytics: 'Product analytics',
   support: 'Support desk',
+  product_analytics: 'Product analytics',
   billing: 'Billing',
+  accounting: 'Accounting',
+  messaging: 'Messaging',
   social: 'Professional network',
+};
+
+/**
+ * The order categories appear in, most useful first for a small sales team.
+ * Anything not listed falls to the end alphabetically.
+ */
+const KIND_ORDER = [
+  'mail',
+  'calendar',
+  'notetaker',
+  'meetings',
+  'scheduling',
+  'calling',
+  'crm',
+  'storage',
+  'support',
+  'product_analytics',
+  'billing',
+  'accounting',
+  'messaging',
+  'social',
+];
+
+/** What each build level means, said in the UI rather than implied. */
+const LEVEL_NOTE: Record<string, { label: string; tone: 'success' | 'accent' | 'neutral'; hint: string }> = {
+  adapter: {
+    label: 'Syncs',
+    tone: 'success',
+    hint: 'Connect this and data really flows.',
+  },
+  oauth: {
+    label: 'Connects',
+    tone: 'accent',
+    hint: 'The connection works; no sync adapter yet, so nothing is pulled.',
+  },
+  catalogue: {
+    label: 'Planned',
+    tone: 'neutral',
+    hint: 'Declared with real scopes, but not yet connectable.',
+  },
 };
 
 export default async function IntegrationsPage({
@@ -100,7 +145,17 @@ export default async function IntegrationsPage({
       )}
 
       <div className="mt-6 space-y-7">
-        {Object.entries(grouped).map(([kind, rows]) => (
+        {Object.entries(grouped)
+          .sort(([a], [b]) => {
+            const ia = KIND_ORDER.indexOf(a);
+            const ib = KIND_ORDER.indexOf(b);
+            // Unlisted kinds fall to the end, alphabetically among themselves.
+            if (ia === -1 && ib === -1) return a.localeCompare(b);
+            if (ia === -1) return 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+          })
+          .map(([kind, rows]) => (
           <section key={kind}>
             <SectionLabel>{KIND_LABEL[kind] ?? titleCase(kind)}</SectionLabel>
             <div className="mt-2.5 grid gap-3 sm:grid-cols-2">
@@ -131,6 +186,15 @@ export default async function IntegrationsPage({
                           {row.status === 'demo' && <Badge tone="accent">Demo</Badge>}
                           {row.status === 'connected' && <Badge tone="success">Live</Badge>}
                           {row.status === 'error' && <Badge tone="danger">Error</Badge>}
+                          {/* What this connector can actually do, stated rather
+                              than implied by the presence of a Connect button. */}
+                          <Badge
+                            tone={LEVEL_NOTE[row.level]?.tone ?? 'neutral'}
+                            title={LEVEL_NOTE[row.level]?.hint}
+                          >
+                            {LEVEL_NOTE[row.level]?.label ?? row.level}
+                          </Badge>
+                          {row.auth === 'api_key' && <Badge tone="outline">API key</Badge>}
                         </div>
                         <p className="mt-1 text-xs leading-relaxed text-text-muted text-pretty">
                           {row.description}
@@ -185,7 +249,7 @@ export default async function IntegrationsPage({
               ))}
             </div>
           </section>
-        ))}
+          ))}
       </div>
 
       {jobs.length > 0 && (
