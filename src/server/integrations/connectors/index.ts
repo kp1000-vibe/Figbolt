@@ -36,7 +36,17 @@ export const SYNCABLE: readonly IntegrationProvider[] = ['gmail', 'google_calend
  * implemented - otherwise the honesty check below would force it to
  * understate itself as catalogue-only.
  */
-export const IMPLEMENTED_NON_SYNC: readonly IntegrationProvider[] = ['local_whisper'];
+export const IMPLEMENTED_NON_SYNC: readonly IntegrationProvider[] = [
+  'local_whisper',
+  // Push, not pull: these arrive through POST /api/v1/notetaker.
+  'granola',
+  'fathom',
+  'fireflies',
+  'otter',
+  'gong',
+  'meetily',
+  'amurex',
+];
 
 export function hasConnector(provider: IntegrationProvider): boolean {
   return SYNCABLE.includes(provider);

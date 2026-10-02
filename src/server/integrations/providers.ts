@@ -87,6 +87,16 @@ const LEVELS: Partial<Record<IntegrationProvider, ProviderLevel>> = {
   // Self-hosted Whisper is implemented in server/meetings/transcribe.ts
   // and needs no OAuth - pointing at a URL is the whole connection.
   local_whisper: 'adapter',
+  // Every notetaker below pushes through POST /api/v1/notetaker rather than
+  // being pulled from. There is no adapter to write per vendor, which is why
+  // the free self-hosted ones work exactly as well as the commercial ones.
+  granola: 'adapter',
+  fathom: 'adapter',
+  fireflies: 'adapter',
+  otter: 'adapter',
+  gong: 'adapter',
+  meetily: 'adapter',
+  amurex: 'adapter',
   google_drive: 'oauth',
   outlook_mail: 'oauth',
   outlook_calendar: 'oauth',

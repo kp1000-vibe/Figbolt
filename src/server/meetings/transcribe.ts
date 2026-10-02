@@ -340,7 +340,7 @@ export async function transcribeMeeting(ctx: Ctx, meetingId: string): Promise<Tr
  * would let untrusted speech be treated as a colleague's instruction, so an
  * unrecognised voice is always the customer.
  */
-async function attributeSpeakers(
+export async function attributeSpeakers(
   ctx: Ctx,
   meetingId: string,
   utterances: RawUtterance[],

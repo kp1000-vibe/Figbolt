@@ -106,23 +106,20 @@ describe('a connector cannot claim more than it does', () => {
     }
   });
 
-  it('defaults an unlisted provider to catalogue, never to something better', () => {
-    // The safe direction: a new provider understates until promoted.
-    const promoted = [
-      'gmail',
-      'google_calendar',
-      'google_drive',
-      'outlook_mail',
-      'outlook_calendar',
-      'onedrive',
-      'ms_teams',
-      'local_whisper',
-    ];
-    const unlisted = PROVIDERS.filter((p) => !promoted.includes(p.provider));
-    expect(unlisted.length).toBeGreaterThan(25);
-    for (const spec of unlisted) {
-      expect(providerLevel(spec), spec.provider).toBe('catalogue');
-    }
+  it('defaults to catalogue, so a new provider understates until promoted', () => {
+    // Derived rather than hand-listed: a hardcoded roster of promoted
+    // providers goes stale the moment one is added, and the maintenance
+    // falls on whoever is least expecting it.
+    const byLevel = { adapter: 0, oauth: 0, catalogue: 0 };
+    for (const spec of PROVIDERS) byLevel[providerLevel(spec)]++;
+
+    // Most of a 44-entry catalogue is honestly aspirational, and should be.
+    expect(byLevel.catalogue).toBeGreaterThan(byLevel.adapter + byLevel.oauth);
+
+    // The default itself: anything the LEVELS table does not name is
+    // catalogue, never something better.
+    const fake = { provider: 'definitely_not_a_real_provider' } as unknown as (typeof PROVIDERS)[number];
+    expect(providerLevel(fake)).toBe('catalogue');
   });
 
   it('does not offer an OAuth redirect for an API-key connector', async () => {
