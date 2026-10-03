@@ -178,6 +178,9 @@ export default async function LandingPage() {
             </Link>
 
             <div className="hidden items-center gap-8 md:flex">
+              <a href="#small-teams" className="text-sm text-white/80 transition-colors hover:text-white">
+                For small teams
+              </a>
               <a href="#how" className="text-sm text-white/80 transition-colors hover:text-white">
                 How it works
               </a>
@@ -210,6 +213,9 @@ export default async function LandingPage() {
 
         {/* ── Statement ────────────────────────────────────────────────── */}
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.5rem)] max-w-5xl flex-col items-center justify-center px-5 pb-24 text-center sm:px-8">
+          <p className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
+            The CRM for small businesses
+          </p>
           <h1
             className="max-w-4xl text-[clamp(2.6rem,7.4vw,5.5rem)] leading-[1.03] tracking-[-0.015em] text-white text-balance"
             style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}
@@ -218,9 +224,9 @@ export default async function LandingPage() {
           </h1>
 
           <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-white/85 text-pretty sm:text-lg">
-            Every CRM ever sold is a database your team maintains for a machine. Figbolt inverts
-            it — reading the email, meetings and conversations you already have, and asking you
-            only for the decisions that deserve a person.
+            For teams of one to ten who have customers to look after, not a database to feed.
+            Connect your email and calendar, and Figbolt fills in your customers, deals and
+            follow-ups itself — asking you only for the decisions that need a person.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
@@ -238,8 +244,10 @@ export default async function LandingPage() {
             </Link>
           </div>
 
-          <p className="mt-8 text-xs text-white/55">
-            No credit card. The demo workspace is fictional.
+          {/* On a phone this line lands on the brightest band of cloud, so it
+              gets more opacity and a soft shadow rather than a faint white. */}
+          <p className="mt-8 text-xs text-white/80 [text-shadow:0_1px_8px_rgba(8,10,28,0.5)]">
+            No credit card. No data entry. The demo workspace is fictional.
           </p>
         </div>
 
@@ -249,6 +257,91 @@ export default async function LandingPage() {
           className="absolute inset-x-0 bottom-0 z-10 h-28"
           style={{ background: 'linear-gradient(180deg, transparent, var(--bg))' }}
         />
+      </section>
+
+      {/* ── Minimal work ─────────────────────────────────────────────────────
+          Who it is for, in terms of the hours it gives back. Every line on the
+          right is something the product actually does today. */}
+      <section id="small-teams" className="scroll-mt-16 border-b border-border">
+        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
+          <h2 className="max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
+            A small team has no one to keep a CRM up to date
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-text-muted text-pretty">
+            In a business of five people, the person who would update the CRM is the same person
+            talking to the customer. So the CRM goes stale, and it stops being worth opening.
+            Figbolt does that upkeep for you.
+          </p>
+
+          <div className="mt-9 grid overflow-hidden rounded-[var(--radius-lg)] border border-border-strong bg-surface md:grid-cols-2">
+            <div className="p-6 sm:p-7">
+              <p className="text-2xs font-medium uppercase tracking-[0.14em] text-text-subtle">
+                Your job, in a typical CRM
+              </p>
+              <ul className="mt-5 space-y-3.5">
+                {[
+                  'Log every call and email by hand',
+                  'Move each deal to the right stage',
+                  'Remember what you promised, and when',
+                  'Write up notes after every meeting',
+                  'Build a report to see what needs attention',
+                ].map((line) => (
+                  <li key={line} className="flex gap-2.5 text-sm leading-snug text-text-muted">
+                    <span aria-hidden className="mt-1.5 text-text-subtle">
+                      —
+                    </span>
+                    <span className="text-pretty line-through decoration-text-subtle/60">{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="border-t border-border bg-bg-muted p-6 sm:p-7 md:border-l md:border-t-0">
+              <p className="text-2xs font-medium uppercase tracking-[0.14em] text-accent-text">
+                Figbolt&rsquo;s job instead
+              </p>
+              <ul className="mt-5 space-y-3.5">
+                {[
+                  'Reads your email and meetings and files them against the right customer',
+                  'Suggests the stage from what the customer actually said',
+                  'Turns promises in emails and calls into follow-ups with due dates',
+                  'Summarises every meeting from its transcript',
+                  'Briefs you each morning on what changed and what needs you',
+                ].map((line) => (
+                  <li key={line} className="flex gap-2.5 text-sm leading-snug text-text">
+                    <span aria-hidden className="mt-1.5 text-accent-text">
+                      —
+                    </span>
+                    <span className="text-pretty">{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                k: 'Connect once',
+                d: 'Link Gmail and Google Calendar. Your customers and deals appear from the conversations you have already had.',
+              },
+              {
+                k: 'Approve, don’t type',
+                d: 'When Figbolt wants to change a deal or email a customer, you get one tap to approve. Nothing goes out without you.',
+              },
+              {
+                k: 'Just ask',
+                d: '“Who haven’t I followed up with?” Ask Bolt in plain English and get an answer that shows its sources.',
+              },
+            ].map((x) => (
+              <div key={x.k} className="rounded-[var(--radius-lg)] border border-border bg-surface p-5">
+                <p className="text-sm font-semibold tracking-tight text-text">{x.k}</p>
+                <p className="mt-2 text-xs leading-relaxed text-text-muted text-pretty">{x.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ── The gap ──────────────────────────────────────────────────────── */}
@@ -271,7 +364,7 @@ export default async function LandingPage() {
               <dl className="mt-5 space-y-3.5">
                 {[
                   ['Stage', 'Negotiation'],
-                  ['Amount', '$210,000'],
+                  ['Amount', '$24,000'],
                   ['Close date', '29 September'],
                   ['Next step', '“Following up this week”'],
                   ['Forecast', 'Commit'],
@@ -463,8 +556,8 @@ export default async function LandingPage() {
             Stop maintaining your CRM. Start reading it.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-text-muted text-pretty">
-            Sign in to the demo workspace and open any account — every summary, concern and score
-            in it was derived from raw email and transcripts, not typed in by anyone.
+            Sign in to the demo workspace and open any account. Every summary, follow-up and score
+            in it came from email and meeting transcripts — nobody typed any of it in.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -488,7 +581,7 @@ export default async function LandingPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Brand />
           <p className="text-2xs text-text-subtle">
-            Sweet deals, lightning fast. &middot; Demo data is fictional.
+            Sweet deals, lightning fast. &middot; The CRM for teams of one to ten. &middot; Demo data is fictional.
           </p>
         </div>
       </footer>

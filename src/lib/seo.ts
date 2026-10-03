@@ -24,10 +24,10 @@ export const SITE = {
   url: canonicalOrigin(),
   /** Under ~160 characters, so search results do not truncate mid-sentence. */
   description:
-    'The CRM nobody has to fill in. Figbolt builds the record from your email, meetings and tickets — and Bolt, its AI analyst, answers with the evidence.',
+    'The CRM for small businesses that fills itself in. Figbolt builds your customer records from email and meetings, and Bolt answers with the evidence.',
   /** Longer form, for OG cards and structured data where there is room. */
   longDescription:
-    'Figbolt is an agent-native CRM. It derives accounts, deals and commitments from the email, meetings, tickets and product usage you already have, so reps stop doing data entry. Bolt, the built-in AI analyst, answers questions with citations back to the records it used, and every action that changes data or reaches a customer waits for a human.',
+    'Figbolt is a CRM for small businesses and teams of one to ten, built so nobody has to maintain it. It derives accounts, deals and follow-ups from the email, meetings, tickets and product usage you already have, so there is no data entry. Bolt, the built-in AI analyst, answers questions with citations back to the records it used, and every action that changes data or reaches a customer waits for a human.',
   locale: 'en_US',
   twitter: '@figbolt',
 } as const;
