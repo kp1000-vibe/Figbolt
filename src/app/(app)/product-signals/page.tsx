@@ -101,7 +101,7 @@ export default async function ProductSignalsPage({
                       {theme.themeId ? (
                         <Link
                           href={`/product-signals/${theme.themeId}`}
-                          className="text-sm font-medium text-text hover:text-accent-text"
+                          className="inline-block py-0.5 text-sm font-medium text-text hover:text-accent-text"
                         >
                           {theme.name}
                         </Link>

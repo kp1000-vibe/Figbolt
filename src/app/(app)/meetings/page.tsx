@@ -53,7 +53,7 @@ export default async function MeetingsPage({
                     <div className="min-w-0">
                       <Link
                         href={`/meetings/${meeting.id}`}
-                        className="text-sm font-medium text-text hover:text-accent-text"
+                        className="inline-block py-0.5 text-sm font-medium text-text hover:text-accent-text"
                       >
                         {meeting.title}
                       </Link>

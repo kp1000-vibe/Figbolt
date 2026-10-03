@@ -84,7 +84,10 @@ export function PipelineView({
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
+        {/* basis-64, not flex-1: with a zero basis this never wraps, and on a
+            phone the search box (min 224px) slid underneath the view toggle.
+            A real basis lets the toggle drop to its own line instead. */}
+        <div className="min-w-0 grow basis-64">
           <FilterBar
             filters={filters}
             current={current}
@@ -204,7 +207,11 @@ function KanbanBoard({ board }: { board: NonNullable<Board> }) {
   const stageOptions = board.map((c) => ({ id: c.stage.id, name: c.stage.name }));
 
   return (
-    <div className="-mx-4 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+    // `relative` matters: each card carries an absolutely positioned sr-only
+    // label, and a scroller only clips descendants it is the containing block
+    // for. Without it those labels escape to <body> and widen the phone's
+    // layout viewport to ~960px, which pushes fixed UI off the screen.
+    <div className="relative -mx-4 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
       <div className="flex min-w-max gap-3">
         {columns.map((column) => (
           <section
@@ -312,7 +319,7 @@ function DealCard({
         <div className="flex items-start justify-between gap-2">
           <Link
             href={`/opportunities/${deal.id}`}
-            className="min-w-0 text-xs font-medium text-text hover:text-accent-text"
+            className="inline-flex min-h-6 min-w-0 items-center text-xs font-medium text-text hover:text-accent-text"
             draggable={false}
           >
             {deal.accountName}
@@ -351,13 +358,16 @@ function DealCard({
           </span>
         </div>
 
-        {/* Keyboard-accessible equivalent of dragging. */}
+        {/* Keyboard- and touch-accessible equivalent of dragging. Revealed on
+            hover for a pointer; always shown where there is no hover (phones),
+            or it would be an invisible control on exactly the devices that
+            cannot drag reliably. */}
         <label className="mt-1.5 block">
           <span className="sr-only">Move {deal.name} to a different stage</span>
           <select
             value={deal.stageId}
             onChange={(e) => onStageChange(e.target.value)}
-            className="w-full cursor-pointer rounded-[var(--radius-xs)] border border-transparent bg-transparent py-0.5 text-2xs text-text-subtle opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 focus:border-border focus:opacity-100"
+            className="min-h-7 w-full cursor-pointer rounded-[var(--radius-xs)] border border-transparent bg-transparent py-0.5 text-2xs text-text-subtle opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 focus:border-border focus:opacity-100 [@media(hover:none)]:border-border [@media(hover:none)]:opacity-100"
           >
             {stageOptions.map((stage) => (
               <option key={stage.id} value={stage.id}>

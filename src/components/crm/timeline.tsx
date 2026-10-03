@@ -111,7 +111,7 @@ export function Timeline({ events }: { events: Event[] }) {
             aria-pressed={minImportance === option.value}
             onClick={() => setMinImportance(option.value)}
             className={cn(
-              'rounded-full border px-2.5 py-0.5 text-2xs transition-colors',
+              'min-h-6 rounded-full border px-2.5 py-0.5 text-2xs transition-colors',
               minImportance === option.value
                 ? 'border-accent-border bg-accent-subtle font-medium text-accent-text'
                 : 'border-border bg-surface text-text-muted hover:border-border-strong hover:text-text',

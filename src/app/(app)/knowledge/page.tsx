@@ -106,7 +106,7 @@ export default async function KnowledgePage({
                         <div className="min-w-0">
                           <Link
                             href={`/knowledge/${doc.id}`}
-                            className="text-sm font-medium text-text hover:text-accent-text"
+                            className="inline-block py-0.5 text-sm font-medium text-text hover:text-accent-text"
                           >
                             {doc.title}
                           </Link>

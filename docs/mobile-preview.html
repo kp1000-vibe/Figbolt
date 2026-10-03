@@ -171,9 +171,9 @@
     <h2>Where the native build actually is</h2>
     <ul class="steps">
       <li><span class="pill done">done</span> Mobile parity measured across 17 routes — no route scrolls sideways</li>
-      <li><span class="pill done">done</span> Touch targets and iOS input zoom fixed in the shared primitives</li>
-      <li><span class="pill now">now</span> Clipped content on Pipeline and Prospecting</li>
-      <li><span class="pill next">next</span> PWA layer — manifest, icons, offline shell</li>
+      <li><span class="pill done">done</span> iOS input zoom fixed; every tap target at or above the 24px WCAG floor (was 344 below)</li>
+      <li><span class="pill done">done</span> Layout on Pipeline and Prospecting — no clipped content, no overlapping controls on any route</li>
+      <li><span class="pill now">now</span> PWA layer — manifest, icons, offline shell</li>
       <li><span class="pill next">next</span> Capacitor projects for iOS and Android</li>
       <li><span class="pill next">next</span> Native push, biometric unlock, camera</li>
       <li><span class="pill next">you</span> Apple Developer + Play accounts, signing, submission</li>
@@ -192,9 +192,9 @@
       properly offline-capable, and the Capacitor step turns it into a real store app.
     </p>
     <p>
-      The two screens still being fixed are <strong>Pipeline</strong> and
-      <strong>Prospecting</strong>, where some content sits past the right edge on a narrow
-      screen. Everything else measured clean.
+      All 17 signed-in routes now pass the phone audit (<code>scripts/mobile-audit.mjs</code>):
+      no sideways scroll, no widened layout viewport, no clipped content, no overlapping
+      controls, and no tap target under 24px.
     </p>
   </div>
 

@@ -104,7 +104,7 @@ export default async function HomePage() {
           <section>
             <div className="mb-3 flex items-baseline justify-between gap-3">
               <SectionLabel>Today&rsquo;s priorities</SectionLabel>
-              <Link href="/inbox" className="text-2xs text-accent-text hover:underline">
+              <Link href="/inbox" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
                 Open inbox
               </Link>
             </div>
@@ -160,7 +160,7 @@ export default async function HomePage() {
           <section>
             <div className="mb-3 flex items-baseline justify-between gap-3">
               <SectionLabel>What Bolt has noticed</SectionLabel>
-              <Link href="/analytics" className="text-2xs text-accent-text hover:underline">
+              <Link href="/analytics" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
                 All analytics
               </Link>
             </div>
@@ -198,7 +198,7 @@ export default async function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>Today&rsquo;s meetings</CardTitle>
-              <Link href="/meetings" className="text-2xs text-accent-text hover:underline">
+              <Link href="/meetings" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
                 All
               </Link>
             </CardHeader>
@@ -234,7 +234,7 @@ export default async function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>Commitments due</CardTitle>
-              <Link href="/tasks?tab=commitments" className="text-2xs text-accent-text hover:underline">
+              <Link href="/tasks?tab=commitments" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
                 All
               </Link>
             </CardHeader>
@@ -268,7 +268,7 @@ export default async function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>At-risk deals</CardTitle>
-              <Link href="/opportunities?flag=at_risk" className="text-2xs text-accent-text hover:underline">
+              <Link href="/opportunities?flag=at_risk" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
                 All
               </Link>
             </CardHeader>
@@ -302,7 +302,7 @@ export default async function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>Agent activity</CardTitle>
-              <Link href="/agents" className="text-2xs text-accent-text hover:underline">
+              <Link href="/agents" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
                 All
               </Link>
             </CardHeader>

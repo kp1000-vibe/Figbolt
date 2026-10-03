@@ -106,7 +106,7 @@ export default async function ContactsPage({
                     {contact.accountId ? (
                       <Link
                         href={`/accounts/${contact.accountId}`}
-                        className="text-xs text-text-muted hover:text-accent-text"
+                        className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-accent-text"
                       >
                         {contact.accountName}
                       </Link>

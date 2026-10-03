@@ -87,7 +87,7 @@ export function TasksView({
                   aria-pressed={active}
                   onClick={() => setBucket(option.value)}
                   className={cn(
-                    'flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-2xs transition-colors',
+                    'flex min-h-6 items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-2xs transition-colors',
                     active
                       ? 'border-accent-border bg-accent-subtle font-medium text-accent-text'
                       : 'border-border bg-surface text-text-muted hover:border-border-strong hover:text-text',
@@ -211,20 +211,26 @@ function TaskRow({ task }: { task: Task }) {
           disabled={pending}
           aria-pressed={completed}
           aria-label={completed ? 'Mark as not done' : 'Mark as done'}
-          className={cn(
-            'mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-[4px] border transition-colors',
-            completed
-              ? 'border-success bg-success text-white'
-              : 'border-border-strong hover:border-accent',
-          )}
+          // A 24px hit area around the 16px box: the box is the visual, the
+          // button is what a thumb has to land on.
+          className="group/check -m-1 mt-[-2px] flex size-6 shrink-0 items-center justify-center rounded-md"
         >
-          {pending ? (
-            <Spinner className="size-2.5" />
-          ) : completed ? (
-            <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="3.5" aria-hidden>
-              <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          ) : null}
+          <span
+            className={cn(
+              'flex size-4 items-center justify-center rounded-[4px] border transition-colors',
+              completed
+                ? 'border-success bg-success text-white'
+                : 'border-border-strong group-hover/check:border-accent',
+            )}
+          >
+            {pending ? (
+              <Spinner className="size-2.5" />
+            ) : completed ? (
+              <svg viewBox="0 0 24 24" className="size-3" fill="none" stroke="currentColor" strokeWidth="3.5" aria-hidden>
+                <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            ) : null}
+          </span>
         </button>
 
         <div className="min-w-0 flex-1">
@@ -266,12 +272,12 @@ function TaskRow({ task }: { task: Task }) {
             {!task.dueAt && <span>no due date</span>}
             <span>{task.assigneeName ?? 'Unassigned'}</span>
             {task.accountId && task.accountName && (
-              <Link href={`/accounts/${task.accountId}`} className="hover:text-accent-text">
+              <Link href={`/accounts/${task.accountId}`} className="inline-flex min-h-6 items-center hover:text-accent-text">
                 {task.accountName}
               </Link>
             )}
             {task.opportunityId && task.opportunityName && (
-              <Link href={`/opportunities/${task.opportunityId}`} className="hover:text-accent-text">
+              <Link href={`/opportunities/${task.opportunityId}`} className="inline-flex min-h-6 items-center hover:text-accent-text">
                 {task.opportunityName}
               </Link>
             )}

@@ -121,7 +121,7 @@ export function CommitmentRow({ commitment }: { commitment: Commitment }) {
       {commitment.status !== 'fulfilled' && (
         <div className="mt-1.5 flex items-center gap-1">
           {commitment.taskId ? (
-            <Link href="/tasks" className="text-2xs text-accent-text hover:underline">
+            <Link href="/tasks" className="-mx-1.5 inline-flex min-h-6 items-center px-1.5 text-2xs text-accent-text hover:underline">
               Task created
             </Link>
           ) : (

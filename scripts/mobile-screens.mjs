@@ -10,6 +10,7 @@
 import { chromium, devices } from 'playwright';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
+import { signedInContext } from './lib/demo-session.mjs';
 
 const BASE = process.argv[2] ?? 'http://localhost:3400';
 const OUT = process.argv[3] ?? 'docs/mobile/screens';
@@ -31,19 +32,19 @@ async function main() {
   mkdirSync(OUT, { recursive: true });
 
   const browser = await chromium.launch();
-  const context = await browser.newContext({ ...devices['iPhone 13'], deviceScaleFactor: 3 });
+  const phone = { ...devices['iPhone 13'], deviceScaleFactor: 3 };
+
+  // The sign-in screen, from a context that is not signed in.
+  const anon = await browser.newContext(phone);
+  const anonPage = await anon.newPage();
+  await anonPage.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded', timeout: 90_000 });
+  await anonPage.waitForTimeout(800);
+  await anonPage.screenshot({ path: path.join(OUT, '00-login.png') });
+  await anon.close();
+
+  // Signed in once and reused: per-run sign-ins trip the login rate limit.
+  const context = await signedInContext(browser, BASE, phone);
   const page = await context.newPage();
-
-  await page.goto(`${BASE}/login`, { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(800);
-  await page.screenshot({ path: path.join(OUT, '00-login.png') });
-
-  await page.fill('input[type="email"], input[name="email"]', 'alex@northwindlabs.com');
-  await page.fill('input[type="password"], input[name="password"]', 'demo1234');
-  await Promise.all([
-    page.waitForURL((u) => !u.pathname.startsWith('/login'), { timeout: 60_000 }),
-    page.click('button[type="submit"]'),
-  ]).catch(() => {});
 
   console.log(`\nCapturing ${SCREENS.length} screens at 390x844\n`);
   for (const [file, route, label] of SCREENS) {
@@ -51,6 +52,8 @@ async function main() {
       await page.goto(`${BASE}${route}`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
       await page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {});
       await page.waitForTimeout(1100);
+      const landed = new URL(page.url()).pathname;
+      if (landed !== route) throw new Error(`landed on ${landed}, not ${route}`);
       await page.screenshot({ path: path.join(OUT, `${file}.png`) });
       console.log(`  + ${label}`);
     } catch (err) {

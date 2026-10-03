@@ -309,7 +309,7 @@ function UserFooter({ user }: { user: SidebarUser }) {
             title={label}
             onClick={() => setTheme(value)}
             className={cn(
-              'flex flex-1 items-center justify-center rounded-[var(--radius-sm)] py-1 transition-colors',
+              'flex min-h-7 flex-1 items-center justify-center rounded-[var(--radius-sm)] py-1 transition-colors',
               theme === value
                 ? 'bg-surface text-text shadow-[var(--shadow-sm)]'
                 : 'text-text-subtle hover:text-text',

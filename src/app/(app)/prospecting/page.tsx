@@ -95,7 +95,7 @@ export default async function ProspectingPage({
                 <Stat label="Top industry" value={icp.industries[0]?.value ?? '—'} />
               </div>
 
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <SectionLabel>Industries that closed</SectionLabel>
                   <ul className="mt-1.5 space-y-1.5">
@@ -137,12 +137,12 @@ export default async function ProspectingPage({
                   )}
 
                   <SectionLabel className="mt-4">Fastest closes</SectionLabel>
-                  <ul className="mt-1.5 space-y-1">
+                  <ul className="mt-1">
                     {icp.basedOn.slice(0, 5).map((deal) => (
                       <li key={deal.accountId} className="flex items-baseline justify-between gap-2">
                         <Link
                           href={`/accounts/${deal.accountId}`}
-                          className="min-w-0 truncate text-xs text-text-muted hover:text-accent-text"
+                          className="min-w-0 truncate py-1 text-xs text-text-muted hover:text-accent-text"
                         >
                           {deal.name}
                         </Link>
@@ -183,7 +183,10 @@ export default async function ProspectingPage({
                 }
               />
             ) : (
-              <div className="grid gap-3 lg:grid-cols-2">
+              // grid-cols-1 is minmax(0, 1fr). Without it the implicit column
+              // is `auto`, which grows to the widest nowrap line in any card
+              // and pushed the whole list past a phone's edge.
+              <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                 {prospects.map((prospect) => (
                   <ProspectCard key={prospect.name} prospect={prospect} />
                 ))}

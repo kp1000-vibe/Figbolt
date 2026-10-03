@@ -1,1042 +1,716 @@
 [
   {
     "route": "/home",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "a",
-        "label": "Open inbox",
-        "size": "57x16"
-      },
-      {
-        "tag": "a",
-        "label": "Continental — Dock Scheduling",
-        "size": "166x22"
-      },
-      {
-        "tag": "a",
-        "label": "Halcyon Health — Clinical Ops",
-        "size": "166x22"
-      }
-    ],
-    "failingCount": 28,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 40
+    "tightCount": 68
   },
   {
     "route": "/ask",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      }
-    ],
-    "failingCount": 3,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 47
+    "tightCount": 50
   },
   {
     "route": "/inbox",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "a",
-        "label": "Meridian Telecom",
-        "size": "122x22"
-      },
-      {
-        "tag": "a",
-        "label": "Meridian — Provisioning Workflows",
-        "size": "166x22"
-      },
-      {
-        "tag": "a",
-        "label": "Kestrel Analytics",
-        "size": "115x22"
-      }
-    ],
-    "failingCount": 54,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 115
+    "tightCount": 169
   },
   {
     "route": "/accounts",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "At risk",
-        "size": "52x22"
-      },
-      {
-        "tag": "button",
-        "label": "No contact 30d+",
-        "size": "104x22"
-      }
-    ],
-    "failingCount": 5,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 58
+    "tightCount": 63
   },
   {
     "route": "/contacts",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "End user31",
-        "size": "80x22"
-      },
-      {
-        "tag": "button",
-        "label": "Champion26",
-        "size": "88x22"
-      },
-      {
-        "tag": "button",
-        "label": "Influencer17",
-        "size": "86x22"
-      }
-    ],
-    "failingCount": 16,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 208
+    "tightCount": 224
   },
   {
     "route": "/opportunities",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
-    "clipped": [
-      {
-        "tag": "svg",
-        "cls": "size-5 shrink-0",
-        "right": 917
-      },
-      {
-        "tag": "path",
-        "cls": "",
-        "right": 913
-      },
-      {
-        "tag": "path",
-        "cls": "",
-        "right": 915
-      }
-    ],
-    "clippedCount": 3,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "At risk",
-        "size": "52x22"
-      },
-      {
-        "tag": "button",
-        "label": "No contact 14d+",
-        "size": "104x22"
-      },
-      {
-        "tag": "button",
-        "label": "Closing in 30d",
-        "size": "91x22"
-      }
-    ],
-    "failingCount": 59,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
+      }
+    ],
+    "tightCount": 89
+  },
+  {
+    "route": "/tasks",
+    "overlaps": [],
+    "overlapCount": 0,
+    "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
+      }
+    ],
+    "tightCount": 71
+  },
+  {
+    "route": "/meetings",
+    "overlaps": [],
+    "overlapCount": 0,
+    "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
+      }
+    ],
+    "tightCount": 32
+  },
+  {
+    "route": "/agents",
+    "overlaps": [],
+    "overlapCount": 0,
+    "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
     "tightCount": 30
   },
   {
-    "route": "/tasks",
-    "scrollsSideways": false,
-    "bodyWidth": 390,
-    "viewport": 390,
-    "clipped": [],
-    "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "All open5",
-        "size": "76x22"
-      },
-      {
-        "tag": "button",
-        "label": "Overdue5",
-        "size": "76x22"
-      },
-      {
-        "tag": "button",
-        "label": "Due today5",
-        "size": "84x22"
-      }
-    ],
-    "failingCount": 44,
-    "tightTargets": [
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Ask anything⌘K",
-        "size": "125x32"
-      },
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Close navigation",
-        "size": "26x26"
-      }
-    ],
-    "tightCount": 27
-  },
-  {
-    "route": "/meetings",
-    "scrollsSideways": false,
-    "bodyWidth": 390,
-    "viewport": 390,
-    "clipped": [],
-    "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Past55",
-        "size": "58x22"
-      },
-      {
-        "tag": "button",
-        "label": "Upcoming0",
-        "size": "82x22"
-      },
-      {
-        "tag": "button",
-        "label": "Awaiting processing0",
-        "size": "129x22"
-      }
-    ],
-    "failingCount": 6,
-    "tightTargets": [
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Ask anything⌘K",
-        "size": "125x32"
-      },
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Close navigation",
-        "size": "26x26"
-      }
-    ],
-    "tightCount": 26
-  },
-  {
-    "route": "/agents",
-    "scrollsSideways": false,
-    "bodyWidth": 390,
-    "viewport": 390,
-    "clipped": [],
-    "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      }
-    ],
-    "failingCount": 3,
-    "tightTargets": [
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Ask anything⌘K",
-        "size": "125x32"
-      },
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Close navigation",
-        "size": "26x26"
-      }
-    ],
-    "tightCount": 27
-  },
-  {
     "route": "/automations",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      }
-    ],
-    "failingCount": 3,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 27
+    "tightCount": 30
   },
   {
     "route": "/prospecting",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
-    "bodyWidth": 484,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
     "viewport": 390,
-    "clipped": [
-      {
-        "tag": "div",
-        "cls": "rounded-[var(--radius-lg)] border border-border bg-surface shadow-[var",
-        "right": 484
-      },
-      {
-        "tag": "div",
-        "cls": "px-4 pb-4 flex-1",
-        "right": 483
-      },
-      {
-        "tag": "div",
-        "cls": "flex items-start justify-between gap-3",
-        "right": 467
-      },
-      {
-        "tag": "div",
-        "cls": "shrink-0 text-right",
-        "right": 467
-      },
-      {
-        "tag": "div",
-        "cls": "text-lg font-semibold tabular text-text",
-        "right": 467
-      },
-      {
-        "tag": "div",
-        "cls": "text-3xs uppercase tracking-wide text-text-subtle",
-        "right": 467
-      }
-    ],
-    "clippedCount": 300,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "a",
-        "label": "Vertex Manufacturing",
-        "size": "114x16"
-      },
-      {
-        "tag": "a",
-        "label": "Willow Creek Bank",
-        "size": "98x16"
-      },
-      {
-        "tag": "a",
-        "label": "Brightpath Retail",
-        "size": "88x16"
-      }
-    ],
-    "failingCount": 17,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 49
+    "tightCount": 66
   },
   {
     "route": "/analytics",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "a",
-        "label": "Beacon — Outage Coordination — quiet",
-        "size": "166x22"
-      },
-      {
-        "tag": "a",
-        "label": "Cascade — Exception Management — qui",
-        "size": "166x22"
-      },
-      {
-        "tag": "a",
-        "label": "Atlas — Maintenance Escalations — qu",
-        "size": "166x22"
-      }
-    ],
-    "failingCount": 41,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 40
+    "tightCount": 81
   },
   {
     "route": "/product-signals",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Security28",
-        "size": "76x22"
-      },
-      {
-        "tag": "button",
-        "label": "Integration12",
-        "size": "91x22"
-      },
-      {
-        "tag": "a",
-        "label": "Audit logging",
-        "size": "88x20"
-      }
-    ],
-    "failingCount": 9,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
-    "tightCount": 25
+    "tightCount": 34
   },
   {
     "route": "/knowledge",
+    "overlaps": [],
+    "overlapCount": 0,
     "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
     "bodyWidth": 390,
     "viewport": 390,
     "clipped": [],
     "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      }
-    ],
-    "failingCount": 3,
+    "failingTargets": [],
+    "failingCount": 0,
     "tightTargets": [
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Ask anything⌘K",
-        "size": "125x32"
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
       },
       {
         "tag": "a",
         "label": "Figbolt",
-        "size": "78x28"
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
       },
       {
         "tag": "button",
         "label": "Close navigation",
-        "size": "26x26"
-      }
-    ],
-    "tightCount": 26
-  },
-  {
-    "route": "/learning",
-    "scrollsSideways": false,
-    "bodyWidth": 390,
-    "viewport": 390,
-    "clipped": [],
-    "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      }
-    ],
-    "failingCount": 3,
-    "tightTargets": [
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Ask anything⌘K",
-        "size": "125x32"
-      },
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Close navigation",
-        "size": "26x26"
-      }
-    ],
-    "tightCount": 26
-  },
-  {
-    "route": "/integrations",
-    "scrollsSideways": false,
-    "bodyWidth": 390,
-    "viewport": 390,
-    "clipped": [],
-    "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      },
-      {
-        "tag": "a",
-        "label": "Docs",
-        "size": "52x16"
-      },
-      {
-        "tag": "a",
-        "label": "Docs",
-        "size": "52x16"
-      },
-      {
-        "tag": "a",
-        "label": "Docs",
-        "size": "52x16"
-      }
-    ],
-    "failingCount": 47,
-    "tightTargets": [
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Ask anything⌘K",
-        "size": "125x32"
-      },
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Close navigation",
-        "size": "26x26"
-      }
-    ],
-    "tightCount": 69
-  },
-  {
-    "route": "/settings",
-    "scrollsSideways": false,
-    "bodyWidth": 390,
-    "viewport": 390,
-    "clipped": [],
-    "clippedCount": 0,
-    "failingTargets": [
-      {
-        "tag": "button",
-        "label": "Light",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "Dark",
-        "size": "70x22"
-      },
-      {
-        "tag": "button",
-        "label": "System",
-        "size": "70x22"
-      }
-    ],
-    "failingCount": 3,
-    "tightTargets": [
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Ask anything⌘K",
-        "size": "125x32"
-      },
-      {
-        "tag": "a",
-        "label": "Figbolt",
-        "size": "78x28"
-      },
-      {
-        "tag": "button",
-        "label": "Close navigation",
-        "size": "26x26"
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
       }
     ],
     "tightCount": 29
+  },
+  {
+    "route": "/learning",
+    "overlaps": [],
+    "overlapCount": 0,
+    "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
+      }
+    ],
+    "tightCount": 29
+  },
+  {
+    "route": "/integrations",
+    "overlaps": [],
+    "overlapCount": 0,
+    "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
+      }
+    ],
+    "tightCount": 116
+  },
+  {
+    "route": "/settings",
+    "overlaps": [],
+    "overlapCount": 0,
+    "scrollsSideways": false,
+    "layoutWidth": 390,
+    "layoutWide": false,
+    "fixedOffscreen": [],
+    "bodyWidth": 390,
+    "viewport": 390,
+    "clipped": [],
+    "clippedCount": 0,
+    "failingTargets": [],
+    "failingCount": 0,
+    "tightTargets": [
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Ask anything⌘K",
+        "size": "125x32",
+        "cls": "ml-auto flex h-8 items-center gap-2 rounded-[var(--radius-md)] border border-border bg-sur"
+      },
+      {
+        "tag": "a",
+        "label": "Figbolt",
+        "size": "78x28",
+        "cls": "flex items-center gap-2"
+      },
+      {
+        "tag": "button",
+        "label": "Close navigation",
+        "size": "26x26",
+        "cls": "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-["
+      }
+    ],
+    "tightCount": 32
   }
 ]
