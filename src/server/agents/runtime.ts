@@ -9,7 +9,7 @@ import {
   type Role,
   type SourceRef,
 } from '@/db/schema';
-import { getLanguageModel } from '@/lib/ai';
+import { getModelForTask } from '@/lib/ai';
 import type { ModelMessage, ToolCall, ToolDefinition } from '@/lib/ai/types';
 import { dispatchTool, ensureToolsLoaded } from '@/lib/agents/dispatch';
 import { getTool } from '@/lib/agents/registry';
@@ -121,7 +121,9 @@ export async function runAgent(ctx: Ctx, agentId: string, trigger: RunTrigger): 
     });
   }
 
-  const model = getLanguageModel();
+  // Jev picks the model once for the whole run: a tool-calling conversation
+  // must not change provider between steps.
+  const { model } = await getModelForTask({ usesTools: true });
   const workspaceContext = await loadWorkspaceContext(ctx);
   const sources: SourceRef[] = [];
   const pendingApprovals: string[] = [];

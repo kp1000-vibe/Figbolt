@@ -3,7 +3,7 @@ import { conversations, messages, workspaces, type SourceRef } from '@/db/schema
 import { getLanguageModel, getModelForTask } from '@/lib/ai';
 import { s } from '@/lib/ai/providers/structured';
 import { fitEvidence } from '@/lib/ai/prompt';
-import type { AnswerEnvelope, EvidenceItem } from '@/lib/ai/types';
+import type { AnswerEnvelope, EvidenceItem, RoutingSummary } from '@/lib/ai/types';
 import { scope, scoped, type Ctx } from '../context';
 import { ctxAssert } from '../context';
 import { record } from '../audit';
@@ -73,6 +73,8 @@ export type AskResult = AnswerEnvelope & {
   evidence: EvidenceItem[];
   latencyMs: number;
   model: string;
+  /** How `model` was chosen: by Jev, or by code when Jev did not decide. */
+  routing?: RoutingSummary;
   /** Set when the question was routed to the analytics engine instead. */
   analytics?: Awaited<ReturnType<typeof runAnalyticsQuestion>>;
 };
@@ -110,13 +112,14 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
         extractedEntities: [],
         reasoningSummary: analytics.methodology,
       };
-      const persisted = await persist(ctx, options, question, envelope, model.id, Date.now() - started);
+      // A report answered this; no language model ran.
+      const persisted = await persist(ctx, options, question, envelope, 'report', Date.now() - started);
       return {
         ...envelope,
         ...persisted,
         evidence: [],
         latencyMs: Date.now() - started,
-        model: model.id,
+        model: 'report',
         analytics,
       };
     }
@@ -144,8 +147,8 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
       reasoningSummary: 'Searched CRM records, conversations and knowledge; no matches.',
       caveat: 'No matching records found.',
     };
-    const persisted = await persist(ctx, options, question, envelope, model.id, Date.now() - started);
-    return { ...envelope, ...persisted, evidence: [], latencyMs: Date.now() - started, model: model.id };
+    const persisted = await persist(ctx, options, question, envelope, 'none', Date.now() - started);
+    return { ...envelope, ...persisted, evidence: [], latencyMs: Date.now() - started, model: 'none' };
   }
 
   /* 4 — build context within a token budget */
@@ -201,7 +204,9 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
   };
 
   const latencyMs = Date.now() - started;
-  const persisted = await persist(ctx, options, question, envelope, model.id, latencyMs, result.usage);
+  // result.model is the model that actually answered — with Jev routing,
+  // model.id would only name the router.
+  const persisted = await persist(ctx, options, question, envelope, result.model, latencyMs, result.usage);
 
   await record(ctx, {
     action: 'ai.question_answered',
@@ -214,10 +219,21 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
       confidence: envelope.confidence,
       intent: intent.intent,
       latencyMs,
+      model: result.model,
+      modelChosenBy: result.routing?.decidedBy ?? 'default',
+      routingReason: result.routing?.reason,
+      failedOverFrom: result.routing?.failedOverFrom,
     },
   });
 
-  return { ...envelope, ...persisted, evidence: fitted, latencyMs, model: model.id };
+  return {
+    ...envelope,
+    ...persisted,
+    evidence: fitted,
+    latencyMs,
+    model: result.model,
+    routing: result.routing,
+  };
 }
 
 /* ── Intent ───────────────────────────────────────────────────────────────── */

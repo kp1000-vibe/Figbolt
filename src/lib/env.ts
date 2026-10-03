@@ -47,7 +47,18 @@ const schema = z.object({
   TYPESAFE_API_KEY: optional,
   /** Opt in to sending the operator's own request text, never customer content. */
   JEV_SEND_CONTENT: bool(false),
-  /** Which provider serves each tier, smallest first. */
+  /**
+   * The models Jev chooses between, comma-separated: `claude-haiku-4-5-20251001,
+   * gpt-4.1,gemini-2.5-pro`, or `provider:model` to be explicit. Unset, the
+   * catalogue is Claude Haiku, Sonnet and Opus plus OPENAI_MODEL and
+   * GOOGLE_MODEL. Either way a model is only offered when its provider's key
+   * is set. See src/lib/ai/catalogue.ts.
+   */
+  JEV_MODELS: optional,
+  /**
+   * Legacy: extra candidates, as a model ID or a provider name. Kept so
+   * existing deployments keep their models; prefer JEV_MODELS.
+   */
   MODEL_TIER_TINY: optional,
   MODEL_TIER_EVERYDAY: optional,
   MODEL_TIER_LARGE: optional,

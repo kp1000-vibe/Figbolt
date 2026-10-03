@@ -11,7 +11,7 @@ import {
   JEV_MODEL_ID,
   type JevResult,
 } from '@/lib/ai/jev';
-import { describeJob, routeTask, TIERS, type Tier } from '@/lib/ai/router';
+import { describeJob, routeTask, TIERS, type RoutableModel, type Tier } from '@/lib/ai/router';
 import type { EvidenceItem, LanguageModel } from '@/lib/ai/types';
 
 /**
@@ -55,12 +55,34 @@ function fakeModel(id: string): LanguageModel {
   };
 }
 
-const TIER_MODELS: Partial<Record<Tier, LanguageModel>> = {
-  tiny: fakeModel('tier-tiny'),
-  everyday: fakeModel('tier-everyday'),
-  large: fakeModel('tier-large'),
-  hardest: fakeModel('tier-hardest'),
+/**
+ * Four candidates, one per strength, across providers. Keyed by the strength
+ * name so each test reads the same as when Jev picked a tier.
+ */
+const PROVIDER_BY_STRENGTH: Record<Tier, RoutableModel['provider']> = {
+  tiny: 'anthropic',
+  everyday: 'openai',
+  large: 'google',
+  hardest: 'anthropic',
 };
+
+function candidate(strength: Tier): RoutableModel {
+  return {
+    key: strength,
+    provider: PROVIDER_BY_STRENGTH[strength],
+    modelId: `model-${strength}`,
+    strength,
+    criteria: `Criteria for the ${strength} model.`,
+    model: fakeModel(`tier-${strength}`),
+  };
+}
+
+const CANDIDATES: RoutableModel[] = TIERS.map(candidate);
+
+/** A subset of the candidates, in the order given. */
+function only(...strengths: Tier[]): RoutableModel[] {
+  return strengths.map(candidate);
+}
 const DEFAULT_MODEL = fakeModel('default');
 
 /** A response in the documented shape: answers keyed by question id. */
@@ -70,7 +92,7 @@ function jevResponds(
   opts: { stakes?: number; stakesConfidence?: number } = {},
 ) {
   const answers: Record<string, unknown> = {
-    tier: { type: 'choice', choice: tier, confidence, probabilities: { [tier]: confidence } },
+    model: { type: 'choice', choice: tier, confidence, probabilities: { [tier]: confidence } },
   };
   if (opts.stakes !== undefined) {
     answers['stakes'] = {
@@ -128,7 +150,7 @@ describe('the documented wire format', () => {
     const spy = jevResponds('everyday', 0.9);
     vi.stubGlobal('fetch', spy);
     const { routeTask: route } = await freshRouter();
-    await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     const [url, init] = spy.mock.calls[0] as [string, RequestInit];
     expect(url).toBe('https://api.typesafe.ai/v1/systemone');
@@ -146,20 +168,21 @@ describe('the documented wire format', () => {
     const spy = jevResponds('everyday', 0.9);
     vi.stubGlobal('fetch', spy);
     const { routeTask: route } = await freshRouter();
-    await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     const body = sentBody(spy);
     expect(body['model']).toBe(JEV_MODEL_ID);
     // A map, not an array: the ids are the keys.
     expect(Array.isArray(body['questions'])).toBe(false);
-    expect(Object.keys(body['questions']).sort()).toEqual(['stakes', 'tier']);
+    expect(Object.keys(body['questions']).sort()).toEqual(['model', 'stakes']);
 
-    const tier = body['questions']['tier'];
-    expect(tier['type']).toBe('choice');
-    expect(typeof tier['instructions']).toBe('string');
+    const model = body['questions']['model'];
+    expect(model['type']).toBe('choice');
+    expect(typeof model['instructions']).toBe('string');
     // Option meanings belong in criteria, not smashed into the instructions.
-    expect(Object.keys(tier['criteria'])).toEqual(['tiny', 'everyday', 'large', 'hardest']);
-    expect(tier['instructions']).not.toContain('A lookup, a rename');
+    expect(Object.keys(model['criteria'])).toEqual(['tiny', 'everyday', 'large', 'hardest']);
+    expect(model['criteria']['tiny']).toBe('Criteria for the tiny model.');
+    expect(model['instructions']).not.toContain('Criteria for the');
 
     const stakes = body['questions']['stakes'];
     expect(stakes['type']).toBe('score');
@@ -173,7 +196,7 @@ describe('the documented wire format', () => {
     const spy = jevResponds('everyday', 0.9, { stakes: 1 });
     vi.stubGlobal('fetch', spy);
     const { routeTask: route } = await freshRouter();
-    await route({ task: 'draft_email' }, TIER_MODELS, DEFAULT_MODEL);
+    await route({ task: 'draft_email' }, CANDIDATES, DEFAULT_MODEL);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
@@ -207,7 +230,7 @@ describe('never blocks', () => {
 
     const { routeTask: route } = await freshRouter();
     const started = Date.now();
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.reason).toBe('jev_unavailable');
     expect(decision.model.id).toBe('default');
@@ -221,7 +244,7 @@ describe('never blocks', () => {
       const spy = vi.fn(async () => new Response('nope', { status }));
       vi.stubGlobal('fetch', spy);
       const { routeTask: route } = await freshRouter();
-      const decision = await route({ task: 'draft_email' }, TIER_MODELS, DEFAULT_MODEL);
+      const decision = await route({ task: 'draft_email' }, CANDIDATES, DEFAULT_MODEL);
 
       expect(decision.reason, `status ${status}`).toBe('jev_unavailable');
       expect(decision.model.id).toBe('default');
@@ -236,7 +259,7 @@ describe('never blocks', () => {
       vi.fn(async () => new Response(JSON.stringify({ surprise: true }), { status: 200 })),
     );
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'summarize_account' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'summarize_account' }, CANDIDATES, DEFAULT_MODEL);
     expect(decision.reason).toBe('jev_unavailable');
   });
 
@@ -244,7 +267,7 @@ describe('never blocks', () => {
     vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('DNS exploded'); }));
     const { routeTask: route } = await freshRouter();
     await expect(
-      route({ task: 'answer_question' }, TIER_MODELS, DEFAULT_MODEL),
+      route({ task: 'answer_question' }, CANDIDATES, DEFAULT_MODEL),
     ).resolves.toMatchObject({ fellBack: true });
   });
 });
@@ -253,10 +276,10 @@ describe('never guesses', () => {
   it('uses the tier Jev picked when it is confident', async () => {
     vi.stubGlobal('fetch', jevResponds('tiny', 0.97));
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.reason).toBe('jev');
-    expect(decision.tier).toBe('tiny');
+    expect(decision.chosen?.key).toBe('tiny');
     expect(decision.model.id).toBe('tier-tiny');
     expect(decision.fellBack).toBe(false);
     expect(decision.confidence).toBeCloseTo(0.97);
@@ -265,7 +288,7 @@ describe('never guesses', () => {
   it('falls back below the confidence floor', async () => {
     vi.stubGlobal('fetch', jevResponds('tiny', 0.42));
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.reason).toBe('low_confidence');
     expect(decision.confidence).toBeCloseTo(0.42);
@@ -279,20 +302,20 @@ describe('never guesses', () => {
       vi.fn(
         async () =>
           new Response(
-            JSON.stringify({ answers: { tier: { type: 'choice', choice: 'hardest' } } }),
+            JSON.stringify({ answers: { model: { type: 'choice', choice: 'hardest' } } }),
             { status: 200 },
           ),
       ),
     );
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'generate_insights' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'generate_insights' }, CANDIDATES, DEFAULT_MODEL);
     expect(decision.model.id).toBe('default');
   });
 
   it('rejects a tier Jev invented', async () => {
     vi.stubGlobal('fetch', jevResponds('gigantic', 0.99));
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'answer_question' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'answer_question' }, CANDIDATES, DEFAULT_MODEL);
     expect(decision.model.id).toBe('default');
   });
 
@@ -305,14 +328,14 @@ describe('never guesses', () => {
         async () =>
           new Response(
             JSON.stringify({
-              answers: { tier: { type: 'score', score: 2, confidence: 0.99 } },
+              answers: { model: { type: 'score', score: 2, confidence: 0.99 } },
             }),
             { status: 200 },
           ),
       ),
     );
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
     expect(decision.reason).toBe('jev_unavailable');
   });
 
@@ -426,33 +449,33 @@ describe('policy is code, not prompt', () => {
   it('moves a job up a tier when a wrong answer would reach a customer', async () => {
     vi.stubGlobal('fetch', jevResponds('tiny', 0.95, { stakes: 2 }));
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'draft_email' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'draft_email' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.reason).toBe('jev');
     expect(decision.stakes).toBe(2);
     expect(decision.raisedForStakes).toBe(true);
-    expect(decision.tier).toBe('everyday');
+    expect(decision.chosen?.key).toBe('everyday');
     expect(decision.model.id).toBe('tier-everyday');
   });
 
   it('leaves low-stakes jobs on the tier Jev picked', async () => {
     vi.stubGlobal('fetch', jevResponds('tiny', 0.95, { stakes: 0 }));
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.stakes).toBe(0);
     expect(decision.raisedForStakes).toBe(false);
-    expect(decision.tier).toBe('tiny');
+    expect(decision.chosen?.key).toBe('tiny');
   });
 
   it('does not escalate on an unsure stakes reading', async () => {
     vi.stubGlobal('fetch', jevResponds('tiny', 0.95, { stakes: 2, stakesConfidence: 0.2 }));
     const { routeTask: route } = await freshRouter();
-    const decision = await route({ task: 'draft_email' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'draft_email' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.stakes).toBeNull();
     expect(decision.raisedForStakes).toBe(false);
-    expect(decision.tier).toBe('tiny');
+    expect(decision.chosen?.key).toBe('tiny');
   });
 
   it('cannot escalate past the largest configured tier', async () => {
@@ -460,10 +483,10 @@ describe('policy is code, not prompt', () => {
     const { routeTask: route } = await freshRouter();
     const decision = await route(
       { task: 'generate_insights' },
-      { tiny: TIER_MODELS.tiny, large: TIER_MODELS.large },
+      only('tiny', 'large'),
       DEFAULT_MODEL,
     );
-    expect(decision.tier).toBe('large');
+    expect(decision.chosen?.key).toBe('large');
     expect(decision.raisedForStakes).toBe(false);
   });
 });
@@ -520,7 +543,7 @@ describe('never leaks', () => {
     const spy = jevResponds('everyday', 0.9);
     vi.stubGlobal('fetch', spy);
     const { routeTask: route } = await freshRouter();
-    await route({ task: 'extract_objections', evidence }, TIER_MODELS, DEFAULT_MODEL);
+    await route({ task: 'extract_objections', evidence }, CANDIDATES, DEFAULT_MODEL);
 
     // The end-to-end check, not just the state builder in isolation.
     const raw = (spy.mock.calls[0]?.[1] as RequestInit).body as string;
@@ -537,7 +560,7 @@ describe('stays out of the way', () => {
     vi.stubGlobal('fetch', fetchSpy);
 
     const { routeTask: route } = await import('@/lib/ai/router');
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
 
     expect(decision.reason).toBe('router_off');
     expect(decision.model.id).toBe('default');
@@ -549,7 +572,7 @@ describe('stays out of the way', () => {
     delete process.env['TYPESAFE_API_KEY'];
     vi.resetModules();
     const { routeTask: route } = await import('@/lib/ai/router');
-    const decision = await route({ task: 'classify_intent' }, TIER_MODELS, DEFAULT_MODEL);
+    const decision = await route({ task: 'classify_intent' }, CANDIDATES, DEFAULT_MODEL);
     expect(decision.reason).toBe('jev_not_configured');
   });
 
@@ -559,7 +582,7 @@ describe('stays out of the way', () => {
     const { routeTask: route } = await freshRouter();
     const decision = await route(
       { task: 'classify_intent' },
-      { everyday: TIER_MODELS.everyday },
+      only('everyday'),
       DEFAULT_MODEL,
     );
 
@@ -575,13 +598,13 @@ describe('stays out of the way', () => {
 
     const decision = await route(
       { task: 'generate_insights' },
-      { tiny: TIER_MODELS.tiny, large: TIER_MODELS.large },
+      only('tiny', 'large'),
       DEFAULT_MODEL,
     );
 
     const body = sentBody(spy);
-    expect(Object.keys(body['questions']['tier']['criteria'])).toEqual(['tiny', 'large']);
-    expect(decision.tier).toBe('large');
+    expect(Object.keys(body['questions']['model']['criteria'])).toEqual(['tiny', 'large']);
+    expect(decision.chosen?.key).toBe('large');
     expect(decision.model.id).toBe('tier-large');
   });
 
@@ -590,7 +613,7 @@ describe('stays out of the way', () => {
     const { routeTask: route } = await freshRouter();
     const decision = await route(
       { task: 'generate_insights' },
-      { tiny: TIER_MODELS.tiny, large: TIER_MODELS.large },
+      only('tiny', 'large'),
       DEFAULT_MODEL,
     );
     // Confident, but out of range: the default runs rather than a guess.
@@ -605,7 +628,7 @@ describe('cost accounting', () => {
     const { routeTask: route } = await freshRouter();
     const decision = await route(
       { task: 'summarize_meeting', evidence: [] },
-      TIER_MODELS,
+      CANDIDATES,
       DEFAULT_MODEL,
     );
 

@@ -10,32 +10,31 @@ import {
   type JevQuestions,
   type JevState,
 } from './jev';
+import { STRENGTHS, type ModelCandidate } from './catalogue';
 import type { EvidenceItem, LanguageModel, TaskKind } from './types';
 
 /**
- * Jev decides which model does the work.
+ * Jev decides which model does the work — Claude, OpenAI or Gemini.
  *
  * Most of what a CRM asks a model to do is small. Classifying an intent,
  * suggesting a stage, deciding whether a sentence is a commitment — these do
  * not need the largest model, and paying frontier prices for them is how AI
- * budgets get burned with nothing to show. Jev sizes each job in a fraction of
- * a second for a rounding error, and the work goes to the smallest model that
- * can do it well.
+ * budgets get burned with nothing to show. Equally, some jobs suit one
+ * provider better than another: a long-context model for a pile of
+ * transcripts, the strongest reasoner for strategy. Jev reads a description of
+ * each job and picks the model, by name, from whatever is configured.
  *
  * This follows TypeSafe's intent-routing pattern: one call, two independent
- * questions over the same state — which tier, and how expensive a wrong answer
- * is — with code, not the model, owning the policy that combines them.
- *
- * Four tiers, smallest first, matched to whichever providers are actually
- * configured. With fewer than two tiers configured there is nothing to route
- * between and the router stays out of the way.
+ * questions over the same state — which model, and how expensive a wrong
+ * answer is — with code, not the model, owning the policy that combines them.
  *
  * Three things this must never do, in priority order:
  *
  *   1. **Never block.** Jev slow, missing, erroring or switched off is
  *      indistinguishable from the router not existing.
- *   2. **Never guess.** Below the confidence floor the default model runs. A
- *      confident wrong tier is recoverable; an unsure one is a coin toss.
+ *   2. **Never guess.** Below the confidence floor, code makes the call: the
+ *      default model runs. A confident wrong pick is recoverable; an unsure
+ *      one is a coin toss.
  *   3. **Never leak.** By default Jev is sent a *description* of the job — its
  *      kind, its size, its shape — and not the customer's words. Figbolt's
  *      whole trust model treats customer email and transcripts as sensitive;
@@ -43,16 +42,9 @@ import type { EvidenceItem, LanguageModel, TaskKind } from './types';
  *      that away for a fraction of a cent. Set JEV_SEND_CONTENT=true to opt in.
  */
 
-export const TIERS = ['tiny', 'everyday', 'large', 'hardest'] as const;
-export type Tier = (typeof TIERS)[number];
-
-/** Option descriptions belong in criteria, not crammed into the instructions. */
-const TIER_CRITERIA: Record<Tier, string> = {
-  tiny: 'A lookup, a rename, a one-line answer, or a yes/no classification.',
-  everyday: 'A normal email, a short summary, or a routine extraction.',
-  large: 'A multi-step build, research across many records, or a full report.',
-  hardest: 'Strategy, or anything where a wrong call is expensive to undo.',
-};
+/** Kept for the vocabulary: the candidate strengths, weakest first. */
+export const TIERS = STRENGTHS;
+export type Tier = (typeof STRENGTHS)[number];
 
 /**
  * What a wrong answer costs. Ordered levels, each a concrete situation, so the
@@ -67,11 +59,15 @@ const STAKES_LEVELS = [
 /** The level at which we would rather overspend than be wrong. */
 const STAKES_ESCALATE_AT = STAKES_LEVELS.length - 1;
 
+/** A candidate with the model that runs it. */
+export type RoutableModel = ModelCandidate & { model: LanguageModel };
+
 export type RoutingDecision = {
-  tier: Tier;
+  /** The candidate that will run the job, or null when the default runs. */
+  chosen: RoutableModel | null;
   /** The model that will run the job. */
   model: LanguageModel;
-  /** Why this model: Jev's call, or the reason we did not use one. */
+  /** Why this model: Jev's call, or the reason code made it instead. */
   reason:
     | 'jev'
     | 'router_off'
@@ -82,7 +78,7 @@ export type RoutingDecision = {
   confidence: number | null;
   /** Jev's read on what a wrong answer costs, 0-based across STAKES_LEVELS. */
   stakes: number | null;
-  /** True when policy moved the job up a tier because the stakes were high. */
+  /** True when policy moved the job to a stronger model because the stakes were high. */
   raisedForStakes: boolean;
   jevLatencyMs: number | null;
   jevCostUsd: number | null;
@@ -91,12 +87,15 @@ export type RoutingDecision = {
 };
 
 export type RouteRequest = {
-  task: TaskKind;
+  /** Absent for general-purpose calls that are not one of the named jobs. */
+  task?: TaskKind;
   /** The user's own words, when there are any. Never a customer's. */
   instruction?: string;
   evidence?: EvidenceItem[];
   /** Hint that the caller expects a long, composed answer. */
   expectsProse?: boolean;
+  /** True when the job calls tools over several steps (agents). */
+  usesTools?: boolean;
 };
 
 /** Tasks whose cost is dominated by judgement, not volume. */
@@ -112,18 +111,18 @@ export function routerEnabled(): boolean {
 }
 
 /**
- * Ask Jev which tier this job needs, then resolve that to a model.
+ * Ask Jev which model should run this job.
  *
- * `available` maps a tier to a model. Tiers with no model fall to the nearest
- * smaller one that has a model, so a workspace with two providers routes
- * between two rather than failing.
+ * `candidates` are the models that can actually run — see listCandidates().
+ * `defaultModel` is what runs whenever Jev does not make the call.
  */
 export async function routeTask(
   request: RouteRequest,
-  available: Partial<Record<Tier, LanguageModel>>,
+  candidates: readonly RoutableModel[],
   defaultModel: LanguageModel,
 ): Promise<RoutingDecision> {
   const base = {
+    chosen: null,
     model: defaultModel,
     confidence: null,
     stakes: null,
@@ -133,39 +132,40 @@ export async function routeTask(
     fellBack: true,
   } as const;
 
-  const configuredTiers = TIERS.filter((t) => available[t]);
-  if (configuredTiers.length < 2) {
-    return { ...base, tier: 'everyday', reason: 'single_model' };
-  }
-  if (!routerEnabled()) return { ...base, tier: 'everyday', reason: 'router_off' };
-  if (!jevConfigured()) return { ...base, tier: 'everyday', reason: 'jev_not_configured' };
+  if (candidates.length < 2) return { ...base, reason: 'single_model' };
+  if (!routerEnabled()) return { ...base, reason: 'router_off' };
+  if (!jevConfigured()) return { ...base, reason: 'jev_not_configured' };
 
   const options: Record<string, string> = {};
-  for (const tier of configuredTiers) options[tier] = TIER_CRITERIA[tier];
+  for (const c of candidates) options[c.key] = c.criteria;
 
   const questions: JevQuestions = {
     // Two independent judgements over one state, answered in parallel.
-    tier: choice(
-      'Which is the smallest model tier that can do this job well? Judge from the ' +
-        'kind of work, how much evidence there is, and whether a written answer is expected.',
+    model: choice(
+      'Which model should do this job? Pick the cheapest one that will do it well. Judge from ' +
+        'the kind of work, how much evidence there is, whether a written answer is expected, ' +
+        'and whether it calls tools over several steps.',
       options,
     ),
     stakes: score('If the model gets this job wrong, how much does it cost?', STAKES_LEVELS),
   };
 
   const result = await askJev(describeJob(request), questions);
-  if (!result) return { ...base, tier: 'everyday', reason: 'jev_unavailable' };
+  if (!result) return { ...base, reason: 'jev_unavailable' };
 
   const stakes = confidentScore(result, 'stakes');
-  const chosen = confidentChoice(result, 'tier', configuredTiers);
+  const picked = confidentChoice(
+    result,
+    'model',
+    candidates.map((c) => c.key),
+  );
 
-  if (!chosen) {
-    // Jev answered but is not sure enough. The caller's default is the safest
-    // thing in the room, so it wins.
-    const answer = result.answers['tier'];
+  if (!picked) {
+    // Jev answered but is not sure enough, or named something it was not
+    // offered. Code makes the call: the default is the safest thing in the room.
+    const answer = result.answers['model'];
     return {
       ...base,
-      tier: 'everyday',
       reason: 'low_confidence',
       confidence: answer?.type === 'choice' ? answer.confidence : null,
       stakes: stakes?.level ?? null,
@@ -176,17 +176,17 @@ export async function routeTask(
 
   // Policy lives here, not in the prompt: raw judgements stay reusable and
   // this rule can change without re-running inference.
-  const picked = chosen.value as Tier;
+  const first = candidates.find((c) => c.key === picked.value)!;
   const raise = stakes !== null && stakes.level >= STAKES_ESCALATE_AT;
-  const tier = raise ? nextTierUp(picked, configuredTiers) : picked;
+  const chosen = raise ? strongerThan(first, candidates) : first;
 
   return {
-    tier,
-    model: resolveTier(tier, available, defaultModel),
+    chosen,
+    model: chosen.model,
     reason: 'jev',
-    confidence: chosen.confidence,
+    confidence: picked.confidence,
     stakes: stakes?.level ?? null,
-    raisedForStakes: tier !== picked,
+    raisedForStakes: chosen !== first,
     jevLatencyMs: result.latencyMs,
     jevCostUsd: result.costUsd,
     fellBack: false,
@@ -198,9 +198,9 @@ export async function routeTask(
  *
  * This is the privacy boundary. By default it describes the job without
  * quoting the material: what kind of work it is, how much evidence there is,
- * whether any of it is untrusted, and roughly how long. That is enough to size
- * a job — the difference between a one-line classification and a full report is
- * structural, not semantic.
+ * whether any of it is untrusted, and roughly how long. That is enough to pick
+ * a model — the difference between a one-line classification and a full report
+ * is structural, not semantic.
  *
  * Named fields rather than a paragraph, per TypeSafe's guidance on state with
  * several parts.
@@ -210,12 +210,13 @@ export function describeJob(request: RouteRequest): JevState {
   const totalChars = evidence.reduce((n, e) => n + e.content.length, 0);
 
   const state: Record<string, unknown> = {
-    job: request.task.replace(/_/g, ' '),
+    job: request.task ? request.task.replace(/_/g, ' ') : 'general request',
     evidence_items: evidence.length,
     evidence_characters: totalChars,
     untrusted_sources: evidence.filter((e) => e.trust === 'untrusted').length,
     expects_written_answer: Boolean(request.expectsProse),
-    judgement_heavy_task: INHERENTLY_HARD.has(request.task),
+    multi_step_tool_use: Boolean(request.usesTools),
+    judgement_heavy_task: request.task ? INHERENTLY_HARD.has(request.task) : false,
   };
 
   if (env.JEV_SEND_CONTENT) {
@@ -229,28 +230,18 @@ export function describeJob(request: RouteRequest): JevState {
   return state;
 }
 
-/** One tier larger among those configured, or the same tier if already top. */
-function nextTierUp(tier: Tier, configured: readonly Tier[]): Tier {
-  const bigger = configured.filter((t) => TIERS.indexOf(t) > TIERS.indexOf(tier));
-  return bigger[0] ?? tier;
-}
-
-/** Nearest configured model at or below the chosen tier. */
-function resolveTier(
-  tier: Tier,
-  available: Partial<Record<Tier, LanguageModel>>,
-  fallbackModel: LanguageModel,
-): LanguageModel {
-  const index = TIERS.indexOf(tier);
-  for (let i = index; i >= 0; i--) {
-    const candidate = available[TIERS[i]!];
-    if (candidate) return candidate;
-  }
-  for (let i = index + 1; i < TIERS.length; i++) {
-    const candidate = available[TIERS[i]!];
-    if (candidate) return candidate;
-  }
-  return fallbackModel;
+/**
+ * The next stronger candidate, for high-stakes jobs: the weakest model that is
+ * stronger than Jev's pick, preferring the same provider. Unchanged when the
+ * pick is already the strongest.
+ */
+function strongerThan(pick: RoutableModel, candidates: readonly RoutableModel[]): RoutableModel {
+  const rank = (c: ModelCandidate) => STRENGTHS.indexOf(c.strength);
+  const stronger = candidates.filter((c) => rank(c) > rank(pick));
+  if (stronger.length === 0) return pick;
+  const nextRank = Math.min(...stronger.map(rank));
+  const atNext = stronger.filter((c) => rank(c) === nextRank);
+  return atNext.find((c) => c.provider === pick.provider) ?? atNext[0]!;
 }
 
 export { JEV_CONFIDENCE_FLOOR };

@@ -67,6 +67,18 @@ export type CompletionResult = {
   stopReason: 'stop' | 'tool_use' | 'max_tokens' | 'error';
   usage: TokenUsage;
   model: string;
+  /** Who picked `model`, when the call went through the Jev router. */
+  routing?: RoutingSummary;
+};
+
+/** How a routed call's model was chosen — enough to show and to audit. */
+export type RoutingSummary = {
+  /** `jev` when Jev made the call; otherwise code did, for `reason`. */
+  decidedBy: 'jev' | 'default';
+  reason: string;
+  confidence: number | null;
+  /** The model Jev picked, when the call then failed over to the default. */
+  failedOverFrom?: string;
 };
 
 export type TokenUsage = { promptTokens: number; completionTokens: number };
@@ -91,6 +103,8 @@ export type StructuredResult<T> = {
   model: string;
   /** How much of the answer the model considers supported by the evidence. */
   confidence: number;
+  /** Who picked `model`, when the call went through the Jev router. */
+  routing?: RoutingSummary;
 };
 
 export const TASK_KINDS = [

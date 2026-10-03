@@ -113,8 +113,23 @@ export default async function AskPage({
                     caveat: result.caveat,
                   }}
                   footer={
-                    <span className="ml-auto shrink-0 font-mono text-2xs text-text-subtle">
-                      {result.model} · {result.latencyMs}ms
+                    <span
+                      className="ml-auto shrink-0 font-mono text-2xs text-text-subtle"
+                      title={
+                        result.routing?.failedOverFrom
+                          ? `Jev chose ${result.routing.failedOverFrom}; it failed, so the default answered.`
+                          : result.routing?.decidedBy === 'jev'
+                            ? `Jev chose this model (confidence ${Math.round((result.routing.confidence ?? 0) * 100)}%).`
+                            : result.routing
+                              ? `Default model — Jev did not decide (${result.routing.reason.replace(/_/g, ' ')}).`
+                              : undefined
+                      }
+                    >
+                      {result.model}
+                      {result.routing?.decidedBy === 'jev' && !result.routing.failedOverFrom && ' · chosen by Jev'}
+                      {result.routing?.failedOverFrom && ' · failover'}
+                      {' · '}
+                      {result.latencyMs}ms
                     </span>
                   }
                 />
