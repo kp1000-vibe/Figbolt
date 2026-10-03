@@ -2,7 +2,13 @@ import { defineConfig } from 'vitest/config';
 import path from 'node:path';
 
 export default defineConfig({
-  resolve: { alias: { '@': path.resolve(process.cwd(), 'src') } },
+  resolve: {
+    alias: {
+      '@': path.resolve(process.cwd(), 'src'),
+      // next/font only exists inside the Next compiler; see the stub's note.
+      'next/font/google': path.resolve(process.cwd(), 'tests/stubs/next-font-google.ts'),
+    },
+  },
   test: {
     environment: 'node',
     globals: true,

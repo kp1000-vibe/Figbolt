@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Bodoni_Moda } from 'next/font/google';
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth/session';
 import { absoluteUrl, productJsonLd, SITE } from '@/lib/seo';
@@ -11,6 +12,21 @@ import { absoluteUrl, productJsonLd, SITE } from '@/lib/seo';
  * public page, add it here and to PUBLIC_ROUTES in src/lib/seo.ts so the
  * sitemap agrees with the meta tags.
  */
+/**
+ * The display face for the hero.
+ *
+ * A true Didone: the high stroke contrast is what makes a single sentence feel
+ * composed rather than typed, and it is the one place on this page where the
+ * type is the design. Loaded through next/font so it is self-hosted and
+ * cannot shift the layout as it arrives.
+ */
+const display = Bodoni_Moda({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  display: 'swap',
+  variable: '--font-display',
+});
+
 export const metadata: Metadata = {
   title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
   description: SITE.description,
@@ -53,7 +69,7 @@ export default async function LandingPage() {
   const signedIn = Boolean(user);
 
   return (
-    <main className="min-h-dvh bg-bg">
+    <main className={`min-h-dvh bg-bg ${display.variable}`}>
       {/* Structured data. Only claims this page itself makes — see src/lib/seo.ts. */}
       <script
         type="application/ld+json"
@@ -61,106 +77,185 @@ export default async function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd()) }}
       />
 
-      {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
-          <Brand />
-          <div className="flex items-center gap-1.5 sm:gap-3">
-            <a
-              href="#how"
-              className="hidden rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text sm:block"
-            >
-              How it works
-            </a>
-            <a
-              href="#agents"
-              className="hidden rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text sm:block"
-            >
-              For agents
-            </a>
-            <Link
-              href="/why"
-              className="hidden rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text sm:block"
-            >
-              vs Salesforce
-            </Link>
-            {signedIn ? (
-              <Link
-                href="/home"
-                className="rounded-[var(--radius-md)] bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
+      {/* ── Hero ─────────────────────────────────────────────────────────
+          A dawn sky, painted in CSS rather than photographed: no asset to
+          ship, no licence to track, and it scales to any viewport without
+          ever being the wrong crop. The hero commits to one visual world in
+          both themes - the sky is the sky - while the page below follows the
+          reader's theme as usual. */}
+      <section className="relative isolate min-h-[100svh] overflow-hidden">
+        {/* Sky */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-30"
+          style={{
+            background:
+              'linear-gradient(180deg,' +
+              '#0b1030 0%,' +
+              '#1b2a5e 22%,' +
+              '#3f4a8f 42%,' +
+              '#7a6aa0 58%,' +
+              '#b57f9c 71%,' +
+              '#e0a08f 82%,' +
+              '#f2c79c 92%,' +
+              '#f7dcb4 100%)',
+          }}
+        />
+
+        {/* Stars, only where the sky is dark enough to hold them. */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 -z-30 h-[46%] opacity-70"
+          style={{
+            backgroundImage:
+              'radial-gradient(1.4px 1.4px at 12% 18%, rgba(255,255,255,.9), transparent 60%),' +
+              'radial-gradient(1.2px 1.2px at 28% 8%, rgba(255,255,255,.7), transparent 60%),' +
+              'radial-gradient(1.6px 1.6px at 44% 26%, rgba(255,255,255,.85), transparent 60%),' +
+              'radial-gradient(1px 1px at 61% 12%, rgba(255,255,255,.6), transparent 60%),' +
+              'radial-gradient(1.5px 1.5px at 73% 30%, rgba(255,255,255,.8), transparent 60%),' +
+              'radial-gradient(1.1px 1.1px at 86% 16%, rgba(255,255,255,.65), transparent 60%),' +
+              'radial-gradient(1.3px 1.3px at 93% 36%, rgba(255,255,255,.7), transparent 60%),' +
+              'radial-gradient(1px 1px at 6% 40%, rgba(255,255,255,.5), transparent 60%)',
+            maskImage: 'linear-gradient(180deg, #000 0%, #000 55%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(180deg, #000 0%, #000 55%, transparent 100%)',
+          }}
+        />
+
+        {/* The sun, just under the horizon line. */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 -z-30 h-[55%]"
+          style={{
+            background:
+              'radial-gradient(60% 70% at 50% 100%, rgba(255,214,164,.75) 0%, rgba(255,190,150,.28) 38%, transparent 72%)',
+          }}
+        />
+
+        {/* Cloud banks: wide, soft ellipses rather than a texture, so they
+            stay crisp at any resolution and cost nothing to load. */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 -z-20 h-[62%]"
+          style={{
+            background:
+              // Wide, flat ellipses read as a sea of cloud; tall ones read as
+              // fog. The flattening is what makes this look like altitude.
+              'radial-gradient(46% 11% at 20% 84%, rgba(255,241,228,.82) 0%, transparent 70%),' +
+              'radial-gradient(38% 9% at 74% 79%, rgba(255,230,224,.72) 0%, transparent 72%),' +
+              'radial-gradient(60% 13% at 50% 93%, rgba(255,243,226,.88) 0%, transparent 68%),' +
+              'radial-gradient(30% 7% at 38% 71%, rgba(246,226,238,.60) 0%, transparent 74%),' +
+              'radial-gradient(26% 6% at 88% 66%, rgba(236,220,246,.48) 0%, transparent 76%),' +
+              'radial-gradient(34% 8% at 8% 74%, rgba(248,228,236,.52) 0%, transparent 74%),' +
+              'radial-gradient(80% 16% at 50% 100%, rgba(255,246,232,.9) 0%, transparent 72%)',
+            filter: 'blur(6px)',
+          }}
+        />
+
+        {/* A scrim under the copy. Without it the headline sits on the
+            brightest part of the sky and the contrast collapses. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              'radial-gradient(70% 50% at 50% 38%, rgba(8,10,28,.42) 0%, transparent 72%)',
+          }}
+        />
+
+        {/* ── Nav ──────────────────────────────────────────────────────── */}
+        <header className="relative z-10">
+          <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-6 sm:px-8">
+            <Link href="/" className="flex items-center gap-2.5" aria-label="Figbolt home">
+              <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-sm">
+                <Bolt className="size-4" />
+              </span>
+              <span
+                className="text-xl text-white"
+                style={{ fontFamily: 'var(--font-display), Georgia, serif' }}
               >
-                Go to dashboard
+                Figbolt
+              </span>
+            </Link>
+
+            <div className="hidden items-center gap-8 md:flex">
+              <a href="#how" className="text-sm text-white/80 transition-colors hover:text-white">
+                How it works
+              </a>
+              <Link href="/why" className="text-sm text-white/80 transition-colors hover:text-white">
+                vs Salesforce
               </Link>
-            ) : (
-              <>
+              <a href="#agents" className="text-sm text-white/80 transition-colors hover:text-white">
+                For agents
+              </a>
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              {!signedIn && (
                 <Link
                   href="/login"
-                  className="rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text"
+                  className="hidden px-2 py-2 text-sm text-white/80 transition-colors hover:text-white sm:block"
                 >
                   Sign in
                 </Link>
-                <Link
-                  href="/signup"
-                  className="rounded-[var(--radius-md)] bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
-                >
-                  Start free
-                </Link>
-              </>
-            )}
-          </div>
-        </nav>
-      </header>
+              )}
+              <Link
+                href={signedIn ? '/home' : '/signup'}
+                className="rounded-full border border-white/35 bg-white/10 px-5 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+              >
+                {signedIn ? 'Go to dashboard' : 'Begin free'}
+              </Link>
+            </div>
+          </nav>
+        </header>
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.6]"
-          style={{
-            background:
-              'radial-gradient(55% 45% at 12% 0%, var(--accent-subtle) 0%, transparent 70%), radial-gradient(45% 40% at 90% 95%, var(--info-subtle) 0%, transparent 70%)',
-          }}
-        />
-        <div className="relative mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
-          <p className="flex items-center gap-2 text-2xs font-medium uppercase tracking-[0.16em] text-accent-text">
-            <Bolt className="size-3.5" />
-            Sweet deals, lightning fast
-          </p>
-
-          <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight text-text text-balance sm:text-6xl">
-            A CRM nobody has to fill in.
+        {/* ── Statement ────────────────────────────────────────────────── */}
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.5rem)] max-w-5xl flex-col items-center justify-center px-5 pb-24 text-center sm:px-8">
+          <h1
+            className="max-w-4xl text-[clamp(2.6rem,7.4vw,5.5rem)] leading-[1.03] tracking-[-0.015em] text-white text-balance"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}
+          >
+            The record keeps itself.
           </h1>
 
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-text-muted text-pretty sm:text-lg">
+          <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-white/85 text-pretty sm:text-lg">
             Every CRM ever sold is a database your team maintains for a machine. Figbolt inverts
-            it: the machine keeps the record, reading the email, meetings, tickets and product
-            usage you already generate — and asks you only for the decisions that deserve a person.
+            it — reading the email, meetings and conversations you already have, and asking you
+            only for the decisions that deserve a person.
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
             <Link
               href={signedIn ? '/home' : '/signup'}
-              className="rounded-[var(--radius-md)] bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-md)] transition-colors hover:bg-accent-hover"
+              className="rounded-full border border-white/40 bg-white/15 px-9 py-3.5 text-[15px] font-medium text-white shadow-[0_8px_32px_-12px_rgba(0,0,0,.6)] backdrop-blur-md transition-all hover:bg-white/25 hover:shadow-[0_10px_40px_-12px_rgba(0,0,0,.7)]"
             >
-              {signedIn ? 'Go to dashboard' : 'Start free'}
+              {signedIn ? 'Go to dashboard' : 'Begin free'}
             </Link>
             <Link
               href="/login"
-              className="rounded-[var(--radius-md)] border border-border-strong bg-surface px-5 py-2.5 text-sm font-medium text-text transition-colors hover:bg-surface-hover"
+              className="rounded-full px-6 py-3.5 text-[15px] text-white/80 transition-colors hover:text-white"
             >
               See the live demo
             </Link>
-            <span className="text-xs text-text-subtle">
-              No credit card. The demo workspace is fictional.
-            </span>
           </div>
+
+          <p className="mt-8 text-xs text-white/55">
+            No credit card. The demo workspace is fictional.
+          </p>
         </div>
+
+        {/* The horizon, where the sky hands over to the page. */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 z-10 h-28"
+          style={{ background: 'linear-gradient(180deg, transparent, var(--bg))' }}
+        />
       </section>
 
       {/* ── The gap ──────────────────────────────────────────────────────── */}
       <section className="border-b border-border bg-bg-subtle">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-          <h2 className="max-w-2xl text-2xl font-semibold tracking-tight text-text text-balance sm:text-3xl">
+          <h2 className="max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
             The fields are all filled in. They still tell you nothing.
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-text-muted text-pretty">
@@ -223,7 +318,8 @@ export default async function LandingPage() {
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <section id="how" className="scroll-mt-16 border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-          <h2 className="max-w-2xl text-2xl font-semibold tracking-tight text-text text-balance sm:text-3xl">
+          <h2 className="max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
             Three systems, not a CRM with AI bolted on
           </h2>
 
@@ -263,7 +359,8 @@ export default async function LandingPage() {
       <section className="border-b border-border bg-bg-subtle">
         <div className="mx-auto grid max-w-6xl items-start gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
           <div>
-            <h2 className="max-w-xl text-2xl font-semibold tracking-tight text-text text-balance sm:text-3xl">
+            <h2 className="max-w-xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
               A score you can argue with
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-text-muted text-pretty">
@@ -328,7 +425,8 @@ export default async function LandingPage() {
       {/* ── For agents ───────────────────────────────────────────────────── */}
       <section id="agents" className="scroll-mt-16 border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
-          <h2 className="max-w-2xl text-2xl font-semibold tracking-tight text-text text-balance sm:text-3xl">
+          <h2 className="max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
             Built for agents, not just for browsers
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-text-muted text-pretty">
@@ -360,7 +458,8 @@ export default async function LandingPage() {
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="border-b border-border bg-bg-subtle">
         <div className="mx-auto max-w-6xl px-5 py-16 text-center sm:px-8 sm:py-20">
-          <h2 className="mx-auto max-w-2xl text-2xl font-semibold tracking-tight text-text text-balance sm:text-3xl">
+          <h2 className="mx-auto max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
             Stop maintaining your CRM. Start reading it.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-text-muted text-pretty">
