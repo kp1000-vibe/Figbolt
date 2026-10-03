@@ -173,8 +173,8 @@
       <li><span class="pill done">done</span> Mobile parity measured across 17 routes — no route scrolls sideways</li>
       <li><span class="pill done">done</span> iOS input zoom fixed; every tap target at or above the 24px WCAG floor (was 344 below)</li>
       <li><span class="pill done">done</span> Layout on Pipeline and Prospecting — no clipped content, no overlapping controls on any route</li>
-      <li><span class="pill now">now</span> PWA layer — manifest, icons, offline shell</li>
-      <li><span class="pill next">next</span> Capacitor projects for iOS and Android</li>
+      <li><span class="pill done">done</span> PWA layer — installable manifest, icons, offline page; no customer data cached on the device</li>
+      <li><span class="pill now">now</span> Capacitor projects for iOS and Android</li>
       <li><span class="pill next">next</span> Native push, biometric unlock, camera</li>
       <li><span class="pill next">you</span> Apple Developer + Play accounts, signing, submission</li>
     </ul>
@@ -188,8 +188,8 @@
     <p>
       <strong>Want to try it on your own phone right now?</strong> Open
       <code>figbolt.com</code> and sign in — it is the same app. On iOS, Share → Add to Home
-      Screen already gives you an icon and a full-screen window; the PWA step below makes that
-      properly offline-capable, and the Capacitor step turns it into a real store app.
+      Screen already gives you an icon and a full-screen window; it now installs with its own icon and an offline screen,
+      and the Capacitor step turns it into a real store app.
     </p>
     <p>
       All 17 signed-in routes now pass the phone audit (<code>scripts/mobile-audit.mjs</code>):

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ThemeScript } from '@/components/layout/theme';
+import { ServiceWorkerRegistration } from '@/components/layout/service-worker';
 import { SITE } from '@/lib/seo';
 
 /**
@@ -23,6 +24,9 @@ export const metadata: Metadata = {
   // Telephone autodetection rewrites deal amounts and IDs into phone links on
   // iOS, which looks broken in a CRM.
   formatDetection: { telephone: false, address: false, email: false },
+  // Added to the iOS home screen, open full-screen rather than in a Safari
+  // tab. The manifest (src/app/manifest.ts) covers every other platform.
+  appleWebApp: { capable: true, title: SITE.name, statusBarStyle: 'default' },
 };
 
 export const viewport: Viewport = {
@@ -49,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       */}
       <body className="min-h-dvh antialiased" suppressHydrationWarning>
         {children}
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );

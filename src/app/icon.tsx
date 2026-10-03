@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { BoltMark } from '@/lib/brand-mark';
 
 /**
  * The favicon: the same bolt mark the product's own header uses.
@@ -11,24 +12,5 @@ export const size = { width: 32, height: 32 };
 export const contentType = 'image/png';
 
 export default function Icon() {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#3b5bd4',
-          borderRadius: 7,
-        }}
-      >
-        <svg width="21" height="21" viewBox="0 0 24 24">
-          <path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z" fill="#ffffff" />
-        </svg>
-      </div>
-    ),
-    size,
-  );
+  return new ImageResponse(<BoltMark size={32} radius={7} glyph={21 / 32} />, size);
 }
