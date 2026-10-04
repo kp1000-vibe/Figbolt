@@ -179,7 +179,7 @@ export default async function LandingPage() {
 
             <div className="hidden items-center gap-8 md:flex">
               <a href="#small-teams" className="text-sm text-white/80 transition-colors hover:text-white">
-                For small teams
+                For small businesses
               </a>
               <a href="#how" className="text-sm text-white/80 transition-colors hover:text-white">
                 How it works
@@ -214,7 +214,7 @@ export default async function LandingPage() {
         {/* ── Statement ────────────────────────────────────────────────── */}
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.5rem)] max-w-5xl flex-col items-center justify-center px-5 pb-24 text-center sm:px-8">
           <p className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
-            The CRM for small businesses
+            The CRM for small businesses &amp; solopreneurs
           </p>
           <h1
             className="max-w-4xl text-[clamp(2.6rem,7.4vw,5.5rem)] leading-[1.03] tracking-[-0.015em] text-white text-balance"
@@ -224,7 +224,7 @@ export default async function LandingPage() {
           </h1>
 
           <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-white/85 text-pretty sm:text-lg">
-            For teams of one to ten who have customers to look after, not a database to feed.
+            For solopreneurs and teams up to ten who have customers to look after, not a database to feed.
             Connect your email and calendar, and Figbolt fills in your customers, deals and
             follow-ups itself — asking you only for the decisions that need a person.
           </p>
@@ -266,10 +266,10 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
           <h2 className="max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
             style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
-            A small team has no one to keep a CRM up to date
+            When it&rsquo;s just you, or a few of you, no one keeps the CRM up to date
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-text-muted text-pretty">
-            In a business of five people, the person who would update the CRM is the same person
+            Whether you work alone or with a handful of people, the person who would update the CRM is the same person
             talking to the customer. So the CRM goes stale, and it stops being worth opening.
             Figbolt does that upkeep for you.
           </p>
@@ -581,7 +581,7 @@ export default async function LandingPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Brand />
           <p className="text-2xs text-text-subtle">
-            Sweet deals, lightning fast. &middot; The CRM for teams of one to ten. &middot; Demo data is fictional.
+            Sweet deals, lightning fast. &middot; The CRM for small businesses and solopreneurs. &middot; Demo data is fictional.
           </p>
         </div>
       </footer>
