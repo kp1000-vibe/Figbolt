@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Bodoni_Moda } from 'next/font/google';
 import Link from 'next/link';
+import { LogoTile } from '@/components/brand/logo';
 import { getCurrentUser } from '@/lib/auth/session';
 import { absoluteUrl, productJsonLd, SITE } from '@/lib/seo';
 
@@ -28,7 +29,7 @@ const display = Bodoni_Moda({
 });
 
 export const metadata: Metadata = {
-  title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
+  title: `${SITE.name} — ${SITE.category}`,
   description: SITE.description,
   robots: { index: true, follow: true },
   alternates: { canonical: '/' },
@@ -45,13 +46,13 @@ export const metadata: Metadata = {
     type: 'website',
     url: absoluteUrl('/'),
     siteName: SITE.name,
-    title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
+    title: `${SITE.name} — ${SITE.category}`,
     description: SITE.description,
     locale: SITE.locale,
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE.name} — ${SITE.tagline.toLowerCase()}`,
+    title: `${SITE.name} — ${SITE.category}`,
     description: SITE.description,
   },
 };
@@ -166,9 +167,7 @@ export default async function LandingPage() {
         <header className="relative z-10">
           <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-6 sm:px-8">
             <Link href="/" className="flex items-center gap-2.5" aria-label="Figbolt home">
-              <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-sm">
-                <Bolt className="size-4" />
-              </span>
+              <LogoTile className="size-8 ring-1 ring-white/20" />
               <span
                 className="text-xl text-white"
                 style={{ fontFamily: 'var(--font-display), Georgia, serif' }}
@@ -214,7 +213,7 @@ export default async function LandingPage() {
         {/* ── Statement ────────────────────────────────────────────────── */}
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.5rem)] max-w-5xl flex-col items-center justify-center px-5 pb-24 text-center sm:px-8">
           <p className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
-            The CRM for small businesses &amp; solopreneurs
+            The AI-native CRM for small businesses &amp; solopreneurs
           </p>
           <h1
             className="max-w-4xl text-[clamp(2.6rem,7.4vw,5.5rem)] leading-[1.03] tracking-[-0.015em] text-white text-balance"
@@ -413,7 +412,7 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
           <h2 className="max-w-2xl text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
             style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
-            Three systems, not a CRM with AI bolted on
+            AI-native from the first record, not AI bolted on
           </h2>
 
           <div className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-border bg-border md:grid-cols-3">
@@ -581,7 +580,7 @@ export default async function LandingPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Brand />
           <p className="text-2xs text-text-subtle">
-            Sweet deals, lightning fast. &middot; The CRM for small businesses and solopreneurs. &middot; Demo data is fictional.
+            Sweet deals, lightning fast. &middot; The AI-native CRM for small businesses and solopreneurs. &middot; Demo data is fictional.
           </p>
         </div>
       </footer>
@@ -622,18 +621,9 @@ function Factor({
 function Brand() {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
-        <Bolt className="size-4.5" />
-      </span>
+      <LogoTile className="size-8" />
       <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
     </div>
   );
 }
 
-function Bolt({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden>
-      <path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z" fill="currentColor" />
-    </svg>
-  );
-}

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getCurrentUser, listUserWorkspaces } from '@/lib/auth/session';
 import { SignupForm } from './signup-form';
+import { LogoTile } from '@/components/brand/logo';
 
 export const metadata = { title: 'Create a workspace' };
 
@@ -16,18 +17,12 @@ export default async function SignupPage() {
     <main className="flex min-h-dvh flex-col justify-center px-6 py-12">
       <div className="mx-auto w-full max-w-sm">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
-            <svg viewBox="0 0 24 24" className="size-4.5" fill="none" aria-hidden>
-              <path
-                d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
-                fill="currentColor"
-              />
-            </svg>
-          </span>
+          <LogoTile className="size-8" />
           <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
         </div>
 
         <h1 className="mt-8 text-xl font-semibold tracking-tight text-text">Create a workspace</h1>
+        <p className="mt-1 text-sm text-text-muted">Your AI-native CRM, filled in from your email and meetings.</p>
         <p className="mt-1.5 text-sm text-text-muted">
           Already have one?{' '}
           <Link href="/login" className="font-medium text-accent-text hover:underline">

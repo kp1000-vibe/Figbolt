@@ -17,6 +17,7 @@ import { Spinner, useToast } from '@/components/ui/feedback';
 import { completeOnboardingAction, createWorkspaceAction, seedDemoAction } from './actions';
 import { ArrowRight, CheckCircle, NavIcon, Sparkle } from '@/components/layout/icons';
 import { cn } from '@/lib/utils';
+import { LogoTile } from '@/components/brand/logo';
 
 /**
  * Onboarding.
@@ -129,14 +130,7 @@ export function OnboardingFlow({
       {/* ── Step rail ─────────────────────────────────────────────────── */}
       <aside className="min-w-0">
         <div className="flex items-center gap-2.5">
-          <span className="flex size-7 items-center justify-center rounded-[var(--radius-sm)] bg-accent text-white">
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" aria-hidden>
-              <path
-                d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
-                fill="currentColor"
-              />
-            </svg>
-          </span>
+          <LogoTile className="size-7" />
           <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
         </div>
 

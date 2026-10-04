@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { BoltMark } from '@/lib/brand-mark';
+import { BrandTile } from '@/lib/brand-mark';
 
 /**
  * The favicon: the same bolt mark the product's own header uses.
@@ -12,5 +12,5 @@ export const size = { width: 32, height: 32 };
 export const contentType = 'image/png';
 
 export default function Icon() {
-  return new ImageResponse(<BoltMark size={32} radius={7} glyph={21 / 32} />, size);
+  return new ImageResponse(<BrandTile size={32} radius={7} glyph={21 / 32} />, size);
 }

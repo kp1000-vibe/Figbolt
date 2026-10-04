@@ -11,6 +11,7 @@ import {
 import { CLICK_JOBS, CLICK_CEILING, budgetSummary } from '@/lib/ux/click-budget';
 import { absoluteUrl, SITE } from '@/lib/seo';
 import { getCurrentUser } from '@/lib/auth/session';
+import { LogoTile } from '@/components/brand/logo';
 
 /**
  * The comparison page — public, and deliberately so.
@@ -31,7 +32,7 @@ import { getCurrentUser } from '@/lib/auth/session';
  * worth believing.
  */
 
-const TITLE = 'Why Figbolt instead of Salesforce or HubSpot';
+const TITLE = 'Why an AI-native CRM instead of Salesforce or HubSpot';
 const DESCRIPTION =
   'Salesforce and HubSpot are filing cabinets somebody has to fill in. Figbolt builds the record from your email, meetings and tickets — and says where it is still the weaker choice.';
 
@@ -71,7 +72,7 @@ export default async function WhyPage() {
         <header>
           <Badge tone="accent">In plain language</Badge>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-text text-balance sm:text-4xl">
-            Why Figbolt is different
+            Why an AI-native CRM is different
           </h1>
           <p className="mt-3 max-w-2xl text-base text-text-muted text-pretty">
             What this is, what it does that a traditional CRM does not, and where the older
@@ -259,11 +260,7 @@ function SiteHeader({ signedIn }: { signedIn: boolean }) {
     <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5 sm:px-8">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
-            <svg viewBox="0 0 24 24" className="size-4.5" aria-hidden>
-              <path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z" fill="currentColor" />
-            </svg>
-          </span>
+          <LogoTile className="size-8" />
           <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
         </Link>
         <div className="flex items-center gap-1.5 sm:gap-3">

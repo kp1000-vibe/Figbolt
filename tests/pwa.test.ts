@@ -1,10 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { describe, expect, it, vi } from 'vitest';
 import manifest from '@/app/manifest';
 import nextConfig from '../next.config';
 import { isPwaIconFile, PWA_ICON_PREFIX, PWA_ICONS, PWA_OFFLINE_URL, PWA_START_URL } from '@/lib/pwa';
+import { MARK_BODY_PATH, MARK_LEAF_PATH } from '@/lib/brand-mark';
 
 /**
  * The installable app, and the one way it could do real damage.
@@ -284,3 +285,31 @@ describe('icon allowlist', () => {
     for (const good of Object.keys(PWA_ICONS)) expect(isPwaIconFile(good)).toBe(true);
   });
 });
+
+describe('brand mark', () => {
+  it('is the same mark on the offline page as everywhere else', () => {
+    // The offline page is static HTML and cannot import the component, so it
+    // carries its own copy of the paths. This keeps that copy honest.
+    const offline = readFileSync(path.resolve(process.cwd(), 'public/offline.html'), 'utf8');
+    expect(offline).toContain(MARK_BODY_PATH);
+    expect(offline).toContain(MARK_LEAF_PATH);
+  });
+
+  it('has no stray copy of the old bolt-only logo anywhere in the source', () => {
+    const OLD = 'M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z';
+    const files = [
+      ...readdirRecursive(path.resolve(process.cwd(), 'src')),
+      path.resolve(process.cwd(), 'public/offline.html'),
+    ];
+    const offenders = files.filter((f) => readFileSync(f, 'utf8').includes(OLD));
+    expect(offenders).toEqual([]);
+  });
+});
+
+function readdirRecursive(dir: string): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return readdirRecursive(full);
+    return /\.(tsx?|html)$/.test(entry.name) ? [full] : [];
+  });
+}

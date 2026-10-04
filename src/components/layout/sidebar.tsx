@@ -8,6 +8,7 @@ import { Badge, Button, Kbd } from '@/components/ui/primitives';
 import { NAV, isActive } from './nav';
 import { NavIcon, Close, LogOut, Menu, Monitor, Moon, Sun } from './icons';
 import { useTheme } from './theme';
+import { LogoTile } from '@/components/brand/logo';
 
 export type SidebarUser = {
   name: string;
@@ -167,14 +168,7 @@ export function Sidebar({
 function Mark() {
   return (
     <Link href="/home" className="flex items-center gap-2">
-      <span className="flex size-7 items-center justify-center rounded-[var(--radius-sm)] bg-accent text-white">
-        <svg viewBox="0 0 24 24" className="size-4" fill="none" aria-hidden>
-          <path
-            d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
+      <LogoTile className="size-7" />
       <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
     </Link>
   );

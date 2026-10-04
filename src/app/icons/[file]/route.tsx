@@ -1,5 +1,5 @@
 import { ImageResponse } from 'next/og';
-import { BoltMark } from '@/lib/brand-mark';
+import { BrandTile } from '@/lib/brand-mark';
 import { PWA_ICONS, isPwaIconFile } from '@/lib/pwa';
 
 /**
@@ -19,7 +19,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ fil
   if (!isPwaIconFile(file)) return new Response('Not found', { status: 404 });
 
   const icon = PWA_ICONS[file];
-  return new ImageResponse(<BoltMark size={icon.size} radius={icon.radius} glyph={icon.glyph} />, {
+  return new ImageResponse(<BrandTile size={icon.size} radius={icon.radius} glyph={icon.glyph} />, {
     width: icon.size,
     height: icon.size,
   });

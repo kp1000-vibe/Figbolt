@@ -17,7 +17,7 @@ import { SITE } from '@/lib/seo';
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: { default: `${SITE.name} — ${SITE.tagline.toLowerCase()}`, template: `%s · ${SITE.name}` },
+  title: { default: `${SITE.name} — ${SITE.category}`, template: `%s · ${SITE.name}` },
   description: SITE.description,
   applicationName: SITE.name,
   robots: { index: false, follow: false },

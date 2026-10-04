@@ -20,14 +20,16 @@ export const SITE = {
   /** The AI assistant inside the product. Figbolt is the product; Bolt answers. */
   assistant: 'Bolt',
   tagline: 'Sweet deals, lightning fast',
+  /** What it is, in one line. Leads every title and the link-preview card. */
+  category: 'The AI-native CRM for small businesses',
   /** Canonical origin. Overridable so preview deploys do not claim figbolt.com. */
   url: canonicalOrigin(),
   /** Under ~160 characters, so search results do not truncate mid-sentence. */
   description:
-    'The CRM for small businesses and solopreneurs that fills itself in. Figbolt builds your records from email and meetings; Bolt answers with evidence.',
+    'Figbolt is the AI-native CRM for small businesses and solopreneurs. It fills itself in from email and meetings, and Bolt answers with evidence.',
   /** Longer form, for OG cards and structured data where there is room. */
   longDescription:
-    'Figbolt is a CRM for small businesses and solopreneurs — from one person to a team of ten — built so nobody has to maintain it. It derives accounts, deals and follow-ups from the email, meetings, tickets and product usage you already have, so there is no data entry. Bolt, the built-in AI analyst, answers questions with citations back to the records it used, and every action that changes data or reaches a customer waits for a human.',
+    'Figbolt is an AI-native CRM for small businesses and solopreneurs — from one person to a team of ten — built so nobody has to maintain it. It derives accounts, deals and follow-ups from the email, meetings, tickets and product usage you already have, so there is no data entry. Bolt, the built-in AI analyst, answers questions with citations back to the records it used, and every action that changes data or reaches a customer waits for a human.',
   locale: 'en_US',
   twitter: '@figbolt',
 } as const;

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getCurrentUser, listUserWorkspaces } from '@/lib/auth/session';
 import { LoginForm } from './login-form';
 import { demoCredentials } from './actions';
+import { LogoTile } from '@/components/brand/logo';
 
 export const metadata = { title: 'Sign in' };
 
@@ -42,7 +43,7 @@ export default async function LoginPage({
 
         <div className="relative max-w-lg">
           <h1 className="text-3xl font-semibold tracking-tight text-text text-balance">
-            A CRM that already knows what happened.
+            The AI-native CRM that already knows what happened.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-text-muted text-pretty">
             Figbolt reads your emails, meetings and calls, turns them into structured customer
@@ -119,14 +120,7 @@ export default async function LoginPage({
 function Mark() {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="flex size-8 items-center justify-center rounded-[var(--radius-md)] bg-accent text-white shadow-[var(--shadow-md)]">
-        <svg viewBox="0 0 24 24" className="size-4.5" fill="none" aria-hidden>
-          <path
-            d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z"
-            fill="currentColor"
-          />
-        </svg>
-      </span>
+      <LogoTile className="size-8" />
       <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
     </div>
   );

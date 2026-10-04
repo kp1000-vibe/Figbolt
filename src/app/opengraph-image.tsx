@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { SITE } from '@/lib/seo';
+import { BrandTile } from '@/lib/brand-mark';
 
 /**
  * The link preview card, generated rather than checked in as a PNG.
@@ -14,7 +15,7 @@ import { SITE } from '@/lib/seo';
  * better against both Slack themes than a near-white one.
  */
 
-export const alt = `${SITE.name} — ${SITE.tagline}`;
+export const alt = `${SITE.name} — ${SITE.category}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -45,20 +46,8 @@ export default function OpengraphImage() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 68,
-              height: 68,
-              borderRadius: 18,
-              background: ACCENT,
-            }}
-          >
-            <svg width="38" height="38" viewBox="0 0 24 24">
-              <path d="M13.5 2.5 6 13.2h4.6L9.8 21.5 18 10.4h-4.9z" fill="#ffffff" />
-            </svg>
+          <div style={{ display: 'flex', width: 68, height: 68 }}>
+            <BrandTile size={68} radius={19} glyph={0.64} />
           </div>
           <div style={{ fontSize: 44, fontWeight: 700, color: TEXT, letterSpacing: -1 }}>
             {SITE.name}
@@ -76,11 +65,11 @@ export default function OpengraphImage() {
               maxWidth: 880,
             }}
           >
-            The CRM nobody has to fill in.
+            The AI-native CRM that fills itself in.
           </div>
           <div style={{ fontSize: 31, color: MUTED, lineHeight: 1.45, maxWidth: 900 }}>
-            Figbolt builds the record from your email, meetings and tickets. Bolt answers
-            with the evidence. Humans approve anything consequential.
+            For small businesses and solopreneurs. Figbolt builds the record from your email
+            and meetings; Bolt answers with the evidence; you approve what matters.
           </div>
         </div>
 
