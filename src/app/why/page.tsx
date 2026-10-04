@@ -11,7 +11,7 @@ import {
 import { CLICK_JOBS, CLICK_CEILING, budgetSummary } from '@/lib/ux/click-budget';
 import { absoluteUrl, SITE } from '@/lib/seo';
 import { getCurrentUser } from '@/lib/auth/session';
-import { LogoTile } from '@/components/brand/logo';
+import { SiteFooter, SiteHeader } from '@/components/marketing/site-chrome';
 
 /**
  * The comparison page — public, and deliberately so.
@@ -240,64 +240,11 @@ export default async function WhyPage() {
         </div>
       </div>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-6 sm:px-8">
-          <span className="text-2xs text-text-subtle">
-            Figbolt — sweet deals, lightning fast.
-          </span>
-          <span className="text-2xs text-text-subtle">
-            Comparisons describe generally documented product behaviour, not benchmarks.
-          </span>
-        </div>
-      </footer>
+      <SiteFooter note="Comparisons describe generally documented product behaviour, not benchmarks." />
     </main>
   );
 }
 
-/** The public shell's header. Mirrors the landing page so the two feel like one site. */
-function SiteHeader({ signedIn }: { signedIn: boolean }) {
-  return (
-    <header className="sticky top-0 z-20 border-b border-border bg-bg/85 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          <LogoTile className="size-8" />
-          <span className="text-base font-semibold tracking-tight text-text">Figbolt</span>
-        </Link>
-        <div className="flex items-center gap-1.5 sm:gap-3">
-          <Link
-            href="/"
-            className="hidden rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text sm:block"
-          >
-            Overview
-          </Link>
-          {signedIn ? (
-            <Link
-              href="/home"
-              className="rounded-[var(--radius-md)] bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
-            >
-              Go to dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="rounded-[var(--radius-sm)] px-3 py-2 text-sm text-text-muted transition-colors hover:text-text"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/signup"
-                className="rounded-[var(--radius-md)] bg-accent px-3.5 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-accent-hover"
-              >
-                Start free
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
-    </header>
-  );
-}
 
 /* ── Content ────────────────────────────────────────────────────────────── */
 

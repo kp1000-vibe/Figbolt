@@ -3,6 +3,7 @@ import './globals.css';
 import { ThemeScript } from '@/components/layout/theme';
 import { ServiceWorkerRegistration } from '@/components/layout/service-worker';
 import { SITE } from '@/lib/seo';
+import { env } from '@/lib/env';
 
 /**
  * Metadata defaults for every route.
@@ -24,6 +25,12 @@ export const metadata: Metadata = {
   // Telephone autodetection rewrites deal amounts and IDs into phone links on
   // iOS, which looks broken in a CRM.
   formatDetection: { telephone: false, address: false, email: false },
+  // Ownership proof for Google Search Console and Bing Webmaster Tools. Set
+  // the codes in the environment; absent, no tag is rendered.
+  verification: {
+    ...(env.GOOGLE_SITE_VERIFICATION ? { google: env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(env.BING_SITE_VERIFICATION ? { other: { 'msvalidate.01': env.BING_SITE_VERIFICATION } } : {}),
+  },
   // Added to the iOS home screen, open full-screen rather than in a Safari
   // tab. The manifest (src/app/manifest.ts) covers every other platform.
   appleWebApp: { capable: true, title: SITE.name, statusBarStyle: 'default' },

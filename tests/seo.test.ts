@@ -150,3 +150,63 @@ describe('what a crawler is told', () => {
     }
   });
 });
+
+describe('search positioning', () => {
+  it('gives every guide its own title and description, within result limits', async () => {
+    const { GUIDES } = await import('@/lib/guides');
+    const titles = GUIDES.map((g) => g.title);
+    const descriptions = GUIDES.map((g) => g.description);
+    // Duplicate titles or descriptions make pages compete with each other.
+    expect(new Set(titles).size).toBe(titles.length);
+    expect(new Set(descriptions).size).toBe(descriptions.length);
+    for (const g of GUIDES) {
+      expect(g.title.length, g.title).toBeLessThanOrEqual(60);
+      expect(g.description.length, g.description).toBeLessThanOrEqual(160);
+      expect(PUBLIC_ROUTES).toContain(g.path);
+    }
+  });
+
+  it('puts the target phrase in the homepage title, description and H1', () => {
+    const source = readFileSync(path.join(APP, 'page.tsx'), 'utf8');
+    const h1s = source.match(/<h1\b/g) ?? [];
+    expect(h1s).toHaveLength(1);
+    const h1 = source.slice(source.indexOf('<h1'), source.indexOf('</h1>'));
+    expect(h1).toMatch(/AI-native CRM/);
+    expect(String(landingMetadata.title)).toMatch(/AI-native CRM/);
+    expect(SITE.description).toMatch(/AI-native CRM/);
+  });
+
+  it('marks up only FAQs the page shows', async () => {
+    const { GUIDES } = await import('@/lib/guides');
+    const { guideJsonLd, HOME_FAQS } = await import('@/lib/seo');
+    for (const g of GUIDES) {
+      const faq = guideJsonLd(g)['@graph'].find((n) => n['@type'] === 'FAQPage') as {
+        mainEntity: { name: string }[];
+      };
+      expect(faq.mainEntity.map((q) => q.name)).toEqual(g.faqs.map((f) => f.q));
+    }
+    const home = productJsonLd()['@graph'].find((n) => n['@type'] === 'FAQPage') as {
+      mainEntity: { name: string }[];
+    };
+    expect(home.mainEntity.map((q) => q.name)).toEqual(HOME_FAQS.map((f) => f.q));
+    // And the homepage renders that same list.
+    expect(readFileSync(path.join(APP, 'page.tsx'), 'utf8')).toContain('HOME_FAQS.map');
+  });
+
+  it('cannot be broken out of by content in structured data', async () => {
+    const { jsonLdScript } = await import('@/lib/seo');
+    const out = jsonLdScript({ text: '</script><script>alert(1)</script>' });
+    expect(out).not.toContain('</script>');
+    expect(JSON.parse(out)).toEqual({ text: '</script><script>alert(1)</script>' });
+  });
+
+  it('dates the sitemap by content, not by deploy', () => {
+    const entries = sitemap();
+    expect(entries).toHaveLength(PUBLIC_ROUTES.length);
+    for (const e of entries) {
+      expect(e.lastModified).toBeInstanceOf(Date);
+      expect(Number.isNaN((e.lastModified as Date).getTime())).toBe(false);
+      expect((e.lastModified as Date).getTime()).toBeLessThanOrEqual(Date.now());
+    }
+  });
+});

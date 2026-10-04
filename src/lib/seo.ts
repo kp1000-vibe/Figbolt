@@ -48,7 +48,31 @@ export function absoluteUrl(path = '/'): string {
  * Routes a crawler may index. Everything else inherits the root layout's
  * `robots: { index: false }`, and robots.txt disallows the app outright.
  */
-export const PUBLIC_ROUTES = ['/', '/why'] as const;
+export const PUBLIC_ROUTES = [
+  '/',
+  '/ai-crm',
+  '/crm-for-small-business',
+  '/crm-for-solopreneurs',
+  '/why',
+] as const;
+
+/**
+ * When each public page's content last changed, for the sitemap's lastmod.
+ * A real date rather than the build time: a sitemap that claims every page
+ * changed at each deploy teaches crawlers to ignore the field.
+ */
+export const CONTENT_UPDATED: Record<(typeof PUBLIC_ROUTES)[number], string> = {
+  '/': '2026-10-04',
+  '/ai-crm': '2026-10-04',
+  '/crm-for-small-business': '2026-10-04',
+  '/crm-for-solopreneurs': '2026-10-04',
+  '/why': '2026-10-04',
+};
+
+/** JSON-LD for a <script> tag, with `<` escaped so content cannot end the tag. */
+export function jsonLdScript(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
 
 /**
  * Route prefixes that hold customer data or a session, and must never be
@@ -106,6 +130,7 @@ export function productJsonLd() {
         publisher: { '@id': absoluteUrl('/#organization') },
         inLanguage: 'en',
       },
+      faqPageLd(HOME_FAQS, absoluteUrl('/#faq')),
       {
         '@type': 'SoftwareApplication',
         '@id': absoluteUrl('/#software'),
@@ -117,6 +142,7 @@ export function productJsonLd() {
         description: SITE.longDescription,
         publisher: { '@id': absoluteUrl('/#organization') },
         featureList: [
+          'AI-native CRM for small businesses and solopreneurs',
           'Derives CRM records from email, meetings, tickets and product usage',
           'Answers questions with citations back to the source records',
           'AI agents that act through typed, permission-checked tools',
@@ -124,6 +150,87 @@ export function productJsonLd() {
           'MCP server and REST API for external agents',
         ],
       },
+    ],
+  };
+}
+
+/**
+ * The homepage FAQ. Rendered visibly on the page and mirrored in FAQPage
+ * structured data — search engines only honour FAQ markup for questions the
+ * page actually shows, so both read from this one list.
+ */
+export const HOME_FAQS: { q: string; a: string }[] = [
+  {
+    q: 'What is Figbolt?',
+    a: 'Figbolt is an AI-native CRM for small businesses and solopreneurs. It builds your customer records from your email and meetings, so there is no data entry, and Bolt, its AI assistant, answers questions about your customers with links to the evidence.',
+  },
+  {
+    q: 'What makes a CRM AI-native?',
+    a: 'An AI-native CRM is built around AI from the first record: it fills itself in from your conversations instead of asking you to type, and AI is how it works rather than an add-on.',
+  },
+  {
+    q: 'Who is Figbolt for?',
+    a: 'Small businesses, solopreneurs, freelancers and consultants — teams of one to ten who have customers to look after and no one whose job is keeping a CRM up to date.',
+  },
+  {
+    q: 'Does Figbolt contact customers on its own?',
+    a: 'No. Figbolt can draft emails and suggest changes, but anything that reaches a customer or changes a deal waits for your approval.',
+  },
+  {
+    q: 'How do I start?',
+    a: 'Create a workspace and connect Gmail and Google Calendar, or explore the demo workspace first. No credit card is needed to start.',
+  },
+];
+
+type Faq = { q: string; a: string };
+
+function faqPageLd(faqs: Faq[], id: string) {
+  return {
+    '@type': 'FAQPage',
+    '@id': id,
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+}
+
+/** Structured data for a guide page: the page, its breadcrumb, and its FAQ. */
+export function guideJsonLd(guide: {
+  path: string;
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  faqs: Faq[];
+  updated: string;
+}) {
+  const url = absoluteUrl(guide.path);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: guide.h1,
+        description: guide.description,
+        inLanguage: 'en',
+        dateModified: guide.updated,
+        isPartOf: { '@id': absoluteUrl('/#website') },
+        about: { '@id': absoluteUrl('/#software') },
+        breadcrumb: { '@id': `${url}#breadcrumb` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: SITE.name, item: SITE.url },
+          { '@type': 'ListItem', position: 2, name: guide.eyebrow, item: url },
+        ],
+      },
+      faqPageLd(guide.faqs, `${url}#faq`),
     ],
   };
 }

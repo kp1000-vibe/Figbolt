@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { Bodoni_Moda } from 'next/font/google';
 import Link from 'next/link';
 import { LogoTile } from '@/components/brand/logo';
+import { MARKETING_LINKS } from '@/components/marketing/site-chrome';
 import { getCurrentUser } from '@/lib/auth/session';
-import { absoluteUrl, productJsonLd, SITE } from '@/lib/seo';
+import { absoluteUrl, productJsonLd, jsonLdScript, HOME_FAQS, SITE } from '@/lib/seo';
 
 /**
  * The one route that opts into being indexed.
@@ -75,7 +76,7 @@ export default async function LandingPage() {
       <script
         type="application/ld+json"
         // The payload is built from our own constants, never from user input.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd()) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(productJsonLd()) }}
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────────
@@ -212,15 +213,19 @@ export default async function LandingPage() {
 
         {/* ── Statement ────────────────────────────────────────────────── */}
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5.5rem)] max-w-5xl flex-col items-center justify-center px-5 pb-24 text-center sm:px-8">
-          <p className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
+          {/* The page's main heading is what it is — the AI-native CRM for small
+              businesses — because that is what search engines read as the
+              page's subject. The display line below is the same visual design,
+              set as a paragraph. */}
+          <h1 className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
             The AI-native CRM for small businesses &amp; solopreneurs
-          </p>
-          <h1
+          </h1>
+          <p
             className="max-w-4xl text-[clamp(2.6rem,7.4vw,5.5rem)] leading-[1.03] tracking-[-0.015em] text-white text-balance"
             style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}
           >
             The record keeps itself.
-          </h1>
+          </p>
 
           <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-white/85 text-pretty sm:text-lg">
             For solopreneurs and teams up to ten who have customers to look after, not a database to feed.
@@ -303,7 +308,7 @@ export default async function LandingPage() {
               <ul className="mt-5 space-y-3.5">
                 {[
                   'Reads your email and meetings and files them against the right customer',
-                  'Suggests the stage from what the customer actually said',
+                  'Flags deals that are slipping, and shows you why',
                   'Turns promises in emails and calls into follow-ups with due dates',
                   'Summarises every meeting from its transcript',
                   'Briefs you each morning on what changed and what needs you',
@@ -547,6 +552,40 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* ── FAQ ──────────────────────────────────────────────────────────────
+          Mirrored in the FAQPage structured data from the same list. */}
+      <section id="faq" className="scroll-mt-16 border-b border-border">
+        <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-20">
+          <h2 className="text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-text text-balance sm:text-[2.35rem]"
+            style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}>
+            Questions about an AI-native CRM
+          </h2>
+          <dl className="mt-8 divide-y divide-border border-y border-border">
+            {HOME_FAQS.map((faq) => (
+              <div key={faq.q} className="py-5">
+                <dt className="text-[15px] font-semibold text-text">{faq.q}</dt>
+                <dd className="mt-1.5 text-sm leading-relaxed text-text-muted text-pretty">{faq.a}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-6 text-sm text-text-muted">
+            More in{' '}
+            <Link href="/ai-crm" className="text-accent-text hover:underline">
+              what an AI-native CRM is
+            </Link>
+            ,{' '}
+            <Link href="/crm-for-small-business" className="text-accent-text hover:underline">
+              Figbolt for small businesses
+            </Link>{' '}
+            and{' '}
+            <Link href="/crm-for-solopreneurs" className="text-accent-text hover:underline">
+              Figbolt for solopreneurs
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
       {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="border-b border-border bg-bg-subtle">
         <div className="mx-auto max-w-6xl px-5 py-16 text-center sm:px-8 sm:py-20">
@@ -577,6 +616,17 @@ export default async function LandingPage() {
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+        <nav aria-label="Learn more" className="mb-6 flex flex-wrap gap-x-6 gap-y-2">
+          {MARKETING_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="inline-flex min-h-6 items-center text-xs text-text-muted transition-colors hover:text-accent-text"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Brand />
           <p className="text-2xs text-text-subtle">
