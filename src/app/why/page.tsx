@@ -12,6 +12,7 @@ import { CLICK_JOBS, CLICK_CEILING, budgetSummary } from '@/lib/ux/click-budget'
 import { absoluteUrl, SITE } from '@/lib/seo';
 import { getCurrentUser } from '@/lib/auth/session';
 import { SiteFooter, SiteHeader } from '@/components/marketing/site-chrome';
+import { VisitBeacon } from '@/components/marketing/visit-beacon';
 
 /**
  * The comparison page — public, and deliberately so.
@@ -67,6 +68,7 @@ export default async function WhyPage() {
   return (
     <main className="min-h-dvh bg-bg">
       <SiteHeader signedIn={signedIn} />
+      <VisitBeacon path="/why" />
 
       <div className="mx-auto w-full max-w-5xl px-5 sm:px-8 py-10 lg:py-14">
         <header>

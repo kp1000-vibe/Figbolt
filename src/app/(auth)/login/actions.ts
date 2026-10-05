@@ -3,6 +3,7 @@
 import { and, eq, isNull } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
+import { safeNext } from '@/lib/auth/safe-next';
 import { z } from 'zod';
 import { getDb } from '@/db/client';
 import { users, workspaceMembers, workspaces } from '@/db/schema';
@@ -212,7 +213,4 @@ export async function demoCredentials(): Promise<{ email: string; password: stri
 }
 
 /** Only allow same-origin relative redirects. */
-function safeNext(next: string | undefined): string {
-  if (!next || !next.startsWith('/') || next.startsWith('//')) return '/home';
-  return next;
-}
+

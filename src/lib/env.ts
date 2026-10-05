@@ -45,6 +45,8 @@ const schema = z.object({
   JEV_ROUTER: z.enum(['on', 'off']).default('off'),
   /** Search Console / Bing Webmaster ownership codes, rendered as meta tags. */
   GOOGLE_SITE_VERIFICATION: optional,
+  /** Comma-separated emails allowed to see /admin/site-analytics. Unset: nobody. */
+  SITE_ADMIN_EMAILS: optional,
   BING_SITE_VERIFICATION: optional,
   /** api.typesafe.ai key. The SDK and docs both call it TYPESAFE_API_KEY. */
   TYPESAFE_API_KEY: optional,

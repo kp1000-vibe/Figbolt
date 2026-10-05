@@ -80,6 +80,7 @@ export function jsonLdScript(data: unknown): string {
  * in one place next to the reason it exists.
  */
 export const PRIVATE_PREFIXES = [
+  '/admin',
   '/api/',
   '/accounts',
   '/agents',

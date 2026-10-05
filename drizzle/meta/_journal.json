@@ -29,6 +29,13 @@
       "when": 1790575113448,
       "tag": "0003_meeting_scheduling",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791184214593,
+      "tag": "0004_site_analytics",
+      "breakpoints": true
     }
   ]
 }

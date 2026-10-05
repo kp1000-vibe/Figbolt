@@ -779,3 +779,45 @@ export const supportTickets = pgTable(
     index('support_tickets_ws_unprocessed_idx').on(t.workspaceId, t.processedAt),
   ],
 );
+
+/* ── Website analytics ────────────────────────────────────────────────────── */
+
+/**
+ * One row per page view on the public marketing site.
+ *
+ * No IP address is stored. A visitor is a hash of (daily salt, IP, user
+ * agent): the same person counts once per day, and once the day's salt is
+ * deleted the hash cannot be reversed — even by us. That is the approach of
+ * privacy-first analytics tools, and it means no cookie banner is needed.
+ * The trade-off: a person visiting on three days counts three times across
+ * the period, which the analytics view says plainly.
+ */
+export const siteVisits = pgTable(
+  'site_visits',
+  {
+    id: primaryId('vis'),
+    /** UTC day, YYYY-MM-DD. */
+    day: text('day').notNull(),
+    visitorHash: text('visitor_hash').notNull(),
+    path: text('path').notNull(),
+    /** Hostname only — never the full referring URL, which can carry personal data. */
+    referrerHost: text('referrer_host'),
+    /** ISO country code from the edge network, when available. */
+    country: text('country'),
+    device: text('device').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('site_visits_day_idx').on(t.day),
+    index('site_visits_day_visitor_idx').on(t.day, t.visitorHash),
+  ],
+);
+
+/**
+ * The random salt for each day's visitor hashes. Old salts are deleted, which
+ * is what makes yesterday's hashes impossible to link back to anyone.
+ */
+export const siteSalts = pgTable('site_salts', {
+  day: text('day').primaryKey(),
+  salt: text('salt').notNull(),
+});

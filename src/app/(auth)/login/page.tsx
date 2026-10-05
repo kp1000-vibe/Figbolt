@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { safeNext } from '@/lib/auth/safe-next';
 import { getCurrentUser, listUserWorkspaces } from '@/lib/auth/session';
 import { LoginForm } from './login-form';
 import { demoCredentials } from './actions';
@@ -18,7 +19,8 @@ export default async function LoginPage({
   const user = await getCurrentUser();
   if (user) {
     const workspaces = await listUserWorkspaces(user.id);
-    if (workspaces.length > 0) redirect(params.next ?? '/home');
+    // Through safeNext: an unchecked `next` here was an open redirect.
+    if (workspaces.length > 0) redirect(safeNext(params.next));
     redirect('/onboarding');
   }
 

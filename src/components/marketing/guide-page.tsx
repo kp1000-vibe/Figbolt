@@ -3,6 +3,7 @@ import { getCurrentUser } from '@/lib/auth/session';
 import { guideJsonLd, jsonLdScript } from '@/lib/seo';
 import type { Guide } from '@/lib/guides';
 import { MARKETING_LINKS, SiteFooter, SiteHeader } from './site-chrome';
+import { VisitBeacon } from './visit-beacon';
 
 /**
  * One public guide page: a question people search for, answered properly.
@@ -24,6 +25,7 @@ export async function GuidePage({ guide }: { guide: Guide }) {
         dangerouslySetInnerHTML={{ __html: jsonLdScript(guideJsonLd(guide)) }}
       />
       <SiteHeader signedIn={signedIn} />
+      <VisitBeacon path={guide.path} />
 
       <article className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 lg:py-14">
         <nav aria-label="Breadcrumb" className="text-2xs text-text-subtle">

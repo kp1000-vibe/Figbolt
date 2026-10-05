@@ -3,6 +3,7 @@ import { Bodoni_Moda } from 'next/font/google';
 import Link from 'next/link';
 import { LogoTile } from '@/components/brand/logo';
 import { MARKETING_LINKS } from '@/components/marketing/site-chrome';
+import { VisitBeacon } from '@/components/marketing/visit-beacon';
 import { getCurrentUser } from '@/lib/auth/session';
 import { absoluteUrl, productJsonLd, jsonLdScript, HOME_FAQS, SITE } from '@/lib/seo';
 
@@ -72,6 +73,7 @@ export default async function LandingPage() {
 
   return (
     <main className={`min-h-dvh bg-bg ${display.variable}`}>
+      <VisitBeacon path="/" />
       {/* Structured data. Only claims this page itself makes — see src/lib/seo.ts. */}
       <script
         type="application/ld+json"
