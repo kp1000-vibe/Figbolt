@@ -4,6 +4,8 @@ import { getLanguageModel, getModelForTask } from '@/lib/ai';
 import { s } from '@/lib/ai/providers/structured';
 import { fitEvidence } from '@/lib/ai/prompt';
 import type { AnswerEnvelope, EvidenceItem, RoutingSummary } from '@/lib/ai/types';
+import type { DecidedBy } from '@/lib/ai/jev-first';
+import { classifyIntentWithJev } from './jev-intent';
 import { scope, scoped, type Ctx } from '../context';
 import { ctxAssert } from '../context';
 import { record } from '../audit';
@@ -75,6 +77,11 @@ export type AskResult = AnswerEnvelope & {
   model: string;
   /** How `model` was chosen: by Jev, or by code when Jev did not decide. */
   routing?: RoutingSummary;
+  /**
+   * Who classified the question, and whether an LLM was needed at all. A
+   * report-shaped question classified by Jev runs no LLM, end to end.
+   */
+  decisions: { intentBy: DecidedBy; llmUsed: boolean };
   /** Set when the question was routed to the analytics engine instead. */
   analytics?: Awaited<ReturnType<typeof runAnalyticsQuestion>>;
 };
@@ -121,6 +128,8 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
         latencyMs: Date.now() - started,
         model: 'report',
         analytics,
+        // A report answered it: no LLM ran, before or after retrieval.
+        decisions: { intentBy: intent.decidedBy, llmUsed: intent.decidedBy !== 'jev' },
       };
     }
   }
@@ -148,7 +157,14 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
       caveat: 'No matching records found.',
     };
     const persisted = await persist(ctx, options, question, envelope, 'none', Date.now() - started);
-    return { ...envelope, ...persisted, evidence: [], latencyMs: Date.now() - started, model: 'none' };
+    return {
+      ...envelope,
+      ...persisted,
+      evidence: [],
+      latencyMs: Date.now() - started,
+      model: 'none',
+      decisions: { intentBy: intent.decidedBy, llmUsed: intent.decidedBy !== 'jev' },
+    };
   }
 
   /* 4 — build context within a token budget */
@@ -218,6 +234,7 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
       evidenceCount: fitted.length,
       confidence: envelope.confidence,
       intent: intent.intent,
+      intentBy: intent.decidedBy,
       latencyMs,
       model: result.model,
       modelChosenBy: result.routing?.decidedBy ?? 'default',
@@ -233,6 +250,7 @@ export async function ask(ctx: Ctx, options: AskOptions): Promise<AskResult> {
     latencyMs,
     model: result.model,
     routing: result.routing,
+    decisions: { intentBy: intent.decidedBy, llmUsed: true },
   };
 }
 
@@ -242,12 +260,25 @@ export type Intent = {
   intent: 'search' | 'explain' | 'analytics' | 'draft' | 'mutate';
   scopes: SearchScope[];
   timeframeDays: number;
+  /** Jev, an LLM, or the broad default when both failed. */
+  decidedBy: DecidedBy;
 };
 
 async function classifyIntent(ctx: Ctx, question: string): Promise<Intent> {
-  // Routed: a five-way label from one sentence is the cheapest job in the
-  // product and runs on every question asked. Paying top-tier prices for it
-  // is how an AI budget disappears with nothing to show.
+  // Jev first. Classification is a decision, not writing, so when Jev may
+  // read the question and is confident, no LLM runs for it at all.
+  const viaJev = await classifyIntentWithJev(question);
+  if (viaJev) {
+    return {
+      intent: viaJev.intent,
+      scopes: viaJev.scopes,
+      timeframeDays: viaJev.timeframeDays,
+      decidedBy: 'jev',
+    };
+  }
+
+  // Otherwise an LLM classifies — on a model Jev's router picks, since a
+  // five-way label from one sentence should never run on the largest one.
   const { model } = await getModelForTask({
     task: 'classify_intent',
     instruction: question,
@@ -285,6 +316,7 @@ async function classifyIntent(ctx: Ctx, question: string): Promise<Intent> {
       intent: (v['intent'] as Intent['intent']) ?? 'search',
       scopes: scopes.length > 0 ? scopes : ['accounts', 'opportunities', 'emails', 'meetings', 'transcripts'],
       timeframeDays: Math.max(0, Number(v['timeframeDays'] ?? 0)),
+      decidedBy: 'llm',
     };
   } catch {
     // Classification is an optimisation, not a gate — fall back to broad search.
@@ -292,6 +324,7 @@ async function classifyIntent(ctx: Ctx, question: string): Promise<Intent> {
       intent: 'search',
       scopes: ['accounts', 'opportunities', 'emails', 'meetings', 'transcripts', 'commitments', 'objections'],
       timeframeDays: 0,
+      decidedBy: 'default',
     };
   }
 }

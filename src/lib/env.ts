@@ -51,6 +51,12 @@ const schema = z.object({
   /** Opt in to sending the operator's own request text, never customer content. */
   JEV_SEND_CONTENT: bool(false),
   /**
+   * Opt in to Jev reading customer content (emails, transcripts) to make a
+   * decision directly — triage, scoring — instead of an LLM. Separate from
+   * JEV_SEND_CONTENT because it sends other people's words to TypeSafe.
+   */
+  JEV_CUSTOMER_CONTENT: bool(false),
+  /**
    * The models Jev chooses between, comma-separated: `claude-haiku-4-5-20251001,
    * gpt-4.1,gemini-2.5-pro`, or `provider:model` to be explicit. Unset, the
    * catalogue is Claude Haiku, Sonnet and Opus plus OPENAI_MODEL and

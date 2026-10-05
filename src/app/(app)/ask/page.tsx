@@ -97,6 +97,17 @@ export default async function AskPage({
               <div>
                 <SectionLabel>Your question</SectionLabel>
                 <p className="mt-1.5 text-base font-medium text-text text-balance">{question}</p>
+                {/* Who made the calls: Jev decides, an LLM writes — and some
+                    questions never need an LLM at all. */}
+                <p className="mt-1.5 text-2xs text-text-subtle">
+                  {result.decisions.intentBy === 'jev' ? 'Understood by Jev' : 'Understood by an LLM'}
+                  {' · '}
+                  {result.decisions.llmUsed
+                    ? 'answered by an LLM'
+                    : result.model === 'report'
+                      ? 'answered from a report — no LLM needed'
+                      : 'no LLM needed'}
+                </p>
               </div>
 
               {result.analytics ? (
