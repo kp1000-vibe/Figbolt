@@ -18,6 +18,7 @@ import { completeOnboardingAction, createWorkspaceAction, seedDemoAction } from 
 import { ArrowRight, CheckCircle, NavIcon, Sparkle } from '@/components/layout/icons';
 import { cn } from '@/lib/utils';
 import { LogoTile } from '@/components/brand/logo';
+import { SignOutButton } from '@/components/layout/sign-out-button';
 
 /**
  * Onboarding.
@@ -129,9 +130,12 @@ export function OnboardingFlow({
     <div className="mx-auto grid min-h-dvh w-full max-w-6xl gap-8 px-5 py-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:py-16">
       {/* ── Step rail ─────────────────────────────────────────────────── */}
       <aside className="min-w-0">
-        <div className="flex items-center gap-2.5">
-          <LogoTile className="size-7" />
-          <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
+        <div className="flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <LogoTile className="size-7" />
+            <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
+          </div>
+          <SignOutButton className="-mr-2.5" />
         </div>
 
         <p className="mt-6 text-sm text-text-muted">

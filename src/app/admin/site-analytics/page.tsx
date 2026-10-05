@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { LogoTile } from '@/components/brand/logo';
+import { SignOutButton } from '@/components/layout/sign-out-button';
 import { getCurrentUser } from '@/lib/auth/session';
 import { isSiteAdmin } from '@/lib/site-admin';
 import { getSiteStats, type SiteStats } from '@/server/site-analytics';
@@ -35,9 +36,12 @@ export default async function SiteAnalyticsPage({
             <LogoTile className="size-7" />
             <span className="text-sm font-semibold tracking-tight text-text">Figbolt</span>
           </Link>
-          <Link href="/home" className="inline-flex min-h-6 items-center text-sm text-text-muted hover:text-text">
-            Back to the app
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/home" className="inline-flex min-h-8 items-center px-2 text-sm text-text-muted hover:text-text">
+              Back to the app
+            </Link>
+            <SignOutButton />
+          </div>
         </div>
       </header>
 
