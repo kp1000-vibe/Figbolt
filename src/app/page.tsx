@@ -217,14 +217,14 @@ export default async function LandingPage() {
               businesses — because that is what search engines read as the
               page's subject. The display line below is the same visual design,
               set as a paragraph. */}
-          <h1 className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
-            The AI-native CRM for small businesses &amp; solopreneurs
+          <h1 className="mb-7 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-medium tracking-wide text-white/90 text-balance backdrop-blur-sm">
+            The AI-native CRM for Solopreneurs &amp; Small Businesses
           </h1>
           <p
             className="max-w-4xl text-[clamp(2.6rem,7.4vw,5.5rem)] leading-[1.03] tracking-[-0.015em] text-white text-balance"
             style={{ fontFamily: 'var(--font-display), Georgia, serif', fontWeight: 400 }}
           >
-            The record keeps itself.
+            The CRM keeps itself.
           </p>
 
           <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-white/85 text-pretty sm:text-lg">
