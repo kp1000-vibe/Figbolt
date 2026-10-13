@@ -143,6 +143,8 @@ export function productJsonLd() {
         description: SITE.longDescription,
         publisher: { '@id': absoluteUrl('/#organization') },
         featureList: [
+          'AI voice agents that make follow-up calls, each approved by a person',
+          'Transcripts from pocket AI recorders such as Pocket, Plaud and Omi',
           'AI-native CRM for small businesses and solopreneurs',
           'Derives CRM records from email, meetings, tickets and product usage',
           'Answers questions with citations back to the source records',
@@ -176,6 +178,14 @@ export const HOME_FAQS: { q: string; a: string }[] = [
   {
     q: 'Does Figbolt contact customers on its own?',
     a: 'No. Figbolt can draft emails and suggest changes, but anything that reaches a customer or changes a deal waits for your approval.',
+  },
+  {
+    q: 'Can Figbolt make calls to customers?',
+    a: 'Yes. AI voice agents can make follow-up calls for you. Every call is approved by a person first, the agent says it is an AI in its first sentence, it cannot agree to prices or terms, and anyone who asks not to be called again never is. The transcript lands on the contact.',
+  },
+  {
+    q: 'Does Figbolt work with pocket AI recorders?',
+    a: 'Yes. Pocket and Omi send each recorded conversation straight to Figbolt, and Plaud connects through Zapier. In-person conversations become meeting notes with follow-ups, like any call.',
   },
   {
     q: 'How do I start?',

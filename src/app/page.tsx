@@ -231,8 +231,9 @@ export default async function LandingPage() {
 
           <p className="mt-7 max-w-2xl text-[15px] leading-relaxed text-white/85 text-pretty sm:text-lg">
             For solopreneurs and teams up to ten who have customers to look after, not a database to feed.
-            Connect your email and calendar, and Figbolt fills in your customers, deals and
-            follow-ups itself — asking you only for the decisions that need a person.
+            Connect your email, calendar and pocket recorder, and Figbolt fills in your
+            customers, deals and follow-ups itself. AI voice agents make the follow-up calls,
+            and you approve anything that reaches a customer.
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
@@ -291,6 +292,8 @@ export default async function LandingPage() {
                   'Move each deal to the right stage',
                   'Remember what you promised, and when',
                   'Write up notes after every meeting',
+                  'Type up what was said in person, from memory',
+                  'Make every follow-up call yourself',
                   'Build a report to see what needs attention',
                 ].map((line) => (
                   <li key={line} className="flex gap-2.5 text-sm leading-snug text-text-muted">
@@ -313,6 +316,8 @@ export default async function LandingPage() {
                   'Flags deals that are slipping, and shows you why',
                   'Turns promises in emails and calls into follow-ups with due dates',
                   'Summarises every meeting from its transcript',
+                  'Turns in-person conversations from pocket AI recorders like Pocket, Plaud and Omi into notes',
+                  'Sends AI voice agents to make the follow-up calls you approve',
                   'Briefs you each morning on what changed and what needs you',
                 ].map((line) => (
                   <li key={line} className="flex gap-2.5 text-sm leading-snug text-text">
@@ -330,11 +335,11 @@ export default async function LandingPage() {
             {[
               {
                 k: 'Connect once',
-                d: 'Link Gmail and Google Calendar. Your customers and deals appear from the conversations you have already had.',
+                d: 'Link Gmail, Google Calendar and a pocket AI recorder such as Pocket or Omi. Your customers and deals appear from the conversations you have already had.',
               },
               {
                 k: 'Approve, don’t type',
-                d: 'When Figbolt wants to change a deal or email a customer, you get one tap to approve. Nothing goes out without you.',
+                d: 'When Figbolt wants to change a deal, email a customer or have a voice agent call them, you get one tap to approve. Nothing goes out without you.',
               },
               {
                 k: 'Just ask',
