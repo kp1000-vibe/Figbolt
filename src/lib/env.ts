@@ -75,6 +75,27 @@ const schema = z.object({
   MODEL_TIER_LARGE: optional,
   MODEL_TIER_HARDEST: optional,
 
+  /**
+   * Voice agent calls. `console` records calls without dialling — the default,
+   * so nobody is phoned by accident. `vapi` places real calls.
+   */
+  VOICE_PROVIDER: z.enum(['console', 'vapi']).default('console'),
+  /**
+   * The signing secret Pocket shows when you add a webhook. Set, every Pocket
+   * delivery must carry a valid, recent signature.
+   */
+  POCKET_WEBHOOK_SECRET: optional,
+  /** Vapi private API key (dashboard.vapi.ai). Server-side only. */
+  VAPI_API_KEY: optional,
+  /** The Vapi phone number calls are placed from. */
+  VAPI_PHONE_NUMBER_ID: optional,
+  /** The model the voice agent thinks with, inside Vapi. */
+  VAPI_MODEL_PROVIDER: z.string().default('openai'),
+  VAPI_MODEL: z.string().default('gpt-4o'),
+  /** Optional voice; omitted, Vapi's default voice is used. */
+  VAPI_VOICE_PROVIDER: optional,
+  VAPI_VOICE_ID: optional,
+
   EMBEDDING_PROVIDER: z.enum(['local', 'openai']).default('local'),
   EMBEDDING_DIMENSIONS: z.coerce.number().int().positive().default(768),
 

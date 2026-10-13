@@ -111,7 +111,9 @@ export async function dispatchTool(
   const input = parsed.data;
 
   /* 4 — risk gate */
-  const needsApproval = !tool.readOnly && !options.preApproved && !(await mayAutoRun(ctx, tool.risk, options));
+  const humanOnly = tool.neverAutoRun === true && !(options.directUserAction && ctx.actor.type === 'user');
+  const needsApproval =
+    !tool.readOnly && !options.preApproved && (humanOnly || !(await mayAutoRun(ctx, tool.risk, options)));
 
   if (needsApproval) {
     if (!tool.preview) {

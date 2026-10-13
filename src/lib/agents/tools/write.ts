@@ -946,3 +946,74 @@ async function describeLink(
   }
   return null;
 }
+
+/* ── Voice agent calls ─────────────────────────────────────────────────────── */
+
+registerTool(
+  defineTool({
+    name: 'place_call',
+    description:
+      'Have an AI voice agent phone a contact. HIGH RISK and never automatic: a person must approve every call, ' +
+      'seeing the exact opening line. The agent always says it is an AI, cannot agree to prices or terms, and ' +
+      'stops calling anyone who asks it to.',
+    input: z.object({
+      contactId: z.string().describe('The contact to call. Their phone number on file is used.'),
+      purpose: z.string().min(5).max(300).describe('Why you are calling, in one sentence.'),
+      talkingPoints: z.array(z.string().min(2).max(200)).max(8).default([]),
+      maxMinutes: z.number().int().min(1).max(10).default(5),
+      recordCall: z
+        .boolean()
+        .default(false)
+        .describe('Only true if the person agreed to be recorded.'),
+      consentConfirmed: z
+        .boolean()
+        .describe('True only if this person agreed to receive calls from you. Approving the call confirms it.'),
+      opportunityId: z.string().optional(),
+    }),
+    permission: 'call:place',
+    risk: 'high',
+    readOnly: false,
+    neverAutoRun: true,
+    async preview({ ctx }, input): Promise<ApprovalPreview> {
+      const { planCall } = await import('@/server/voice/calls');
+      const plan = await planCall(ctx, { ...input, consentConfirmed: true });
+      return {
+        kind: 'text',
+        body: [
+          `Phone ${plan.contact.name} at ${plan.toNumber} with an AI voice agent.`,
+          '',
+          'It will open with exactly:',
+          `"${plan.firstMessage}"`,
+          '',
+          `Purpose: ${input.purpose}`,
+          input.talkingPoints.length ? `Talking points:\n${input.talkingPoints.map((t) => `- ${t}`).join('\n')}` : null,
+          `Recording: ${input.recordCall ? 'yes' : 'no'} · Up to ${input.maxMinutes} minutes`,
+          plan.callingHours === null
+            ? "Their time zone is unknown: make sure it is between 8am and 9pm for them."
+            : 'Within 8am-9pm in their time zone.',
+          '',
+          `By approving, you confirm ${plan.contact.name} agreed to receive calls from you` +
+            (input.recordCall ? ' and to be recorded.' : '.'),
+          'The agent cannot agree to prices, discounts or contract terms, and will stop if asked not to call again.',
+        ]
+          .filter((line) => line !== null)
+          .join('\n'),
+      };
+    },
+    async execute({ ctx }, input): Promise<ToolResult> {
+      const { placeCall } = await import('@/server/voice/calls');
+      // Consent is passed through as given and checked in placeCall: an
+      // unticked box is a refused call, whoever or whatever asked for it.
+      const result = await placeCall(ctx, input);
+      return {
+        summary:
+          result.status === 'queued'
+            ? 'Call placed. The transcript will appear on the contact when it ends.'
+            : result.status === 'not_placed'
+              ? 'Call recorded but not dialled: no voice provider is configured.'
+              : 'The call could not be placed.',
+        data: result,
+      };
+    },
+  }),
+);

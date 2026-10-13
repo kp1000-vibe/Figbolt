@@ -322,6 +322,12 @@ export const INTEGRATION_PROVIDERS = [
   'meetily',
   'amurex',
   'jitsi',
+  // Pocket recorders - wearable hardware that records in-person conversations
+  'omi',
+  'pocket',
+  'plaud',
+  // Voice agents - AI that places customer calls, always human-approved
+  'vapi',
   // Scheduling links
   'calendly',
   'cal_com',
@@ -821,3 +827,69 @@ export const siteSalts = pgTable('site_salts', {
   day: text('day').primaryKey(),
   salt: text('salt').notNull(),
 });
+
+/* ── Voice agent calls ────────────────────────────────────────────────────── */
+
+export type VoiceCallStatus =
+  | 'placing'
+  | 'queued'
+  | 'in_progress'
+  | 'completed'
+  | 'no_answer'
+  | 'failed'
+  /** No voice provider configured: recorded, not dialled. */
+  | 'not_placed';
+
+/**
+ * Outbound calls made by a voice agent on a person's behalf.
+ *
+ * Each row records who approved the call and that they confirmed the person
+ * agreed to be called — an AI voice call is regulated (in the US the FCC
+ * treats AI voices as "artificial" under the TCPA), so consent is captured
+ * per call, not assumed. `outcome = 'do_not_call'` is permanent for that
+ * number: no later call to it can be placed.
+ */
+export const voiceCalls = pgTable(
+  'voice_calls',
+  {
+    id: primaryId('call'),
+    workspaceId: text('workspace_id')
+      .notNull()
+      .references(() => workspaces.id, { onDelete: 'cascade' }),
+    contactId: text('contact_id').references(() => contacts.id, { onDelete: 'set null' }),
+    accountId: text('account_id').references(() => accounts.id, { onDelete: 'set null' }),
+    opportunityId: text('opportunity_id').references(() => opportunities.id, { onDelete: 'set null' }),
+    /** E.164, e.g. +14155550123. */
+    toNumber: text('to_number').notNull(),
+    purpose: text('purpose').notNull(),
+    talkingPoints: jsonb('talking_points').$type<string[]>().notNull().default([]),
+    /** The exact first sentence spoken, including the AI disclosure. */
+    openingLine: text('opening_line').notNull(),
+    recordCall: boolean('record_call').notNull().default(false),
+    maxMinutes: integer('max_minutes').notNull().default(5),
+    consentConfirmedById: text('consent_confirmed_by_id').references(() => users.id, { onDelete: 'set null' }),
+    consentConfirmedAt: timestamp('consent_confirmed_at', { withTimezone: true, mode: 'date' }).notNull(),
+    status: text('status').$type<VoiceCallStatus>().notNull().default('placing'),
+    outcome: text('outcome').$type<'do_not_call' | 'wrong_person'>(),
+    provider: text('provider').notNull(),
+    providerCallId: text('provider_call_id'),
+    /** SHA-256 of the per-call token in the webhook URL. The token itself is never stored. */
+    webhookTokenHash: text('webhook_token_hash'),
+    endedReason: text('ended_reason'),
+    summary: text('summary'),
+    error: text('error'),
+    durationSeconds: integer('duration_seconds'),
+    meetingId: text('meeting_id'),
+    startedAt: timestamp('started_at', { withTimezone: true, mode: 'date' }),
+    endedAt: timestamp('ended_at', { withTimezone: true, mode: 'date' }),
+    createdById: text('created_by_id').references(() => users.id, { onDelete: 'set null' }),
+    createdByAgentId: text('created_by_agent_id'),
+    approvalId: text('approval_id'),
+    ...timestamps,
+  },
+  (t) => [
+    index('voice_calls_ws_created_idx').on(t.workspaceId, t.createdAt),
+    index('voice_calls_provider_call_idx').on(t.providerCallId),
+    index('voice_calls_ws_number_idx').on(t.workspaceId, t.toNumber),
+  ],
+);

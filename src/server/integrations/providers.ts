@@ -97,6 +97,10 @@ const LEVELS: Partial<Record<IntegrationProvider, ProviderLevel>> = {
   gong: 'adapter',
   meetily: 'adapter',
   amurex: 'adapter',
+  omi: 'adapter',
+  pocket: 'adapter',
+  plaud: 'adapter',
+  vapi: 'adapter',
   google_drive: 'oauth',
   outlook_mail: 'oauth',
   outlook_calendar: 'oauth',
@@ -445,6 +449,25 @@ export const PROVIDERS: ProviderSpec[] = [
 
   /* ── Calling ───────────────────────────────────────────────────────────── */
   {
+    provider: 'vapi',
+    name: 'Vapi voice agent',
+    vendor: 'Vapi',
+    kind: 'calling',
+    description:
+      'An AI voice agent that phones contacts for you. Every call is approved by a person, opens by saying it is an AI, and its transcript lands on the contact.',
+    capabilities: [
+      'Outbound calls, always human-approved',
+      'AI disclosure in the first sentence, consent captured per call',
+      'Transcript and summary on the contact',
+      'Permanent do-not-call on request',
+    ],
+    scopes: [],
+    requiredEnv: ['VAPI_API_KEY', 'VAPI_PHONE_NUMBER_ID'],
+    perUser: false,
+    docsUrl: 'https://docs.vapi.ai',
+    auth: 'api_key',
+  },
+  {
     provider: 'aircall',
     name: 'Aircall',
     vendor: 'Aircall',
@@ -719,6 +742,63 @@ export const PROVIDERS: ProviderSpec[] = [
     perUser: true,
     docsUrl: 'https://github.com/Zackriya-Solutions/meeting-minutes',
     auth: 'self_hosted',
+  },
+  {
+    provider: 'omi',
+    name: 'Omi',
+    vendor: 'Based Hardware (open source)',
+    kind: 'notetaker',
+    description:
+      'Open-source pendant that records in-person conversations. Point its "conversation created" webhook at Figbolt and each conversation becomes a meeting with a transcript.',
+    capabilities: [
+      'In-person conversation transcripts',
+      'Speaker labels, with the wearer marked as you',
+      'Commitment and objection extraction',
+      'Proposed CRM actions for human approval',
+    ],
+    scopes: [],
+    // No secret of its own: it posts with a workspace API key. Live once the
+    // public address its webhook points at is set.
+    requiredEnv: ['APP_URL'],
+    perUser: true,
+    docsUrl: 'https://docs.omi.me',
+    auth: 'api_key',
+  },
+  {
+    provider: 'pocket',
+    name: 'Pocket',
+    vendor: 'Pocket',
+    kind: 'notetaker',
+    description:
+      'MagSafe AI recorder for in-person conversations and calls. Its signed transcription.completed webhook sends each recording to Figbolt as a meeting with a transcript.',
+    capabilities: [
+      'In-person and call transcripts with speaker names',
+      'Signed webhook deliveries, checked for freshness',
+      'Commitment and objection extraction',
+      'Proposed CRM actions for human approval',
+    ],
+    scopes: [],
+    // Posts with a workspace API key; live once the public webhook address is set.
+    requiredEnv: ['APP_URL'],
+    perUser: true,
+    docsUrl: 'https://docs.heypocketai.com/docs/api/webhooks',
+    auth: 'api_key',
+  },
+  {
+    provider: 'plaud',
+    name: 'Plaud',
+    vendor: 'Plaud',
+    kind: 'notetaker',
+    description:
+      'Plaud NotePin and Note recorders. Connect through Zapier: the "Transcript & Summary Ready" trigger posts each recording to the Figbolt transcript endpoint.',
+    capabilities: ['Transcript import via Zapier', 'Commitment and objection extraction', 'Proposed CRM actions for human approval'],
+    scopes: [],
+    // No secret of its own: it posts with a workspace API key. Live once the
+    // public address its webhook points at is set.
+    requiredEnv: ['APP_URL'],
+    perUser: true,
+    docsUrl: 'https://support.plaud.ai/hc/en-us/articles/12200669941647-Zapier-integration',
+    auth: 'api_key',
   },
   {
     provider: 'amurex',

@@ -46,6 +46,13 @@ export const IMPLEMENTED_NON_SYNC: readonly IntegrationProvider[] = [
   'gong',
   'meetily',
   'amurex',
+  // Plaud via Zapier into the same endpoint; Omi via its own webhook adapter,
+  // POST /api/v1/devices/omi (src/server/meetings/devices/omi.ts).
+  'plaud',
+  'omi',
+  'pocket',
+  // Outbound only: src/server/voice. Calls out, reports back by webhook.
+  'vapi',
 ];
 
 export function hasConnector(provider: IntegrationProvider): boolean {

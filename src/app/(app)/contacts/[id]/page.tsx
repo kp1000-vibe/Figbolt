@@ -23,6 +23,10 @@ import { Timeline } from '@/components/crm/timeline';
 import { ActionButtons } from '@/components/ai/action-buttons';
 import { Mail, NavIcon, Phone } from '@/components/layout/icons';
 import { money, relativeTime, shortDate, titleCase } from '@/lib/utils';
+import { ctxCan } from '@/server/context';
+import { isDoNotCall, listCallsForContact, toE164 } from '@/server/voice/calls';
+import { getVoiceProvider } from '@/server/voice/provider';
+import { VoiceCallCard } from './voice-call-card';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -49,6 +53,20 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
 
   const { contact, account } = detail;
   const name = `${contact.firstName} ${contact.lastName}`;
+
+  // Voice agent: can this person be called at all, before anyone fills a form?
+  const phone = toE164(contact.phone);
+  const [calls, blocked] = await Promise.all([
+    listCallsForContact(ctx, contact.id),
+    phone ? isDoNotCall(ctx, phone) : Promise.resolve(false),
+  ]);
+  const canCall: { ok: true } | { ok: false; reason: string } = !ctxCan(ctx, 'call:place')
+    ? { ok: false, reason: 'Your role cannot place calls.' }
+    : !phone
+      ? { ok: false, reason: 'Add a phone number in international format, starting with + and the country code, to call this contact.' }
+      : blocked
+        ? { ok: false, reason: `${contact.firstName} asked not to be called again, so this number is blocked for good.` }
+        : { ok: true };
   const memory = contact.memorySummary;
 
   return (
@@ -286,6 +304,16 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
               </dl>
             </CardBody>
           </Card>
+
+          <VoiceCallCard
+            contactId={contact.id}
+            contactFirstName={contact.firstName}
+            businessName={ctx.session.workspace.name}
+            callerName={ctx.session.user.name}
+            canCall={canCall}
+            live={getVoiceProvider().live}
+            calls={calls}
+          />
 
           {detail.commitments.length > 0 && (
             <Card>

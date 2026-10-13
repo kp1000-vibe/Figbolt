@@ -52,6 +52,12 @@ export type ToolDefinition<TInput = unknown> = {
   readOnly: boolean;
   execute: (tctx: ToolExecuteContext, input: TInput) => Promise<ToolResult>;
   /**
+   * Never run without a person: no workspace auto-approval policy applies.
+   * For actions where the approval itself is a human attestation — a voice
+   * call, where approving confirms the person consented to be called.
+   */
+  neverAutoRun?: boolean;
+  /**
    * Renders the exact proposed effect for the approval screen. Required for
    * every non-read-only tool: a human must see the real payload, not a
    * paraphrase of it.

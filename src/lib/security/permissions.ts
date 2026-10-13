@@ -21,6 +21,8 @@ export const PERMISSIONS = [
   'email:draft',
   'email:send',
   'meeting:manage',
+  /** Have a voice agent phone a customer. Always approval-gated for agents. */
+  'call:place',
   // AI surfaces
   'ai:ask',
   'ai:run_agent',
@@ -53,6 +55,7 @@ const MEMBER: Permission[] = [
   'email:draft',
   'email:send',
   'meeting:manage',
+  'call:place',
   'ai:run_agent',
   'ai:approve_low',
   'ai:approve_medium',
